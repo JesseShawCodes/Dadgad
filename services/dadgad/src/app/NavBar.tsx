@@ -1,9 +1,7 @@
 "use client"
-import { React } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import myImage from './logo.png';
-import ThemeToggleButton from './components/ThemeToggleButton';
 
 function NavBar() {
   return (
@@ -23,9 +21,6 @@ function NavBar() {
             </li>
             <li className="nav-item">
               <Link href="/search" className="nav-link active">Search</Link>
-            </li>
-            <li className="nav-item">
-              <ThemeToggleButton />
             </li>
           </ul>
         </div>
