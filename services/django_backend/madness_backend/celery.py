@@ -15,9 +15,3 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks()
-
-# Prevent worker_state_db crash in production
-# app.conf.worker_state_db = None  # Or use '/tmp/celery_worker_state.db'
-
-def debug_task(self):
-    print(f'Request: {self.request!r}')

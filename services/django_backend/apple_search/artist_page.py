@@ -23,6 +23,7 @@ def artist_content(artist_id):
         songs = future_songs.result()
 
     output['artist_name'] = artist_details['name']
+    output['artist_id'] = int(artist_details['artist_id'])
     output['artist_image'] = format_image(artist_details['image_url'])
     if "errors" in albums:
         output['top_songs_list'] = add_weight_to_songs(
@@ -44,7 +45,8 @@ def get_artist_high_level_details(artist_id):
     '''Both name and image_url should be strings'''
     return {
         'name': artist_data['name'],
-        'image_url': artist_data['artwork']['url']
+        'image_url': artist_data['artwork']['url'],
+        'artist_id': artist['data'][0]['id']
     }
 
 def dedupe_songs(songs):

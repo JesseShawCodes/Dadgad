@@ -129,9 +129,6 @@ WSGI_APPLICATION = 'madness_backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 if os.environ.get("environment") == "production":
-  print("setting prod database")
-  print(os.environ.get('DATABASE_URL'))
-  print("---------------------")
   DATABASES = {
       'default': dj_database_url.config(
           default=os.environ.get('DATABASE_URL'),
@@ -230,9 +227,7 @@ if os.environ.get("environment") == "production":
     DEBUG = False
     CELERY_TASKS_ALWAYS_EAGER = True
     CELERY_TASKS_EAGER_PROPAGATES = True
-    print("Production settings loaded")
 else:
     # Development settings
     DEBUG = True
-    print("Development settings loaded...")
     CELERY_TASKS_ALWAYS_EAGER = True
