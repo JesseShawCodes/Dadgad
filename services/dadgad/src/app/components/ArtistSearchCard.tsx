@@ -18,7 +18,7 @@ type ArtistAttributes = {
 type ArtistRelationships = {
   albums: {
     href: string;
-    data: any[]; // Replace any with a more specific type if you have it
+    data: any[];
   };
 };
 
@@ -38,7 +38,7 @@ export default function ArtistSearchCard({artistResult}: ArtistSearchCardProps) 
   return (
     <div className="mt-4 mx-4 card artist-search-card g-col-6 g-col-md-4" key={artistResult.id}>
       {
-        artistResult.attributes.artwork ? <Image src={artistResult.attributes.artwork.url} className="card-img-top" alt={`${artistResult.attributes.name} promo`} width={100} height={100} /> : 
+        artistResult.attributes.artwork && artistResult.attributes.artwork.url ? <img src={artistResult.attributes.artwork.url} className="card-img-top" alt={`${artistResult.attributes.name} promo`} /> :  
         <div className="h-100 placeholder-image-container d-flex justify-content-center align-items-center">
           <div className="d-flex flex-column">
             <Image src={myImage} alt="Dadgad logo" role="presentation" className="me-2" style={{width: '50px', height: 'auto'}}/>
