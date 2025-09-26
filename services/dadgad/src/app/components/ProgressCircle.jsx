@@ -10,7 +10,7 @@ function ProgressCircle() {
     <>
       <div className="set-size charts-container">
       <div className={`pie-wrapper progress-${progress}`}>
-        <span className="label">{progress}<span className="smaller">%</span></span>
+        <span className="label" data-testid="progress-circle-label">{progress}<span className="smaller">%</span></span>
         <div className="pie">
           <div className="left-side half-circle"></div>
           <div className="right-side half-circle"></div>

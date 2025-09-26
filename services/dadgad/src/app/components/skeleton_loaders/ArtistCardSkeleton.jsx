@@ -1,6 +1,6 @@
 function ArtistCardSkeleton() {
   return (
-    <div className="card shadow-lg overflow-hidden" style={{maxWidth:"24rem", width: "100%"}}>
+    <div className="card shadow-lg overflow-hidden" style={{maxWidth:"24rem", width: "100%"}} data-testid="artist-card-skeleton">
       <div className="h-custom-48 skeleton-line rounded-top"></div>
       <div className="card-body p-4">
         <div className="h-custom-6 skeleton-line w-75 mb-3"></div>
