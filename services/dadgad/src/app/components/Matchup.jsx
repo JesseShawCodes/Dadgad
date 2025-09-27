@@ -1,6 +1,6 @@
 import { React, useContext } from 'react';
 import PropTypes from 'prop-types';
-import MatchupSong from './MatchupSong';
+import MatchupSong from './Matchups/MatchupSong';
 import { Context } from '../context/BracketContext';
 
 export default function Matchup({

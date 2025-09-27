@@ -1,14 +1,18 @@
 "use client";
-import { React, createContext, useReducer } from 'react';
+import { createContext, useReducer } from 'react';
+import { updateUserBracketLocalStorage } from '../services/userBracketLocalStorage';
 
 export const Context = createContext();
 
 const initialState = {
   values: [],
   bracket: {},
+  userBracket: [],
   championshipBracket: {},
   round: 1,
+  roundTotal: 1,
   currentRoundProgres: 0,
+  currentRound: 0,
   selectedGroup: 'all',
   nonGroupPlay: false,
   finalFour: false,
@@ -29,7 +33,20 @@ function bracketReducer(state, action) {
         ...state,
         values: action.payload.values,
       };
-    }
+    };
+    case 'setCurrentRound': {
+      return {
+        ...state,
+        currentRound: action.payload.currentRound,
+      };
+    };
+    case 'setUserBracket': {
+      updateUserBracketLocalStorage(action.payload.userBracket);
+      return {
+        ...state,
+        userBracket: localStorage.getItem('userBracket') ? JSON.parse(localStorage.getItem('userBracket')) : action.payload.userBracket,
+      }
+    };
     case 'setBracket':
       return {
         ...state,
@@ -39,6 +56,7 @@ function bracketReducer(state, action) {
       return {
         ...state,
         round: action.payload.round,
+        roundTotal: Math.max(state.roundTotal, action.payload.round),
       };
     case 'setCurrentRoundProgres':
       return {
@@ -86,4 +104,3 @@ export const BracketContext = ({ children }) => {
     <Context.Provider value={[state, dispatch]}>{children}</Context.Provider>
   );
 }
-
