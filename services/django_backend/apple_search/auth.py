@@ -5,6 +5,10 @@ import requests
 import jwt as pyjwt
 from apple_search.models import AppleAuth
 
+def log_error(e):
+    with open("error.log", "a") as f:
+        f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S')}: {e}\n")
+
 def get_auth_token():
     '''Initial Get Auth Token. This should run if newest auth_token has expired'''
     private_key = os.environ['apple_auth_key'].replace('\\n', '\n')
@@ -30,16 +34,24 @@ def get_newest_auth():
     '''Get the newest auth token from database.'''
     return AppleAuth.objects.order_by('-created').first().auth
 
-def apple_request(endpoint, params=None, base_url=os.environ['apple_artist_details_url']):
+def apple_request(endpoint, params=None, base_url=os.environ['apple_artist_details_url'], default={}):
     """Make a request to Apple Music API"""
-    url = f"{base_url}{endpoint}"
+    try:
+        url = f"{base_url}{endpoint}"
 
-    headers = {'Authorization': f'Bearer {get_newest_auth()}'}
-    resp = requests.get(url, headers=headers, params=params, timeout=5)
-
-    if resp.status_code == 401:  # expired token
-        headers = {'Authorization': f'Bearer {get_auth_token()}'}
+        headers = {'Authorization': f'Bearer {get_newest_auth()}'}
         resp = requests.get(url, headers=headers, params=params, timeout=5)
 
-    resp.raise_for_status()
-    return resp.json()
+        if resp.status_code == 401:  # expired token
+            headers = {'Authorization': f'Bearer {get_auth_token()}'}
+            resp = requests.get(url, headers=headers, params=params, timeout=5)
+        if resp.status_code == 404:
+            return {}
+        
+        resp.raise_for_status()
+
+
+        return resp.json()
+    except Exception as e:
+        log_error(e)
+        return default
