@@ -1,0 +1,38 @@
+/* Base styles for the icons */
+.theme-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.5s ease-in-out; /* The transition for the animation */
+  opacity: 0;
+  scale: 0.8;
+}
+
+/* Style for the sun icon */
+.sun-icon.active {
+  opacity: 1; /* Make it visible */
+  transform: translate(-50%, -50%) translateY(0); /* Final position, no Y-offset */
+  scale: 1; /* Full size */
+}
+
+.sun-icon {
+  transform: translate(-50%, -50%) translateY(100px); /* Start position, below the button */
+}
+
+/* Style for the moon icon */
+.moon-icon.active {
+  opacity: 1; /* Make it visible */
+  transform: translate(-50%, -50%) translateY(0); /* Final position, no Y-offset */
+  scale: 1; /* Full size */
+}
+
+.moon-icon {
+  transform: translate(-50%, -50%) translateY(-100px); /* Start position, above the button */
+}
+
+/* Ensure the button is the container for absolute positioning */
+#change-theme {
+  position: relative;
+  overflow: hidden; /* This hides the icons when they are outside the button bounds */
+}

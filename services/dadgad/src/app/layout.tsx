@@ -7,6 +7,7 @@ import { ThemeProvider } from "./ThemeContext";
 import Footer from "./components/Footer";
 import { BracketContext } from "./context/BracketContext";
 import BootstrapClient from "./components/BootstrapClient";
+import FloatingControls from './components/FloatingControls/FloatingControls';
 import MaintenancePageContent from "./components/MaintenancePageContent";
 import Head from "next/head";
 
@@ -20,7 +21,7 @@ export const metadata = {
   }
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }) {
   const mainLayout = (
     <ReduxProvider>
       <BracketContext>
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="flex-grow-1 bg-my-gradient">
             {children}
           </main>
+          <FloatingControls />
           <Footer />
         </div>
         <BootstrapClient />

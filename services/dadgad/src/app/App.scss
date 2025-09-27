@@ -2,6 +2,7 @@
 @use 'stylesheets/progress.scss';
 @use 'stylesheets/p5js.scss';
 @use 'stylesheets/skeleton_loaders.scss';
+@use 'stylesheets/theme_toggle.scss';
 
 body {
   transition: background-color 0.5s ease, color 0.5s ease, background-image 0.5s ease;
@@ -48,40 +49,68 @@ body {
   }
 }
 
-/*Back to Top*/
+/*
+Floating Controls Container
 
-#back_to_top_container {
-  width: 100px;
-  height: 100px;
-  z-index: 100;
+Back to top button
+Theme change button
+*/
+
+.floating-controls {
   position: fixed;
   bottom: 30px; 
   right: 30px;
-  transition: opacity 0.4s ease-in-out;
-  #back_to_top {
 
-      z-index: 99; 
-      border: none;
-      outline: none;
-      padding: 15px; 
-      font-size: 18px; 
-      transition: all 0.3s ease 0s;
-      cursor: pointer;
-      border-radius: 50px;
-      backface-visibility: hidden;
+  #back_to_top_container {
+    z-index: 100;
+    transition: opacity 1.4s ease-in-out;
+    #back_to_top {
 
-      margin: 20px 20px 4px;
-      box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
-      width: 55px;
+        z-index: 99; 
+        border: none;
+        outline: none;
+        padding: 15px; 
+        font-size: 18px; 
+        transition: all 0.3s ease 0s;
+        cursor: pointer;
+        border-radius: 50px;
+        backface-visibility: hidden;
+
+        margin: 20px 20px 4px;
+        box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
+        width: 55px;
+    }
+
+    .back_to_top_text {
+        color: var(--bs-light);
+        text-align: center;
+        cursor: pointer;
+        border-radius: 12px;
+    }
   }
 
-  .back_to_top_text {
-      color: var(--bs-light);
-      text-align: center;
-      cursor: pointer;
-      border-radius: 12px;
+  #theme-container {
+    transition: opacity 1.4s ease-in-out;
+    #change-theme {
+
+        z-index: 99; 
+        border: none;
+        outline: none;
+        padding: 15px; 
+        font-size: 18px; 
+        transition: all 1.5s ease 0s;
+        cursor: pointer;
+        border-radius: 50px;
+        backface-visibility: hidden;
+
+        margin: 20px 20px 4px;
+        box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
+        width: 55px;
+    }
+
   }
 }
+
 
 .btn:focus {
   font-weight: bold;
