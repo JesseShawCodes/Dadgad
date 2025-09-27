@@ -16,7 +16,6 @@ function ArtistPage() {
       <BracketContext>
         <ErrorBoundary>
           <div className="container-lg">
-            <BackToTop />
             <ArtistName />
             <ArtistPageForm />
             <TopTracks />

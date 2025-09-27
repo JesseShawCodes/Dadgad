@@ -6,6 +6,7 @@ import { Context } from '../context/BracketContext';
 import { isObjectEmpty } from '../services/dataService';
 import ProgressCircle from './ProgressCircle';
 import Champion from './Champion';
+import BracketNavigation from './BracketNavigation';
 
 function BracketTable() {
   const value = useContext(Context);
@@ -58,6 +59,9 @@ function BracketTable() {
       }
       {
         state.champion ? <Champion /> : null
+      }
+      {
+        state.roundTotal > 1 ? <BracketNavigation /> : null
       }
     </>
   );
