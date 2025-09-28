@@ -1,6 +1,5 @@
 import "./globals.css";
 import "./App.scss";
-import '../../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import NavBar from "./NavBar";
 import { ReduxProvider } from "./ReduxProvider";
 import { ThemeProvider } from "./ThemeContext";
