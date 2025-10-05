@@ -29,16 +29,16 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
-  // Use a type annotation for the state
-  const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      const storedTheme = localStorage.getItem("theme") as Theme | null;
-      if (storedTheme) {
-        return storedTheme;
-      }
+  const [theme, setTheme] = useState<Theme>();
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme") as Theme | null;
+    if (storedTheme) {
+      setTheme(storedTheme);
+    } else {
+      setTheme("light");
     }
-    return "light";
-  });
+  }, []);
 
   // Toggle Theme
   const toggleTheme = () => {
