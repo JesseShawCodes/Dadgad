@@ -5,9 +5,9 @@ import myImage from './logo.png';
 
 function NavBar() {
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark" role="navigation">
+    <nav className="navbar navbar-expand-lg bg-dark" role="navigation">
       <div className="container">
-        <Link href="/" className="nav-link active navbar-brand">
+        <Link href="/" className="nav-link navbar-brand">
           <Image src={myImage} alt="Dadgad logo" role="presentation" className="me-2" style={{width: '30px', height: 'auto'}}/>
           {process.env.NEXT_PUBLIC_NAME}
         </Link>
@@ -17,10 +17,10 @@ function NavBar() {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <Link href="/about" className="nav-link active">About</Link>
+              <Link href="/about" className="nav-link">About</Link>
             </li>
             <li className="nav-item">
-              <Link href="/search" className="nav-link active">Search</Link>
+              <Link href="/search" className="nav-link">Search</Link>
             </li>
           </ul>
         </div>

@@ -30,7 +30,15 @@ interface ThemeProviderProps {
 
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   // Use a type annotation for the state
-  const [theme, setTheme] = useState<Theme | undefined>(undefined);
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== 'undefined') {
+      const storedTheme = localStorage.getItem("theme") as Theme | null;
+      if (storedTheme) {
+        return storedTheme;
+      }
+    }
+    return "light";
+  });
 
   // Toggle Theme
   const toggleTheme = () => {
@@ -39,17 +47,6 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
   };
-
-  useEffect(() => {
-    const storedTheme = localStorage.getItem("theme") as Theme | null;
-    if (storedTheme) {
-      // Type-casting the retrieved item to ensure it's a valid theme type
-      setTheme(storedTheme);
-    } else {
-      setTheme("light");
-      localStorage.setItem("theme", "light")
-    }
-  }, []);
 
   useEffect(() => {
     if (theme !== undefined) {

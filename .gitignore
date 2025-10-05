@@ -3,6 +3,7 @@ env
 secrets.sh
 .env
 .DS_Store
+venv
 
 docker-compose-dev.yml
 services/backend/openai_test.py
