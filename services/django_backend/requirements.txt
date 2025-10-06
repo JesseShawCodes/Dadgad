@@ -28,6 +28,7 @@ pycparser==2.23
 PyJWT==2.10.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
+redis
 requests==2.32.5
 six==1.17.0
 sqlparse==0.5.3
