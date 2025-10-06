@@ -5,7 +5,7 @@ import MaintenancePageContent from '../components/MaintenancePageContent';
 
 function HomePage() 
 {
-  const classNames = "min-vh-100 d-flex flex-column justify-content-center bg-my-gradient";
+  const classNames = "min-vh-100 d-flex flex-column justify-content-center";
   return (
     <>
       {

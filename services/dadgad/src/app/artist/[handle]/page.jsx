@@ -5,7 +5,6 @@ import {
 
 import { BracketContext } from '../../context/BracketContext';
 import ErrorBoundary from '../../boundary/ErrorBoundary';
-import BackToTop from '../../components/FloatingControls/BackToTop';
 import ArtistName from '../../components/ArtistName';
 import ArtistPageForm from '../../components/ArtistPageForm';
 import TopTracks from '../../components/TopTracks';
