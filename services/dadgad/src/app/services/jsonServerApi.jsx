@@ -14,8 +14,8 @@ export const jsonServerApi = createApi({
       }),
     }),
     getArtistInfo: builder.query({
-      query: (artistId) => ({
-        url: `/artist-page/${artistId}`,
+      query: (artistName) => ({
+        url: `/artist-page/by-name/${artistName}`,
       }),
     }),
     getTaskStatus: builder.query({
