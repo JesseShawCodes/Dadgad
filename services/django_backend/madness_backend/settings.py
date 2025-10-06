@@ -147,7 +147,6 @@ else:
       }
   }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -212,7 +211,6 @@ ACCOUNT_EMAIL_VERIFICATION = "none"  # Simplify development; adjust for producti
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 
 # Celery Settings
-# CELERY_BROKER_URL = os.environ.get("UPSTASH_REDIS_URL")
 CELERY_BROKER_URL = os.environ.get("UPSTASH_REDIS_URL")
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_ACCEPT_CONTENT = ["json"]
