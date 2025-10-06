@@ -18,6 +18,7 @@ django-filter==25.1
 django_celery_results==2.6.0
 djangorestframework==3.16.1
 dotenv==0.9.9
+gunicorn
 idna==3.10
 kombu==5.5.4
 packaging==25.0
