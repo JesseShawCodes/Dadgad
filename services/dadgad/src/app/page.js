@@ -8,7 +8,7 @@ import { React } from 'react';
 import './App.scss';
 import HomePage from './pages/HomePage';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 export default function Home() {
   return (

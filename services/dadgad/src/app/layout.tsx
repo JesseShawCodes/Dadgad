@@ -28,7 +28,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <ThemeProvider>
         <div className="d-flex flex-column min-vh-100">
           <NavBar />
-          <main className="flex-grow-1 bg-my-gradient">
+          <main className="flex-grow-1">
             {children}
           </main>
           <FloatingControls />
