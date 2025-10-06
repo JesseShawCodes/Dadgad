@@ -12,6 +12,7 @@ def artist_search_view(request):
     return JsonResponse({"task_id": task.id, "status": "queued"})
 
 def artist_page_view(request, artist_name):
+    artist_name = artist_name.replace('-', ' ')
     search_results = artist_search(artist_name)
     artist_id = None
     if search_results.get('results') and search_results['results'].get('artists') and search_results['results']['artists'].get('data'):
