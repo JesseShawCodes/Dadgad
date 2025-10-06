@@ -30,7 +30,7 @@ function SearchPage() {
     setError(null);
     setIsSubmitting(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/artist?q=${query}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER}artist?q=${query}`);
       const result = await res.json();
       debugger;
       setTaskId(result.task_id);
