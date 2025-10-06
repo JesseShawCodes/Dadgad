@@ -21,7 +21,7 @@ from apple_search.views import artist_search_view, artist_page_view, task_status
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('artist', artist_search_view),
-    path('artist-page/<int:artist_id>', artist_page_view),
+    path('artist-page/<str:artist_name>', artist_page_view),
 
     # Task Status checks
     path('api/task-status', task_status_view, name='task-status')
