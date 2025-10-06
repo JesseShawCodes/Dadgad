@@ -15,7 +15,7 @@ function SearchPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data: statusData, error: swrError } = useSWR(
-    taskId ? `${process.env.NEXT_PUBLIC_SERVER}api/task-status?q=${taskId}` : null,
+    taskId ? `${process.env.NEXT_PUBLIC_SERVER}/api/task-status?q=${taskId}` : null,
     fetcher,
     { 
       refreshInterval: (data) => (data?.status === 'SUCCESS' || data?.status === 'FAILURE') ? 0 : 2000,
@@ -25,14 +25,12 @@ function SearchPage() {
   const isPolling = taskId && (!statusData || (statusData.status !== 'SUCCESS' && statusData.status !== 'FAILURE'));
 
   const handleSearch = async () => {
-    debugger
     setTaskId(null);
     setError(null);
     setIsSubmitting(true);
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/artist?q=${query}`);
       const result = await res.json();
-      debugger;
       setTaskId(result.task_id);
     } catch (err) {
       setError(err);
@@ -66,13 +64,13 @@ function SearchPage() {
       {error && <p>{error.message}</p>}
       {swrError && <p>Error fetching status: {swrError.message}</p>}
 
-      {(isSubmitting || isPolling) && 
+      {(isSubmitting || (isPolling && !statusData)) &&
         <div className="container grid d-flex flex-wrap justify-content-center">
           <Loading message="Submitting Search..." />
         </div>
       }
 
-      {statusData && statusData.status === 'PENDING' && (
+      {statusData && (statusData.status === 'PENDING' || statusData.status === 'QUEUED') && (
         <div className="container grid d-flex flex-wrap justify-content-center">
           <ArtistCardSkeleton />
         </div>
