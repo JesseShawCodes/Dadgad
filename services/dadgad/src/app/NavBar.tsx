@@ -5,7 +5,7 @@ import myImage from './logo.png';
 
 function NavBar() {
   return (
-    <nav className="navbar navbar-expand-lg" role="navigation">
+    <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container">
         <Link href="/" className="nav-link navbar-brand">
           <Image src={myImage} alt="Dadgad logo" role="presentation" className="me-2" style={{width: '30px', height: 'auto'}}/>
