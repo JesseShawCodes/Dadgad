@@ -15,7 +15,7 @@ function SearchPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data: statusData, error: swrError } = useSWR(
-    taskId ? `${process.env.NEXT_PUBLIC_SERVER}/api/task-status?q=${taskId}` : null,
+    taskId ? `${process.env.NEXT_PUBLIC_SERVER}api/task-status?q=${taskId}` : null,
     fetcher,
     { 
       refreshInterval: (data) => (data?.status === 'SUCCESS' || data?.status === 'FAILURE') ? 0 : 2000,
