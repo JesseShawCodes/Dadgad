@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from apple_search.artist_page import artist_content
 from apple_search.tasks import fetch_artist_data
+from apple_search.artist_search import artist_search
 
 from celery.result import AsyncResult
 
@@ -10,11 +11,21 @@ def artist_search_view(request):
     task = fetch_artist_data.delay(data)
     return JsonResponse({"task_id": task.id, "status": "queued"})
 
-def artist_page_view(request, artist_id):
-    data = {
-        "artist_id": artist_id
-    }
-    data = artist_content(artist_id)
+def artist_page_view(request, artist_name):
+    artist_name = artist_name.replace('-', ' ')
+    search_results = artist_search(artist_name)
+    artist_id = None
+    if search_results.get('results') and search_results['results'].get('artists') and search_results['results']['artists'].get('data'):
+        for artist in search_results['results']['artists']['data']:
+            if artist['attributes']['name'] == artist_name:
+                artist_id = artist['id']
+                break
+    
+    if artist_id:
+        data = artist_content(artist_id)
+    else:
+        data = {"error": "Artist not found"}
+
     return JsonResponse(data)
 
 def task_status_view(request):

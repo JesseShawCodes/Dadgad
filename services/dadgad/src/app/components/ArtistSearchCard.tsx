@@ -49,7 +49,7 @@ export default function ArtistSearchCard({artistResult}: ArtistSearchCardProps) 
       <h2 className='text-center'>
         {artistResult.attributes.name}
       </h2>
-      <a href={`artist/${artistResult.id}`} className="btn btn-primary" id={artistResult.id}>
+      <a href={`artist/${encodeURIComponent(artistResult.attributes.name)}`} className="btn btn-primary" id={artistResult.id}>
         Start Bracket
       </a>
     </div>
