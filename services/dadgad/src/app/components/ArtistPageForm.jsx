@@ -58,7 +58,7 @@ function ArtistPageForm() {
     }
   }, [musicQuery]);
 
-  const songLengthMessage = () => (state.values.top_songs_list.length < 64 ? 'Available tracks for this artist is a bit short, there may be potential bugs in the bracket generating process' : null);
+  const songLengthMessage = () => (state.values.top_songs_list.length < 64 ? <WarningMessage message='Available tracks for this artist is a bit short, there may be potential bugs in the bracket generating process' /> : null);
 
   if (!musicQuery.top_songs_list) {
     return (
