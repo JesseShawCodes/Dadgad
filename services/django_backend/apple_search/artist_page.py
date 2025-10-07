@@ -84,9 +84,6 @@ def top_songs_list_builder(artist_id):
                 ['Essentials', 'Deep Cuts', 'Set List']
               ):
                 artist_playlist_ids.append(item['id'])
-    # Get Multiple playlists
-    if not artist_playlist_ids:
-        return []
     playlists_content = apple_request(f'playlists?ids={",".join(artist_playlist_ids)}')
     if playlists_content and playlists_content.get('data'):
         for song_list in playlists_content.get('data', []):
