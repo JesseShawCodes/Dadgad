@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 
 function AboutPage() {
   return (
-    <div className="container">
+    <div className="container min-vh-100 d-flex flex-column justify-content-center">
       <h1>{data.aboutPage.aboutPageHeading}</h1>
       <div>
           {
