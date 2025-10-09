@@ -14,7 +14,7 @@ function ArtistPage() {
     <>
       <BracketContext>
         <ErrorBoundary>
-          <div className="container-lg">
+          <div className="container py-4">
             <ArtistName />
             <ArtistPageForm />
             <TopTracks />

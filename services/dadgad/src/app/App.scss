@@ -29,7 +29,7 @@ $default-border-color: rgba(0, 0, 0, 0.227);
   margin: $button-margin;
   box-shadow: $button-box-shadow;
   width: $button-size;
-  height: 58px;
+  height: $button-size;
 }
 
 // ------------------------------------------
