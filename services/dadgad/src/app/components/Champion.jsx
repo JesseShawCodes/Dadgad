@@ -8,7 +8,7 @@ function Champion() {
 
   return (
     <div className="mt-4">
-      <h2>{state.champion.song.attributes.name}</h2>
+      <h2>Your winner: <span className="fw-normal">{state.champion.song.attributes.name}</span></h2>
       <P5Image
         song={state.champion.song.attributes.name}
         artistName={state.values.artist_name}

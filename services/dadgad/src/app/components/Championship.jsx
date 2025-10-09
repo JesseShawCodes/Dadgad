@@ -8,20 +8,24 @@ function Championship() {
   const [state] = value;
 
   return (
-    <div key="Championship Round">
-      <div>
-        {state.championshipBracket[`round${state.round}`].roundMatchups.map((matchup, index) => (
-          <Matchup
-            song1={matchup.attributes.song1}
-            song2={matchup.attributes.song2}
-            matchup={matchup}
-            key={matchup.matchupId}
-            groupName="Championship Round"
-            index={index}
-          />
-        ))}
+    <>
+      {
+        state.champion ? null : <div key="Championship Round">
+        <div>
+          {state.championshipBracket[`round${state.round}`].roundMatchups.map((matchup, index) => (
+            <Matchup
+              song1={matchup.attributes.song1}
+              song2={matchup.attributes.song2}
+              matchup={matchup}
+              key={matchup.matchupId}
+              groupName="Championship Round"
+              index={index}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+      }
+    </>
   );
 }
 

@@ -61,7 +61,7 @@ function BracketTable() {
         state.champion ? <Champion /> : null
       }
       {
-        state.roundTotal > 1 ? <BracketNavigation /> : null
+        (state.roundTotal > 1 && Object.keys(state.championshipBracket).length == 0) && <BracketNavigation />
       }
     </>
   );
