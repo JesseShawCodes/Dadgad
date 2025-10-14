@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import GroupSelect from './GroupSelect';
 import Group from './Group';
 import Championship from './Championship';
 import { Context } from '../context/BracketContext';
@@ -61,7 +60,7 @@ function BracketTable() {
         state.champion ? <Champion /> : null
       }
       {
-        (state.roundTotal > 1 && Object.keys(state.championshipBracket).length == 0) && <BracketNavigation />
+        state.roundTotal > 1 ? <BracketNavigation /> : null
       }
     </>
   );
