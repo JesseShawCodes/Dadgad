@@ -14,6 +14,12 @@ jest.mock('../components/FloatingControls/ThemeButton', () => {
   return MockThemeButton;
 });
 
+jest.mock('../components/FloatingControls/RoundCompleteConfirmation', () => {
+    const MockRoundCompleteConfirmation = () => <div data-testid="round-complete-confirmation" />;
+    MockRoundCompleteConfirmation.displayName = 'MockRoundCompleteConfirmation';
+    return MockRoundCompleteConfirmation;
+});
+
 describe('FloatingControls', () => {
   it('should render the BackToTop and ThemeButton components', () => {
     render(
