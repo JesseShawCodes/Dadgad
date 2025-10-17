@@ -9,7 +9,6 @@ import MatchupSongButton from './MatchupSongButton';
 import { Context } from '../../context/BracketContext';
 import { findObjectById, generateNextRound } from '../../services/dataService';
 import { progressCalculation } from '../../services/progressCalculationService';
-import { nextRound as nextRoundExternal } from '../../services/nextRound';
 
 export default function MatchupSong({
   thissong, opponent, matchupId, round, group, winner, index
@@ -32,7 +31,6 @@ export default function MatchupSong({
   }
 
   const nextRound = () => {
-    nextRoundExternal();
     var len = Object.keys(currentPositionBracket).length;
     var groupProg = 0;
 
