@@ -30,6 +30,18 @@ export const jsonServerApi = createApi({
           return response;
         },
     }),
+    createNextRound: builder.mutation({
+        query: ({ songs, currentRound, matchupRound }) => {
+            return {
+                url: '/artist/next-round',
+                method: 'POST',
+                body: { songs, currentRound, matchupRound }
+            };
+        },
+        transformResponse: (response) => {
+          return response;
+        },
+    }),
     getTaskStatus: builder.query({
       query: (taskId) => `/api/task-status?q=${taskId}`,
       keepUnusedDataFor: 0,
@@ -47,6 +59,7 @@ export const {
   useGetArtistsQuery,
   useGetArtistInfoQuery,
   useCreateBracketMutation,
+  useCreateNextRoundMutation,
   useGetTaskStatusQuery,
   useLazyGetTaskStatusQuery,
   useStartSearchMutation,

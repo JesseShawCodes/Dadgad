@@ -91,3 +91,24 @@ def create_matchups_view(request):
             return JsonResponse({'error': 'Invalid JSON'}, status=400)
     else:
         return JsonResponse({'error': 'Only POST requests are allowed'}, status=405)
+
+@csrf_exempt
+def create_nextround_matchups(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            arr = data.get('songs')
+            matchup_round = data.get('matchupRound')
+            current_round = data.get('currentRound')
+
+            if arr is None or matchup_round is None or current_round is None:
+                logger.error(f"Missing parameters. arr: {arr}, matchup_round: {matchup_round}, current_round: {current_round}")
+                return JsonResponse({'error': 'Missing required parameters'}, status=400)
+
+            matchups = create_matchups(arr, matchup_round, current_round)
+            return JsonResponse(matchups)
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON: {e}")
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    else:
+        return JsonResponse({'error': 'Only POST requests are allowed'}, status=405)

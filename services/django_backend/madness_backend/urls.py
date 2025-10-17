@@ -16,13 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from apple_search.views import artist_search_view, artist_page_view, task_status_view, hello_ai, create_matchups_view
+from apple_search.views import artist_search_view, artist_page_view, task_status_view, hello_ai, create_matchups_view, create_nextround_matchups
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('artist', artist_search_view),
     path('artist-page/<str:artist_name>', artist_page_view),
     path('artist/matchups', create_matchups_view),
+    path('artist/next-round', create_nextround_matchups),
     path("open_ai/test", hello_ai),
 
     # Task Status checks
