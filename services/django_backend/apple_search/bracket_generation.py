@@ -83,3 +83,29 @@ def get_matchup_description(song_a, song_b, matchup_id):
     MatchupDescription.objects.create(matchup_id=matchup_id, description=commentary, song_a=song_a, song_b=song_b)
     print(commentary)
     return commentary
+
+def get_next_round_matchups(song_list=[], round_num=1):
+    next_round = []
+    for i in range(0, len(song_list), 2):
+        if i + 1 < len(song_list):
+            song1 = song_list[i]
+            song2 = song_list[i+1]
+            matchup = {
+                'matchupId': f"{song1.id}{song2.id}",
+                'round': round_num,
+                'attributes': {
+                    'matchupComplete': False,
+                    'song1': {
+                        'song': song1,
+                        'groupRank': song1.rank,
+                        'winner': None,
+                    },
+                    'song2': {
+                        'song': song2,
+                        'groupRank': song2.rank,
+                        'winner': None,
+                    },
+                },
+            }
+            next_round.append(matchup)
+    return next_round
