@@ -93,7 +93,7 @@ body {
   right: $floating-controls-offset;
 
   /* Apply the mixin to all control buttons */
-  #back_to_top, #change-theme {
+  #back_to_top, #change-theme, #next-round {
     @include floating-control-button;
   }
 

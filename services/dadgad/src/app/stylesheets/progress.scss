@@ -3,6 +3,7 @@ $bg-color: #34495e;
 $default-size: 1em;
 $label-font-size: calc($default-size / 4);
 $label-font-size-redo: calc($default-size * 4);
+$progress-circle: var(--color-dadgad-progress);
 
 // -- mixins
 @mixin size($width, $height) {
@@ -30,6 +31,7 @@ $label-font-size-redo: calc($default-size * 4);
 
       .right-side {
         transform: rotate(180deg);
+        transition-duration: 1s;
       }
     }
   }
@@ -58,7 +60,7 @@ $label-font-size-redo: calc($default-size * 4);
 
     .half-circle {
       @include size(100%, 100%);
-      border: calc($default-size / 10) solid #3498db;
+      border: calc($default-size / 10) solid $progress-circle;
       border-radius: 50%;
       clip: rect(0, calc($default-size / 2), $default-size, 0);
       left: 0;
@@ -98,7 +100,7 @@ $label-font-size-redo: calc($default-size * 4);
 
   @for $i from 0 through 100 {
     &.progress-#{$i} {
-      @include draw-progress($i, #3498db);
+      @include draw-progress($i, $progress-circle);
     }
   }
 }

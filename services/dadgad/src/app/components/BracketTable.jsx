@@ -1,15 +1,10 @@
-import React, { useContext } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import Group from './Group';
-import Championship from './Championship';
-import { Context } from '../context/BracketContext';
 import { isObjectEmpty } from '../services/dataService';
 import ProgressCircle from './ProgressCircle';
-import Champion from './Champion';
-import BracketNavigation from './BracketNavigation';
 
 function BracketTable() {
-  const dispatch = useDispatch();
   const bracket = useSelector(state => state.bracket);
   const championshipRound = !isObjectEmpty(bracket.championshipBracket);
 
@@ -40,7 +35,7 @@ function BracketTable() {
         !bracket.champion ? <ProgressCircle /> : null
       }
       {
-        championshipRound === true ? <h1>Option 1</h1> 
+        championshipRound === true ? <h1>Option 1</h1>
           : bracket.selectedGroup === 'all'
               ? groupsList.filter((group) => bracket.selectedGroup === 'all' || group.name === bracket.selectedGroup)
               .map((group) => (

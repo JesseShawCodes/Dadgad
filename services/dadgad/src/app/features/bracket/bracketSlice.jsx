@@ -8,13 +8,13 @@ const initialState = {
   championshipBracket: {},
   round: 1,
   roundTotal: 1,
-  currentRoundProgres: 0,
   currentRound: 0,
   selectedGroup: 'all',
   nonGroupPlay: false,
   finalFour: false,
   finalTwo: false,
   champion: undefined,
+  progress: 0,
   groups: [
     { id: 1, name: 'group1', progress: null },
     { id: 2, name: 'group2', progress: null },
@@ -58,7 +58,6 @@ const bracketSlice = createSlice({
 
       // 4. Update state properties
       state.bracket[group][round] = targetRound;
-      // progressCalculation();
     },
     setArtistDetails(state, action) {
 

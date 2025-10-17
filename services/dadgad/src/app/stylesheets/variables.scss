@@ -3,10 +3,12 @@
 [data-bs-theme="light"] {
   /*Background (bg) colors*/
   --color-dadgad-bg-gradient: rgb(252, 235, 48);
+  --color-dadgad-progress: rgb(255, 6, 248);
 }
 
 // Dark Theme Colors
 [data-bs-theme="dark"]  {
   /*Background (bg) colors*/
   --color-dadgad-bg-gradient: rgb(255, 6, 248);
+  --color-dadgad-progress: rgb(252, 235, 48);
 }
