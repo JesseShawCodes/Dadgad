@@ -3,7 +3,10 @@ import { React, useContext, useEffect } from 'react';
 
 import { Context } from '../context/BracketContext';
 import BracketTable from './BracketTable';
-import { useGetArtistInfoQuery } from '../services/jsonServerApi';
+
+// JSON Server API
+import { useGetArtistInfoQuery, useCreateBracketMutation } from '../services/jsonServerApi';
+
 import Loading from './Loading';
 import { useParams } from 'next/navigation';
 import SongCardSkeleton from './skeleton_loaders/SongCardSkeleton';
@@ -11,18 +14,26 @@ import CheckIsIos from '../services/CheckIsIos';
 import WarningMessage from './WarningMessage';
 import {checkForArtistBracket} from '../services/userBracketLocalStorage';
 import InProgressBracket from './song_list/InProgressBracket';
-import { createMatchups } from '../services/createBracket';
+import { useSelector, useDispatch } from 'react-redux';
+import { setBracket, setTopSongs, setArtistDetails } from '../features/bracket/bracketSlice';
 
 function ArtistPageForm() {
   const { handle } = useParams();
-  const value = useContext(Context);
-  const [state, dispatch] = value;
+  const dispatch = useDispatch();
+  const state = useSelector(state => state.bracket);
+  const [createBracket, { data: matchups, isLoading }] = useCreateBracketMutation();
 
-  // generateBracket only runs on initial build of a bracket.
+  // generateBracket only runs on initial build of a bracket
   const generateBracket = () => {
-    const matchups = createMatchups(state.values.top_songs_list.slice(0, 64), 1, `round${state.round}`);
-    dispatch({ type: 'setBracket', payload: { bracket: matchups } });
+    createBracket({ songs: state.topSongs.slice(0, 64), currentRound: state.round, matchupRound: `round${state.round}` });
   };
+
+  useEffect(() => {
+    if (matchups) {
+      // dispatch({ type: 'setBracket', payload: { bracket: matchups } });
+      dispatch(setBracket(matchups));
+    }
+  }, [matchups]);
 
   const CheckLocalBrackets = () => {
     // Check brackets in local storage.
@@ -54,11 +65,10 @@ function ArtistPageForm() {
 
   useEffect(() => {
     if (Object.keys(musicQuery).length > 0) {
-      dispatch({ type: 'setValues', payload: { values: musicQuery } });
+      dispatch(setTopSongs(musicQuery));
+      dispatch(setArtistDetails(musicQuery));
     }
   }, [musicQuery]);
-
-  const songLengthMessage = () => (state.values.top_songs_list.length < 64 ? <WarningMessage message='Available tracks for this artist is a bit short, there may be potential bugs in the bracket generating process' /> : null);
 
   if (!musicQuery.top_songs_list) {
     return (
@@ -75,7 +85,7 @@ function ArtistPageForm() {
   return (
     <div>
       {
-        Object.keys(state.bracket).length === 0
+        musicQuery.top_songs_list.length > 0 && Object.keys(state.bracket).length === 0
           ? (
             <>
               <p>
@@ -84,19 +94,10 @@ function ArtistPageForm() {
               {
                 CheckIsIos() ? <WarningMessage message={"This feature may not work as expected on iOS devices. We are actively working to improve this experience"} /> : null
               }
-              <button type="button" className="btn btn-primary" onClick={generateBracket}>
-                Generate Bracket
+              <button type="button" className="btn btn-primary" onClick={generateBracket} disabled={isLoading}>
+                {isLoading ? 'Generating...' : 'Generate Bracket'}
               </button>
-              <CheckLocalBrackets />            
-              <div className="my-3 fst-italic">
-                {
-                    Object.keys(state.values).length !== 0
-                      ? (
-                        songLengthMessage()
-                      )
-                      : null
-                }
-              </div>
+              <CheckLocalBrackets />
             </>
           )
           : <BracketTable />

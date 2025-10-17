@@ -63,26 +63,6 @@ function bracketReducer(state, action) {
         ...state,
         currentRoundProgres: action.payload.currentRoundProgres === 1 ? '0' : action.payload.currentRoundProgres,
       };
-    case 'setSelectedGroup':
-      return {
-        ...state,
-        selectedGroup: action.payload.selectedGroup,
-      };
-    case 'setNonGroupPlay':
-      return {
-        ...state,
-        nonGroupPlay: action.payload.nonGroupPlay,
-      };
-    case 'setFinalFour':
-      return {
-        ...state,
-        finalFour: action.payload.finalFour,
-      };
-    case 'setFinalTwo':
-      return {
-        ...state,
-        finalTwo: action.payload.finalTwo,
-      };
     case 'setChampionshipBracket':
       return {
         ...state,

@@ -21,6 +21,7 @@ dotenv==0.9.9
 gunicorn
 idna==3.10
 kombu==5.5.4
+openai
 packaging==25.0
 prompt_toolkit==3.0.52
 psycopg2==2.9.10

@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Group from './Group';
 import Championship from './Championship';
 import { Context } from '../context/BracketContext';
@@ -8,13 +9,13 @@ import Champion from './Champion';
 import BracketNavigation from './BracketNavigation';
 
 function BracketTable() {
-  const value = useContext(Context);
-  const [state] = value;
-  const championshipRound = !isObjectEmpty(state.championshipBracket);
+  const dispatch = useDispatch();
+  const bracket = useSelector(state => state.bracket);
+  const championshipRound = !isObjectEmpty(bracket.championshipBracket);
 
-  const roundHeader = championshipRound ? 'Championship Round' : `Round ${state.round}`;
+  const roundHeader = championshipRound ? 'Championship Round' : `Round ${bracket.round}`;
 
-  const groupsList = state.groups;
+  const groupsList = bracket.groups;
 
   const groupContainer = (groupName, stateContainer) => {
     let group;
@@ -36,22 +37,22 @@ function BracketTable() {
         {roundHeader}
       </h2>
       {
-        !state.champion ? <ProgressCircle /> : null
+        !bracket.champion ? <ProgressCircle /> : null
       }
       {
-        championshipRound === true ? <Championship />
-          : state.selectedGroup === 'all'
-            ? groupsList.filter((group) => state.selectedGroup === 'all' || group.name === state.selectedGroup)
+        championshipRound === true ? <h1>Option 1</h1> 
+          : bracket.selectedGroup === 'all'
+              ? groupsList.filter((group) => bracket.selectedGroup === 'all' || group.name === bracket.selectedGroup)
               .map((group) => (
                 <div key={`group-container-${group.name}`}>
-                  {groupContainer(group, state)}
+                  {groupContainer(group, bracket)}
                 </div>
               ))
-            : Object.entries(state.bracket).map(([group]) => (
+            : Object.entries(bracket.bracket).map(([group]) => (
               state.selectedGroup === group
                 ? (
                   <>
-                    {groupContainer(group, state)}
+                    {groupContainer(group, bracket)}
                   </>
                 )
                 : null))

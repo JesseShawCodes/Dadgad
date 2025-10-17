@@ -1,10 +1,10 @@
 import React, { useContext } from 'react';
 import { Context } from '../context/BracketContext';
+import { useSelector } from 'react-redux';
 
 function ProgressCircle() {
-  const value = useContext(Context);
-  const [state] = value;
-  const progress = Math.round(state.currentRoundProgres * 100);
+  const state = useSelector(state => state.bracket);
+  const progress = Math.round(state.progress * 100);
 
   return (
     <>

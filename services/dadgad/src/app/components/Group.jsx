@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import Matchup from './Matchup';
 import { Context } from '../context/BracketContext';
+import { useSelector } from 'react-redux';
 
 function Group({ groupName, matchups, round }) {
-  const value = useContext(Context);
-  const [state] = value;
+  const state = useSelector(state => state.bracket);
 
   const groupMatchups = matchups.roundMatchups;
   return (
@@ -15,6 +15,7 @@ function Group({ groupName, matchups, round }) {
       <h2 className="mt-1">
         {groupName}
         {state.bracket[groupName][round].progress === 1 ? <FontAwesomeIcon icon={faCheckCircle} className="text-success" /> : null}
+
       </h2>
       <ul className="list-group">
         {groupMatchups.map((matchup, index) => (
@@ -30,6 +31,7 @@ function Group({ groupName, matchups, round }) {
           </li>
         ))}
       </ul>
+
     </div>
   );
 }

@@ -1,10 +1,10 @@
 "use client";
 import { React, useContext, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'next/navigation';
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
+import { setMatchupWinner, setRoundProgress } from '../../features/bracket/bracketSlice';
 import MatchupSongButton from './MatchupSongButton';
 import { Context } from '../../context/BracketContext';
 import { findObjectById, generateNextRound } from '../../services/dataService';
@@ -12,11 +12,11 @@ import { progressCalculation } from '../../services/progressCalculationService';
 import { nextRound as nextRoundExternal } from '../../services/nextRound';
 
 export default function MatchupSong({
-  thissong, opponent, matchupId, round, group, winner,
+  thissong, opponent, matchupId, round, group, winner, index
 }) {
   const { handle } = useParams();
-  const value = useContext(Context);
-  const [state, dispatch] = value;
+  const dispatch = useDispatch();
+  const state = useSelector(state => state.bracket);
   const championship = Object.keys(state.championshipBracket).length !== 0;
   const [boxShadow, setBoxShadow] = useState('none');
   let finalTwo;
@@ -92,6 +92,20 @@ export default function MatchupSong({
 
   // This function runs when winner is selected. Initial handling of selection and state editing
   const selectWinner = () => {
+    dispatch(setMatchupWinner({
+      winner: thissong.song,
+      loser: opponent.song,
+      round: `round${state.round}`,
+      group: group,
+      index: index,
+      currentRoundProgres: state.currentRoundProgres
+    }));
+    /*
+    dispatch(setRoundProgress({
+      currentRoundProgres: progressCalculation(state, group, Object.keys(currentPositionBracket).length, championship)
+    }));
+    */
+    /*
     if (finalTwo) {
       dispatch({
         type: 'setChampion',
@@ -154,12 +168,17 @@ export default function MatchupSong({
 
     dispatch({ type: 'setUserBracket', payload: { userBracket: {artist: handle, bracket: state.bracket, round: state.round, currentRoundProgres: state.currentRoundProgres}}});
     nextRound();
+    */
   };
 
-  winner = typeof (winner) !== "undefined" ? winner.id : null
-
   return (
-    <MatchupSongButton thissong={thissong} boxShadow={boxShadow} setBoxShadow={setBoxShadow} selectWinner={selectWinner} winner={winner}/>
+    <MatchupSongButton 
+      thissong={thissong} 
+      boxShadow={boxShadow} 
+      setBoxShadow={setBoxShadow} 
+      selectWinner={selectWinner} 
+      winner={winner?.id ?? null}
+    />
   );
 }
 

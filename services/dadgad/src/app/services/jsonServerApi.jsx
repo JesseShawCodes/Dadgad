@@ -18,6 +18,18 @@ export const jsonServerApi = createApi({
         url: `/artist-page/${artistName}`,
       }),
     }),
+    createBracket: builder.mutation({
+        query: ({ songs, currentRound, matchupRound }) => {
+            return {
+                url: '/artist/matchups',
+                method: 'POST',
+                body: { songs, currentRound, matchupRound }
+            };
+        },
+        transformResponse: (response) => {
+          return response;
+        },
+    }),
     getTaskStatus: builder.query({
       query: (taskId) => `/api/task-status?q=${taskId}`,
       keepUnusedDataFor: 0,
@@ -34,6 +46,7 @@ export const jsonServerApi = createApi({
 export const {
   useGetArtistsQuery,
   useGetArtistInfoQuery,
+  useCreateBracketMutation,
   useGetTaskStatusQuery,
   useLazyGetTaskStatusQuery,
   useStartSearchMutation,

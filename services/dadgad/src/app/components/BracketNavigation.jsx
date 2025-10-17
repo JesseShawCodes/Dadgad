@@ -3,7 +3,6 @@ import { Context } from '../context/BracketContext';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { progressCalculation } from '../services/progressCalculationService';
 
 function BracketNavigation() {
   const value = useContext(Context);
@@ -12,7 +11,6 @@ function BracketNavigation() {
   // Function to navigate to the previous round
   const handlePrevious = () => {
     dispatch({ type: 'setRound', payload: { round: state.round - 1 } });
-    console.log(progressCalculation(state, 0, Object.keys(state.bracket).length));
     dispatch({ type: 'setCurrentRoundProgres', payload: { currentRoundProgres: 0.20 } });
   };
 

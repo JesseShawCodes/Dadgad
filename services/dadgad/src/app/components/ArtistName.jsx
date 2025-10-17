@@ -1,12 +1,16 @@
 import { React, useContext } from 'react';
 import { Context } from '../context/BracketContext';
+import { useSelector } from 'react-redux';
 
 function ArtistName() {
-  const value = useContext(Context);
-  const [state] = value;
+  const state = useSelector(state => state);
+  let artistName;
+  if (typeof state !== 'undefined') {
+    artistName = state.bracket.artist_name;
+  }
 
   return (
-    <h1>{state.values.artist_name}</h1>
+    <h1>{artistName}</h1>
   );
 }
 

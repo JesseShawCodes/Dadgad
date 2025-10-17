@@ -1,4 +1,5 @@
 import { React, useContext } from 'react';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import MatchupSong from './Matchups/MatchupSong';
 import { Context } from '../context/BracketContext';
@@ -7,7 +8,7 @@ export default function Matchup({
   song1, song2, matchup, groupName, index,
 }) {
   const value = useContext(Context);
-  const [state] = value;
+  const state = useSelector(state => state.bracket);
   const championship = Object.keys(state.championshipBracket).length !== 0;
 
   const getWinner = () => {
@@ -33,6 +34,7 @@ export default function Matchup({
         group={groupName}
         winner={getWinner()}
         key={`matchup_song_${song1.song.id}`}
+        index={index}
       />
         <div>
           vs.
@@ -45,6 +47,7 @@ export default function Matchup({
         group={groupName}
         winner={getWinner()}
         key={`matchup_song_${song2.song.id}`}
+        index={index}
       />
       </div>
     </>
