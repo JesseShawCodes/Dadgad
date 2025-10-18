@@ -12,13 +12,13 @@ const RoundCompleteConfirmation = () => {
   const bracket = useSelector(state => state.bracket);
   const pathname = usePathname();
   const isArtistPage = pathname.startsWith('/artist/');
-  const [nextRound, { data: matchups, isLoading }] = useCreateNextRoundMutation();
+  const [createNextRound, { data: matchups, isLoading }] = useCreateNextRoundMutation();
   const dispatch = useDispatch();
 
   const nextRoundSubmit = () => {
     console.log("NEXT ROUND");
     var finishedRound = bracket.bracket;
-    dispatch(nextRound(finishedRound));
+    dispatch(createNextRound({bracket: finishedRound, currentRound: bracket.round, nextRound: bracket.round + 1}));
   }
 
   return(

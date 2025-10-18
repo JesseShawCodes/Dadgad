@@ -31,11 +31,11 @@ export const jsonServerApi = createApi({
         },
     }),
     createNextRound: builder.mutation({
-        query: ({ songs, currentRound, matchupRound }) => {
+        query: ({ bracket, currentRound, nextRound }) => {
             return {
                 url: '/artist/next-round',
                 method: 'POST',
-                body: { songs, currentRound, matchupRound }
+                body: { bracket, currentRound, nextRound }
             };
         },
         transformResponse: (response) => {

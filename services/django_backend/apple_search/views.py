@@ -97,16 +97,15 @@ def create_nextround_matchups(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            arr = data.get('songs')
-            matchup_round = data.get('matchupRound')
+            bracket = data.get('bracket')
             current_round = data.get('currentRound')
+            next_round = data.get('nextRound')
 
-            if arr is None or matchup_round is None or current_round is None:
-                logger.error(f"Missing parameters. arr: {arr}, matchup_round: {matchup_round}, current_round: {current_round}")
+            if bracket is None or next_round is None or current_round is None:
+                logger.error(f"Missing parameters. bracket: {bracket}, next_round: {next_round}, current_round: {current_round}")
                 return JsonResponse({'error': 'Missing required parameters'}, status=400)
-
-            matchups = create_matchups(arr, matchup_round, current_round)
-            return JsonResponse(matchups)
+            
+            return JsonResponse({"matchups": "TEST 1, 2, 3"})
         except json.JSONDecodeError as e:
             logger.error(f"Invalid JSON: {e}")
             return JsonResponse({'error': 'Invalid JSON'}, status=400)

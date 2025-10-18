@@ -44,7 +44,7 @@ function getNextRoundMatchups(songList = [], round) {
 }
 
 export function generateNextRound(stateObject) {
-  debugger;
+  // next round
   const currentRound = stateObject.round;
   let groupList = undefined;
   if (currentRound > 4) {
