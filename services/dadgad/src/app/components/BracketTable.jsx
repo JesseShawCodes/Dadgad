@@ -59,9 +59,6 @@ function BracketTable() {
       {
         state.champion ? <Champion /> : null
       }
-      {
-        state.roundTotal > 1 ? <BracketNavigation /> : null
-      }
     </>
   );
 }

@@ -2,17 +2,6 @@ export function findObjectById(array, targetId) {
   return array.roundMatchups.find((obj) => obj.matchupId === targetId);
 }
 
-export const removeArtistBracket = () => {
-  console.log("removeArtistBracket");
-  
-}
-
-export const uniqueByKey = (arr, key) => {
-  return arr.filter((obj, index, self) =>
-    index === self.findIndex((o) => o[key] === obj[key])
-  );
-};
-
 export function isObjectEmpty(obj) {
   return Object.keys(obj).length === 0;
 }
@@ -29,6 +18,7 @@ export function generateFinalRound(winnersList) {
 }
 
 function getNextRoundMatchups(songList = [], round) {
+  debugger;
   const nextRound = [];
   for (let i = 0; i < songList.length; i += 2) {
     const matchup = {
@@ -54,6 +44,7 @@ function getNextRoundMatchups(songList = [], round) {
 }
 
 export function generateNextRound(stateObject) {
+  debugger;
   const currentRound = stateObject.round;
   let groupList = undefined;
   if (currentRound > 4) {
