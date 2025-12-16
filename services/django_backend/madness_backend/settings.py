@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
 
-    'apple_search',
+    'apple_search.apps.AppleSearchConfig',
 
     'allauth',
     'allauth.account',
