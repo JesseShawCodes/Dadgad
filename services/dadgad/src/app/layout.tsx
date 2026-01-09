@@ -1,4 +1,3 @@
-import "../../node_modules/bootstrap/dist/css/bootstrap.min.css"
 import "./globals.css";
 import "./App.scss";
 import NavBar from "./NavBar";
@@ -6,7 +5,6 @@ import { ReduxProvider } from "./ReduxProvider";
 import { ThemeProvider } from "./ThemeContext";
 import Footer from "./components/Footer";
 import { BracketContext } from "./context/BracketContext";
-import BootstrapClient from "./components/BootstrapClient";
 import FloatingControls from './components/FloatingControls/FloatingControls';
 import MaintenancePageContent from "./components/MaintenancePageContent";
 import Head from "next/head";
@@ -34,7 +32,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <FloatingControls />
           <Footer />
         </div>
-        <BootstrapClient />
       </ThemeProvider>
       </BracketContext>
     </ReduxProvider>

@@ -17,3 +17,5 @@ db.sqlite3
 media
 staticfiles
 services/frontend/src/pages/ArtistSearch.md
+
+services/my-app

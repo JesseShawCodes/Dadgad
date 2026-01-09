@@ -6,7 +6,7 @@ function HomePageContent({
 }) {
   return (
     <div className={classNames}>
-      <div className="container">
+      <div className="container mx-auto">
         <h1>{homeHeading}</h1>
         <h2>{homeSubHeading}</h2>
         <p className="text-left">{homeContent}</p>
