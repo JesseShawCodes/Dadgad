@@ -45,46 +45,53 @@ function SearchPage() {
   const results = statusData?.status === 'SUCCESS' ? statusData : null;
 
   return (
-    <div className="my-4 w-90 mx-auto">
-      <div className='container d-flex justify-content-center'>
-        <div className=''>
-          <h1>Search for Artist</h1>
-          <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className='d-flex justify-content-center'>
+    <div className="min-h-screen my-4 w-11/12 mx-auto">
+      <div className='container mx-auto flex justify-center'>
+        <div className='text-center'>
+          <h1 className="text-4xl font-bold mb-4">Search for Artist</h1>
+          <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className='flex justify-center'>
             <input
               type="text"
+              className="px-4 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Search"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
-            <button disabled={isSubmitting} className="btn btn-primary" type="submit">Search</button>
+            <button
+              disabled={isSubmitting}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-r-md disabled:bg-gray-400"
+              type="submit"
+            >
+              Search
+            </button>
           </form>
         </div>
       </div>
 
-      {error && <p>{error.message}</p>}
-      {swrError && <p>Error fetching status: {swrError.message}</p>}
+      {error && <p className="text-red-500 text-center my-4">{error.message}</p>}
+      {swrError && <p className="text-red-500 text-center my-4">Error fetching status: {swrError.message}</p>}
 
       {(isSubmitting || (isPolling && !statusData)) &&
-        <div className="container grid d-flex flex-wrap justify-content-center">
+        <div className="container mx-auto flex flex-wrap justify-center">
           <Loading message="Submitting Search..." />
         </div>
       }
 
       {statusData && (statusData.status === 'PENDING' || statusData.status === 'QUEUED') && (
-        <div className="container grid d-flex flex-wrap justify-content-center">
+        <div className="container mx-auto flex flex-wrap justify-center">
           <ArtistCardSkeleton />
         </div>
       )}
 
       {results && (
-        <div className="container grid d-flex flex-wrap justify-content-center">
+        <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {artistList(results)}
         </div>
       )}
 
       {statusData && statusData.status === 'FAILURE' && (
-        <div className="container grid d-flex flex-wrap justify-content-center">
-          <p className="text-danger">There was an error processing your search. Please try again.</p>
+        <div className="container mx-auto flex flex-wrap justify-center">
+          <p className="text-red-500">There was an error processing your search. Please try again.</p>
           <p>{JSON.stringify(statusData)}</p>
         </div>
       )}

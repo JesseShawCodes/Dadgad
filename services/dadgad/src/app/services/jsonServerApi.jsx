@@ -9,24 +9,36 @@ export const jsonServerApi = createApi({
   tagTypes: ['Artists'],
   endpoints: (builder) => ({
     getArtists: builder.query({
-      query: (artist) => ({
-        url: `/artist?q=${artist}`,
-      }),
+      query: (artist) => {
+        console.log('Fetching artists with query:', artist);
+        return {
+          url: `/artist?q=${artist}`,
+        };
+      },
     }),
     getArtistInfo: builder.query({
-      query: (artistName) => ({
-        url: `/artist-page/${artistName}`,
-      }),
+      query: (artistName) => {
+        console.log('Fetching artist info for:', artistName);
+        return {
+          url: `/artist-page/${artistName}`,
+        };
+      },
     }),
     getTaskStatus: builder.query({
-      query: (taskId) => `/api/task-status?q=${taskId}`,
+      query: (taskId) => {
+        console.log('Fetching task status for taskId:', taskId);
+        return `/api/task-status?q=${taskId}`;
+      },
       keepUnusedDataFor: 0,
     }),
     startSearch: builder.mutation({
-      query: (queryParam) => ({
-        url: `/artist?q=${queryParam}`,
-        method: 'GET',
-      }),
+      query: (queryParam) => {
+        console.log('Starting search with queryParam:', queryParam);
+        return {
+          url: `/artist?q=${queryParam}`,
+          method: 'GET',
+        };
+      },
     }),
   }),
 });
