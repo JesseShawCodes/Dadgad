@@ -5,9 +5,9 @@ import ReactMarkdown from 'react-markdown';
 
 function AboutPage() {
   return (
-    <div className="container min-vh-100 d-flex flex-column justify-content-center">
-      <h1>{data.aboutPage.aboutPageHeading}</h1>
-      <div>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <h1 className="text-4xl font-bold mb-6 text-center">{data.aboutPage.aboutPageHeading}</h1>
+      <div className="max-w-prose text-lg leading-relaxed">
           {
             data.aboutPage.aboutPageContent.map((content, index) => (
               <ReactMarkdown key={index} >
