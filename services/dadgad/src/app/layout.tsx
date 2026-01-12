@@ -1,12 +1,10 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import "./App.scss";
+
 import NavBar from "./NavBar";
-import { ReduxProvider } from "./ReduxProvider";
-import { ThemeProvider } from "./ThemeContext";
 import Footer from "./components/Footer";
-import { BracketContext } from "./context/BracketContext";
-import FloatingControls from './components/FloatingControls/FloatingControls';
-import MaintenancePageContent from "./components/MaintenancePageContent";
+
 import Head from "next/head";
 
 export const metadata = {
@@ -21,20 +19,13 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const mainLayout = (
-    <ReduxProvider>
-      <BracketContext>
-      <ThemeProvider>
-        <div className="d-flex flex-column min-vh-100">
-          <NavBar />
-          <main className="flex-grow-1 bg-my-gradient">
-            {children}
-          </main>
-          <FloatingControls />
-          <Footer />
-        </div>
-      </ThemeProvider>
-      </BracketContext>
-    </ReduxProvider>
+    <div>
+      <NavBar />
+      <main className="bg-my-gradient">
+        {children}
+      </main>
+      <Footer />
+    </div>
   )
   return (
     <html lang="en">
@@ -45,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="apple-mobile-web-app-title" content="Dadgad"/>
       </Head>
       <body>
-        { process.env.NEXT_PUBLIC_MAINTENANCE_MODE ? <MaintenancePageContent /> : mainLayout}
+        { process.env.NEXT_PUBLIC_MAINTENANCE_MODE ? <h1>MAIN</h1> : mainLayout }
       </body>
     </html>
   );
