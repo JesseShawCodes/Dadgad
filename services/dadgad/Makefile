@@ -48,6 +48,12 @@ clean:
 	@echo "Cleaning up project..."
 	rm -rf $(NEXT_BUILD_DIR) node_modules package-lock.json
 
+# NPM Related Commands
+update:
+	@echo "Updating all npm packages"
+	npx npm-check-updates -u
+	npm install
+
 # Display help
 help:
 	@echo "Makefile for Next.js project"
