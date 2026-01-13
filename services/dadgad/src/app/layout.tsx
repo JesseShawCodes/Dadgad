@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
+import "./App.scss";
 import NavBar from "./NavBar";
 import Footer from "./components/Footer";
-
+import { ReduxProvider } from "./ReduxProvider";
 import Head from "next/head";
 
 export const metadata = {
@@ -18,13 +18,15 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const mainLayout = (
-    <div>
-      <NavBar />
-      <main className="bg-my-gradient">
-        {children}
-      </main>
-      <Footer />
-    </div>
+    <ReduxProvider>
+      <div>
+        <NavBar />
+        <main className="bg-my-gradient">
+          {children}
+        </main>
+        <Footer />
+      </div>
+    </ReduxProvider>
   )
   return (
     <html lang="en">

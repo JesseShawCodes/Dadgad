@@ -36,7 +36,7 @@ type ArtistSearchCardProps = {
 
 export default function ArtistSearchCard({artistResult}: ArtistSearchCardProps) {
   return (
-    <div className="mt-4 mx-4 w-72 bg-white shadow-lg rounded-lg overflow-hidden p-4" key={artistResult.id}>
+    <div className="mt-4 mx-4 bg-white shadow-lg rounded-lg overflow-hidden p-4" key={artistResult.id}>
       {
         artistResult.attributes.artwork && artistResult.attributes.artwork.url ? <img src={artistResult.attributes.artwork.url} className="w-full h-48 object-cover" alt={`${artistResult.attributes.name} promo`} /> :  
         <div className="h-full flex justify-center items-center">
@@ -46,12 +46,14 @@ export default function ArtistSearchCard({artistResult}: ArtistSearchCardProps) 
           </div>
         </div>
       }
-      <h2 className='text-center py-2'>
+      <h2 className='text-center py-2 text-gray-900'>
         {artistResult.attributes.name}
       </h2>
-      <a href={`artist/${encodeURIComponent(artistResult.attributes.name)}`} className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" id={artistResult.id}>
-        Start Bracket
-      </a>
+      <div className="flex justify-center">
+        <a href={`artist/${encodeURIComponent(artistResult.attributes.name)}`} className="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" id={artistResult.id}>
+          Start Bracket
+        </a>
+      </div>
     </div>
   )
 }
