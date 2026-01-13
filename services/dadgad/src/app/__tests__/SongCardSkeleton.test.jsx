@@ -6,9 +6,10 @@ describe('SongCardSkeleton', () => {
   it('should render the skeleton loader', () => {
     render(<SongCardSkeleton />);
     
-    expect(screen.getByTestId('song-card-skeleton')).toBeInTheDocument();
+    const skeletonContainer = screen.getByTestId('song-card-skeleton');
+    expect(skeletonContainer).toBeInTheDocument();
 
-    const skeletonLines = screen.getAllByText('', { selector: '.skeleton-line' });
-    expect(skeletonLines.length).toBe(2);
+    const skeletonLinesContainer = skeletonContainer.querySelector('.p-4');
+    expect(skeletonLinesContainer.children.length).toBe(2);
   });
 });

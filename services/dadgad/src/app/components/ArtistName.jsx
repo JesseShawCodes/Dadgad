@@ -6,7 +6,7 @@ function ArtistName() {
   const [state] = value;
 
   return (
-    <h1>{state.values.artist_name}</h1>
+    <h1 className="text-4xl font-bold mb-4">{state.values.artist_name}</h1>
   );
 }
 

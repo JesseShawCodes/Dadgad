@@ -84,15 +84,14 @@ function ArtistPageForm() {
               {
                 CheckIsIos() ? <WarningMessage message={"This feature may not work as expected on iOS devices. We are actively working to improve this experience"} /> : null
               }
-              <button type="button" className="btn btn-primary" onClick={generateBracket}>
-                Generate Bracket
-              </button>
-              <CheckLocalBrackets />            
-              <div className="my-3 fst-italic">
-                {
-                    Object.keys(state.values).length !== 0
-                      ? (
-                        songLengthMessage()
+                        <button type="button" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={generateBracket}>
+                          Generate Bracket
+                        </button>
+                        <CheckLocalBrackets />            
+                        <div className="my-3 italic">
+                          {
+                              Object.keys(state.values).length !== 0
+                                ? (                        songLengthMessage()
                       )
                       : null
                 }
