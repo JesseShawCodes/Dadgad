@@ -49,8 +49,10 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   };
 
   useEffect(() => {
-    if (theme !== undefined) {
-      document.body.setAttribute("data-bs-theme", theme);
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
     }
   }, [theme]);
 

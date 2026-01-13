@@ -22,14 +22,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const mainLayout = (
     <ReduxProvider>
       <ThemeProvider>
-      <div>
-        <NavBar />
-        <main className="bg-my-gradient">
-          {children}
-        </main>
-        <FloatingControls />
-        <Footer />
-      </div>
+        <div className="bg-my-gradient">
+          <NavBar />
+          <main>
+            {children}
+          </main>
+          <FloatingControls />
+          <Footer />
+        </div>
       </ThemeProvider>
     </ReduxProvider>
   )
