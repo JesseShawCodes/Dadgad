@@ -8,7 +8,7 @@ describe('ArtistCardSkeleton', () => {
     
     expect(screen.getByTestId('artist-card-skeleton')).toBeInTheDocument();
 
-    const skeletonLines = screen.getAllByText('', { selector: '.skeleton-line' });
+    const skeletonLines = screen.getAllByTestId('skeleton-line');
     expect(skeletonLines.length).toBe(3);
   });
 });

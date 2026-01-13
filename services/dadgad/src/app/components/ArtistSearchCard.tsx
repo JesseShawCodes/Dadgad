@@ -35,16 +35,19 @@ type ArtistSearchCardProps = {
 };
 
 export default function ArtistSearchCard({artistResult}: ArtistSearchCardProps) {
+  const fallBackImage = 
+        <div className="flex justify-center items-center">
+          <div className="flex flex-col">
+            <Image src={myImage} alt="Dadgad logo" role="presentation" className="w-full" style={{width: '50px', height: 'auto'}}/>
+            <FontAwesomeIcon icon={faMusic} />
+          </div>
+        </div>;
+  
   return (
     <div className="mt-4 mx-4 bg-white shadow-lg rounded-lg overflow-hidden p-4" key={artistResult.id}>
       {
         artistResult.attributes.artwork && artistResult.attributes.artwork.url ? <img src={artistResult.attributes.artwork.url} className="w-full h-48 object-cover" alt={`${artistResult.attributes.name} promo`} /> :  
-        <div className="h-full flex justify-center items-center">
-          <div className="flex flex-col">
-            <Image src={myImage} alt="Dadgad logo" role="presentation" className="mr-2" style={{width: '50px', height: 'auto'}}/>
-            <FontAwesomeIcon icon={faMusic} />
-          </div>
-        </div>
+        fallBackImage
       }
       <h2 className='text-center py-2 text-gray-900'>
         {artistResult.attributes.name}

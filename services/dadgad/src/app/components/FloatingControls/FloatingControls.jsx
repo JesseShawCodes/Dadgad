@@ -6,9 +6,7 @@ function FloatingControls() {
   return (
     <div className="floating-controls">
       <BackToTop />
-      {/*
       <ThemeButton />
-      */}
     </div>
   );
 }
