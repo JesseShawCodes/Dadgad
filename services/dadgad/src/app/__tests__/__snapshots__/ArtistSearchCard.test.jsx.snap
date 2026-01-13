@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ArtistSearchCard renders correctly with artwork 1`] = `
+<DocumentFragment>
+  <div
+    class="mt-4 mx-4 w-72 bg-white shadow-lg rounded-lg overflow-hidden p-4"
+  >
+    <img
+      alt="Test Artist promo"
+      class="w-full h-48 object-cover"
+      src="https://example.com/artwork.jpg"
+    />
+    <h2
+      class="text-center py-2"
+    >
+      Test Artist
+    </h2>
+    <a
+      class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      href="artist/Test%20Artist"
+      id="1"
+    >
+      Start Bracket
+    </a>
+  </div>
+</DocumentFragment>
+`;
+
+exports[`ArtistSearchCard renders correctly without artwork 1`] = `
+<DocumentFragment>
+  <div
+    class="mt-4 mx-4 w-72 bg-white shadow-lg rounded-lg overflow-hidden p-4"
+  >
+    <div
+      class="h-full flex justify-center items-center"
+    >
+      <div
+        class="flex flex-col"
+      >
+        <img
+          alt="Dadgad logo"
+          class="mr-2"
+          data-nimg="1"
+          decoding="async"
+          height="40"
+          loading="lazy"
+          role="presentation"
+          src="/_next/image?url=%2Fimg.jpg&w=96&q=75"
+          srcset="/_next/image?url=%2Fimg.jpg&w=48&q=75 1x, /_next/image?url=%2Fimg.jpg&w=96&q=75 2x"
+          style="color: transparent; width: 50px; height: auto;"
+          width="40"
+        />
+        <svg
+          aria-hidden="true"
+          class="svg-inline--fa fa-music"
+          data-icon="music"
+          data-prefix="fas"
+          role="img"
+          viewBox="0 0 512 512"
+        >
+          <path
+            d="M468 7c7.6 6.1 12 15.3 12 25l0 304c0 44.2-43 80-96 80s-96-35.8-96-80 43-80 96-80c11.2 0 22 1.6 32 4.6l0-116.7-224 49.8 0 206.3c0 44.2-43 80-96 80s-96-35.8-96-80 43-80 96-80c11.2 0 22 1.6 32 4.6L128 96c0-15 10.4-28 25.1-31.2l288-64c9.5-2.1 19.4 .2 27 6.3z"
+            fill="currentColor"
+          />
+        </svg>
+      </div>
+    </div>
+    <h2
+      class="text-center py-2"
+    >
+      Test Artist
+    </h2>
+    <a
+      class="inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+      href="artist/Test%20Artist"
+      id="1"
+    >
+      Start Bracket
+    </a>
+  </div>
+</DocumentFragment>
+`;

@@ -40,7 +40,11 @@ function SearchPage() {
   };
 
 
-  const artistList = (res) => res.result.results.artists.data.map((artistResult) => (<ArtistSearchCard key={artistResult.id} artistResult={artistResult}/>));
+  const artistList = (res) => {
+    return res.result.results.artists.data.map((artistResult) => {
+      return (<ArtistSearchCard key={artistResult.id} artistResult={artistResult}/>)
+    });
+  };
 
   const results = statusData?.status === 'SUCCESS' ? statusData : null;
 

@@ -1,9 +1,4 @@
 /* Imports */
-@use 'stylesheets/custom.scss';
-@use 'stylesheets/progress.scss';
-@use 'stylesheets/p5js.scss';
-@use 'stylesheets/skeleton_loaders.scss';
-@use 'stylesheets/theme_toggle.scss';
 
 /* Variables*/
 $transition-speed: 0.5s;
@@ -63,9 +58,7 @@ body {
   width: $max-content-width;
 }
 
-.artist-search-card {
-  width: 18rem;
-}
+
 
 // ------------------------------------------
 
