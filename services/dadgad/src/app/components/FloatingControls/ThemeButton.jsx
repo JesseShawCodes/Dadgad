@@ -18,15 +18,19 @@ function ThemeButton() {
         type="button"
       >
         {/* Sun Icon for Light Theme */}
+        <div className={`${theme === 'dark' ? 'hidden' : ''}`} >
         <FontAwesomeIcon 
           icon={faSun} 
-          className={`text-yellow-500 ${theme === 'dark' ? 'hidden' : ''}`} 
+          className={`text-white sun-icon ${theme === 'light' ? 'active' : ''}`} 
         />
+        </div>
         {/* Moon Icon for Dark Theme */}
+        <div className={`${theme === 'light' ? 'hidden' : ''}`} >
         <FontAwesomeIcon 
           icon={faMoon} 
-          className={`text-white ${theme === 'light' ? 'hidden' : ''}`} 
+          className={`text-white moon-icon ${theme === 'dark' ? 'active' : ''}`} 
         />
+        </div>
       </button>
     </div>
   );
