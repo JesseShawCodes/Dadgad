@@ -28,11 +28,11 @@ function BackToTop() {
 
   return (
     showButton && (
-      <div className="scrollToTop" id="back_to_top_container">
+      <div className="scrollToTop" id="back-to-top-container">
         <button
           aria-label="Back to Top"
           id="back_to_top"
-          className="btn-secondary"
+          className="btn-secondary bg-white text-gray-900"
           onClick={handleScrollToTop}
           type="button"
         >

@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./App.scss";
 import NavBar from "./NavBar";
+import FloatingControls from "./components/FloatingControls/FloatingControls";
 import Footer from "./components/Footer";
 import { ReduxProvider } from "./ReduxProvider";
 import Head from "next/head";
+import { ThemeProvider } from "./ThemeContext";
 
 export const metadata = {
   title: "Dadgad",
@@ -19,13 +21,16 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const mainLayout = (
     <ReduxProvider>
+      <ThemeProvider>
       <div>
         <NavBar />
         <main className="bg-my-gradient">
           {children}
         </main>
+        <FloatingControls />
         <Footer />
       </div>
+      </ThemeProvider>
     </ReduxProvider>
   )
   return (
