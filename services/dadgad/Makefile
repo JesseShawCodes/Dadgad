@@ -11,35 +11,32 @@ NEXT_BUILD_DIR = .next
 all: help
 
 # Install dependencies
-install: $(NODE_MODULES)/.bin
+install:
 	@echo "Installing dependencies..."
 	npm install
 
-$(NODE_MODULES)/.bin: package.json
-	npm install
-
 # Run the development server
-dev: install
+dev:
 	@echo "Starting development server..."
 	npm run dev
 
 # Build the project for production
-build: install
+build:
 	@echo "Building for production..."
 	npm run build
 
 # Start the production server
-start: build
+start:
 	@echo "Starting production server..."
 	npm run start
 
 # Lint the project
-lint: install
+lint:
 	@echo "Linting project..."
 	npm run lint
 
 # Run tests
-test: install
+test:
 	@echo "Running tests..."
 	npm run test
 
@@ -50,7 +47,7 @@ clean:
 
 # NPM Related Commands
 update:
-	@echo "Updating all npm packages"
+	@echo "Updating all npm packages..."
 	npx npm-check-updates -u
 	npm install
 
@@ -66,4 +63,5 @@ help:
 	@echo "  make lint       - Lint the project"
 	@echo "  make test       - Run tests"
 	@echo "  make clean      - Remove build artifacts and dependencies"
+	@echo "  make update     - Update all npm packages"
 	@echo ""
