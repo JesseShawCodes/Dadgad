@@ -5,7 +5,7 @@ import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 function MatchupSongButton({thissong, boxShadow, setBoxShadow, selectWinner, winner}) {
   const bgColor = thissong.song.attributes.artwork.bgColor;
   return (
-    <button className="w-50 user-select-none btn" 
+    <button className="w-1/2 select-none btn" 
       style={{ 
         color: `#${thissong.song.attributes.artwork.textColor1}`, 
         backgroundColor: `#${bgColor}`,

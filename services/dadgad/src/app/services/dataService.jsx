@@ -18,7 +18,6 @@ export function generateFinalRound(winnersList) {
 }
 
 function getNextRoundMatchups(songList = [], round) {
-  debugger;
   const nextRound = [];
   for (let i = 0; i < songList.length; i += 2) {
     const matchup = {
@@ -44,7 +43,6 @@ function getNextRoundMatchups(songList = [], round) {
 }
 
 export function generateNextRound(stateObject) {
-  debugger;
   const currentRound = stateObject.round;
   let groupList = undefined;
   if (currentRound > 4) {

@@ -12,7 +12,7 @@ function Group({ groupName, matchups, round }) {
   const groupMatchups = matchups.roundMatchups;
   return (
     <div className={groupName} key={groupName}>
-      <h2 className="mt-1">
+      <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6 text-gray-700 dark:text-gray-200">
         {groupName}
         {state.bracket[groupName][round].progress === 1 ? <FontAwesomeIcon icon={faCheckCircle} className="text-success" /> : null}
       </h2>

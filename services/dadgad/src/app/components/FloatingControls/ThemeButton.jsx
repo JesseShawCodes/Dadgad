@@ -13,25 +13,19 @@ function ThemeButton() {
         aria-label="Change Theme"
         id="change-theme"
         data-testid="theme-button"
-        className="bg-gray-800 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition-all"
+        className="bg-gray-800 hover:bg-gray-700 text-white font-bold rounded-full w-12 h-12 flex items-center justify-center transition-all"
         onClick={toggleTheme}
         type="button"
       >
-        {/* Sun Icon for Light Theme */}
-        <div className={`${theme === 'dark' ? 'hidden' : ''}`} >
-        <FontAwesomeIcon 
-          icon={faSun} 
-          className={`text-white sun-icon ${theme === 'light' ? 'active' : ''}`} 
+        <FontAwesomeIcon
+          icon={faSun}
+          className={`theme-icon text-white sun-icon ${theme === 'light' ? 'active' : ''} ${theme === 'dark' ? 'hidden' : ''}`}
         />
-        </div>
-        {/* Moon Icon for Dark Theme */}
-        <div className={`${theme === 'light' ? 'hidden' : ''}`} >
-        <FontAwesomeIcon 
-          icon={faMoon} 
-          className={`text-white moon-icon ${theme === 'dark' ? 'active' : ''}`} 
+        <FontAwesomeIcon
+          icon={faMoon}
+          className={`theme-icon text-white moon-icon ${theme === 'dark' ? 'active' : ''} ${theme === 'light' ? 'hidden' : ''}`}
         />
-        </div>
-      </button>
+      </button>    
     </div>
   );
 }

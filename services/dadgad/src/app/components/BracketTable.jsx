@@ -32,7 +32,7 @@ function BracketTable() {
 
   return (
     <>
-      <h2 className="my-3">
+      <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-6 text-gray-700 dark:text-gray-200">
         {roundHeader}
       </h2>
       {
