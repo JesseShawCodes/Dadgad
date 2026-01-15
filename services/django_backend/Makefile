@@ -8,6 +8,12 @@ app-start:
 	$(MAKE) django-start &
 	$(MAKE) celery
 
+app-stop:
+	@echo "Stopping Django development server..."
+	-pkill -f "python manage.py runserver" || true
+	@echo "Stopping Celery worker..."
+	-pkill -f "celery -A madness_backend worker" || true
+
 django-start:
 	$(PYTHON) manage.py runserver
 

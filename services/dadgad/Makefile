@@ -5,7 +5,7 @@ NODE_MODULES = node_modules
 NEXT_BUILD_DIR = .next
 
 # Phony targets are not associated with files
-.PHONY: all install dev build start lint test clean help
+.PHONY: all install dev stop build start lint test clean help
 
 # Default target
 all: help
@@ -19,6 +19,11 @@ install:
 dev:
 	@echo "Starting development server..."
 	npm run dev
+
+# Stop the development server
+stop:
+	@echo "Stopping development server..."
+	-lsof -ti:3000 | xargs kill -9 2>/dev/null || true
 
 # Build the project for production
 build:
@@ -58,6 +63,7 @@ help:
 	@echo "Usage:"
 	@echo "  make install    - Install dependencies"
 	@echo "  make dev        - Start the development server"
+	@echo "  make stop       - Stop the development server"
 	@echo "  make build      - Build the project for production"
 	@echo "  make start      - Start the production server"
 	@echo "  make lint       - Lint the project"
