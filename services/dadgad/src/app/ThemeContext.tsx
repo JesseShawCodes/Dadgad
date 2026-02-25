@@ -33,27 +33,29 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme") as Theme | null;
-    if (storedTheme) {
+    if (storedTheme === "light" || storedTheme === "dark") {
       setTheme(storedTheme);
-    } else {
-      setTheme("light");
+      return;
     }
+
+    const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)")?.matches;
+    setTheme(prefersDark ? "dark" : "light");
   }, []);
 
   // Toggle Theme
   const toggleTheme = () => {
     // Correctly handle the potential undefined state
-    const newTheme = theme === "light" ? "dark" : "light";
+    const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
   };
 
   useEffect(() => {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
+    if (!theme) {
+      return;
     }
+
+    document.documentElement.classList.toggle("dark", theme === "dark");
   }, [theme]);
 
   const value = { theme, toggleTheme };

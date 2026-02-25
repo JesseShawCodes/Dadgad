@@ -1,4 +1,7 @@
 /* Imports */
+
+/* Dark Mode Implementation */
+/* https://tailwindcss.com/docs/dark-mode */
 @use 'stylesheets/progress.scss';
 @use 'stylesheets/p5js.scss';
 @use 'stylesheets/theme_toggle.scss';
@@ -12,7 +15,6 @@ $button-box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
 $button-margin: 20px 20px 4px;
 $z-index-base: 99;
 $z-index-top: 100;
-$default-border-color: rgba(0, 0, 0, 0.227);
 
 /* Mixins */
 @mixin floating-control-button {
@@ -37,6 +39,8 @@ body {
   transition: background-color $transition-speed ease, 
               color $transition-speed ease, 
               background-image $transition-speed ease;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
 }
 
 .btn:focus {
@@ -46,7 +50,7 @@ body {
 /* Layout & Utility */
 
 .list-container {
-  border-bottom: 1px solid $default-border-color;
+  border-bottom: 1px solid var(--color-border);
   margin: 20px auto;
   width: $max-content-width;
   text-align: left;
@@ -106,7 +110,7 @@ body {
     transition: opacity 1.4s ease-in-out;
 
     .back_to_top_text {
-      color: var(--bs-light);
+      color: var(--color-muted);
       text-align: center;
       cursor: pointer;
       border-radius: 12px;

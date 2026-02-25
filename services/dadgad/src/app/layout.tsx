@@ -22,7 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const mainLayout = (
     <ReduxProvider>
       <ThemeProvider>
-        <div className="bg-my-gradient">
+        <div className="min-h-screen bg-dadgad-light text-slate-900 transition-colors duration-500 dark:bg-dadgad-dark dark:text-slate-50">
           <NavBar />
           <main>
             {children}

@@ -32,7 +32,7 @@ function BackToTop() {
         <button
           aria-label="Back to Top"
           id="back_to_top"
-          className="btn-secondary bg-white text-gray-900"
+          className="rounded-full border border-slate-200 bg-white/90 text-slate-900 shadow-lg px-3 py-3 hover:bg-slate-100 dark:bg-slate-800/80 dark:border-slate-700 dark:text-slate-50 transition duration-200"
           onClick={handleScrollToTop}
           type="button"
         >
