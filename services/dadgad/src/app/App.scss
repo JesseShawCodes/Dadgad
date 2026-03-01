@@ -1,9 +1,9 @@
 /* Imports */
-@use 'stylesheets/custom.scss';
-@use 'stylesheets/progress.scss';
-@use 'stylesheets/p5js.scss';
-@use 'stylesheets/skeleton_loaders.scss';
-@use 'stylesheets/theme_toggle.scss';
+@use 'stylesheets/custom';
+@use 'stylesheets/progress';
+@use 'stylesheets/p5js';
+@use 'stylesheets/skeleton_loaders';
+@use 'stylesheets/theme_toggle';
 
 /* Variables*/
 $transition-speed: 0.5s;
@@ -30,6 +30,7 @@ $default-border-color: rgba(0, 0, 0, 0.227);
   box-shadow: $button-box-shadow;
   width: $button-size;
   height: $button-size;
+  background-color: color-mix(in srgb, var(--bs-black) 90%, transparent 20% );
 }
 
 // ------------------------------------------

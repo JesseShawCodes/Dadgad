@@ -1,13 +1,17 @@
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
 @import "../../../node_modules/bootstrap/scss/functions";
-@import "../../../node_modules/bootstrap/scss/functions";
+
+// 2. Include any default variable overrides here
+@import "variables.scss";
+
+// 3. Include remainder of required Bootstrap stylesheets
 @import "../../../node_modules/bootstrap/scss/variables";
 @import "../../../node_modules/bootstrap/scss/variables-dark";
 @import "../../../node_modules/bootstrap/scss/maps";
 @import "../../../node_modules/bootstrap/scss/mixins";
 @import "../../../node_modules/bootstrap/scss/utilities";
 
-@import "variables.scss";
-
+// 4. Optionally include utilities API last to generate classes based on the Sass map
 $utilities: map-merge(
   $utilities,
   (
@@ -15,7 +19,7 @@ $utilities: map-merge(
       property: background-image,
       class: bg,
       values: map-merge(
-        map-get($utilities, "background-color", "values"), 
+        map-get($utilities, "background-color", "values"),
         (
           "my-gradient": linear-gradient(to bottom, var(--bs-body-bg) 0%, var(--bs-body-bg) 70%, var(--color-dadgad-bg-gradient) 100%),
           "my-gradient-footer": linear-gradient(to bottom, var(--color-dadgad-bg-gradient) 0%, var(--bs-body-bg) 70%)
@@ -24,7 +28,8 @@ $utilities: map-merge(
     )
   )
 );
+@import "../../../node_modules/bootstrap/scss/utilities/api";
 
 
-@import "bootstrap/scss/utilities/api";
-@import "bootstrap/scss/bootstrap";
+// 5. Finally, import the rest of bootstrap to apply all styles
+@import "../../../node_modules/bootstrap/scss/bootstrap";

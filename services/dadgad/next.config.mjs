@@ -31,7 +31,6 @@ const nextConfig = {
               base-uri 'self';
               form-action 'self';
               frame-ancestors 'none';
-              upgrade-insecure-requests;
               connect-src 'self' ${backendConnectSrc};
             `
             .replace(/\s{2,}/g, ' ')
