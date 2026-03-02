@@ -2,7 +2,15 @@
 from django.test import TestCase, Client
 from apple_search.auth import get_auth_token, get_newest_auth
 
-class AuthTest(TestCase):
+class BaseTestCase(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        from django.db import connections
+        for connection in connections.all():
+            connection.close()
+        super().tearDownClass()
+
+class AuthTest(BaseTestCase):
     '''Authorization Tests'''
     def setUp(self):
         get_auth_token()
@@ -14,15 +22,8 @@ class AuthTest(TestCase):
     def test_newest_auth(self):
         """Newest Auth is obtained"""
         self.assertIsInstance(get_newest_auth(), str)
-    
-    @classmethod
-    def tearDownClass(cls):
-        from django.db import connections
-        for connection in connections.all():
-            connection.close()
-        super().tearDownClass()
 
-class ArtistSearch(TestCase):
+class ArtistSearch(BaseTestCase):
     '''Artist Search Tests'''
     def setUp(self):
         get_auth_token()
@@ -39,10 +40,3 @@ class ArtistSearch(TestCase):
         response = self.client.get('/artist-page/1092903')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], "application/json")
-
-    @classmethod
-    def tearDownClass(cls):
-        from django.db import connections
-        for connection in connections.all():
-            connection.close()
-        super().tearDownClass()
