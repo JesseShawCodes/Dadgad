@@ -14,6 +14,13 @@ class AuthTest(TestCase):
     def test_newest_auth(self):
         """Newest Auth is obtained"""
         self.assertIsInstance(get_newest_auth(), str)
+    
+    @classmethod
+    def tearDownClass(cls):
+        from django.db import connections
+        for connection in connections.all():
+            connection.close()
+        super().tearDownClass()
 
 class ArtistSearch(TestCase):
     '''Artist Search Tests'''
@@ -32,3 +39,10 @@ class ArtistSearch(TestCase):
         response = self.client.get('/artist-page/1092903')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.headers["Content-Type"], "application/json")
+
+    @classmethod
+    def tearDownClass(cls):
+        from django.db import connections
+        for connection in connections.all():
+            connection.close()
+        super().tearDownClass()
