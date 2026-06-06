@@ -24,14 +24,15 @@ function ArtistPageForm() {
     dispatch({ type: 'setBracket', payload: { bracket: matchups } });
   };
 
-  const CheckLocalBrackets = () => {
+  const checkLocalBrackets = () => {
     // Check brackets in local storage.
     const localBrackets = JSON.parse(localStorage.getItem("userBracket"));
     let initialLocalBracketCheck = checkForArtistBracket(handle, localBrackets);
     if (initialLocalBracketCheck) {
-      return <InProgressBracket />
+      return <InProgressBracket />;
     }
-  }
+    return null;
+  };
 
   useEffect(() => {
     const saveInterval = setInterval(() => {
@@ -46,7 +47,7 @@ function ArtistPageForm() {
     }, 10000);
 
     return () => clearInterval(saveInterval);
-  }, [state]);
+  }, [state, dispatch, handle]);
 
   const {
     data: musicQuery = {},
@@ -56,7 +57,7 @@ function ArtistPageForm() {
     if (Object.keys(musicQuery).length > 0) {
       dispatch({ type: 'setValues', payload: { values: musicQuery } });
     }
-  }, [musicQuery]);
+  }, [musicQuery, dispatch]);
 
   const songLengthMessage = () => (state.values.top_songs_list.length < 64 ? <WarningMessage message='Available tracks for this artist is a bit short, there may be potential bugs in the bracket generating process' /> : null);
 
@@ -87,7 +88,7 @@ function ArtistPageForm() {
               <button type="button" className="btn btn-primary" onClick={generateBracket}>
                 Generate Bracket
               </button>
-              <CheckLocalBrackets />            
+              {checkLocalBrackets()}            
               <div className="my-3 fst-italic">
                 {
                     Object.keys(state.values).length !== 0

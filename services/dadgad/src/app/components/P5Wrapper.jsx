@@ -53,7 +53,7 @@ const P5Wrapper = ({ containerRef }) => {
         p5Instance.remove();
       }
     }
-  }, [containerRef])
+  }, [containerRef, state])
 
   return null;
 };

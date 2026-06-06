@@ -1,5 +1,5 @@
 "use client"
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useSyncExternalStore } from "react";
 
 // Types for theme
 type Theme = "light" | "dark";
@@ -28,30 +28,35 @@ interface ThemeProviderProps {
   children: React.ReactNode;
 }
 
-export const ThemeProvider = ({ children }: ThemeProviderProps) => {
-  const [theme, setTheme] = useState<Theme>();
+function subscribe(callback: () => void) {
+  window.addEventListener("storage", callback);
+  return () => window.removeEventListener("storage", callback);
+}
 
-  useEffect(() => {
-    const storedTheme = localStorage.getItem("theme") as Theme | null;
-    if (storedTheme) {
-      setTheme(storedTheme);
-    } else {
-      setTheme("light");
-    }
-  }, []);
+function getSnapshot() {
+  return localStorage.getItem("theme") as Theme | null;
+}
+
+function getServerSnapshot() {
+  return undefined;
+}
+
+export const ThemeProvider = ({ children }: ThemeProviderProps) => {
+  const storedTheme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  
+  // Use a fallback for the theme value
+  const theme = storedTheme || "light";
 
   // Toggle Theme
   const toggleTheme = () => {
-    // Correctly handle the potential undefined state
     const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
+    // useSyncExternalStore won't see local changes unless we dispatch an event
+    window.dispatchEvent(new Event("storage"));
   };
 
   useEffect(() => {
-    if (theme !== undefined) {
-      document.body.setAttribute("data-bs-theme", theme);
-    }
+    document.body.setAttribute("data-bs-theme", theme);
   }, [theme]);
 
   const value = { theme, toggleTheme };
