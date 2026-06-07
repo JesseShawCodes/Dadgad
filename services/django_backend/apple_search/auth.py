@@ -11,9 +11,13 @@ def log_error(e):
 
 def get_auth_token():
     '''Initial Get Auth Token. This should run if newest auth_token has expired'''
-    private_key = os.environ['apple_auth_key'].replace('\\n', '\n')
-    key_id = os.environ["apple_key_id"]
-    team_id = os.environ["apple_team_id"]
+    private_key = os.environ.get('apple_auth_key', '').replace('\\n', '\n')
+    key_id = os.environ.get("apple_key_id", "")
+    team_id = os.environ.get("apple_team_id", "")
+
+    if not private_key or not key_id or not team_id:
+        print("Apple Music API credentials missing. Skipping auth token generation.")
+        return None
 
     headers = {
       "alg": "ES256",
@@ -26,13 +30,18 @@ def get_auth_token():
       "exp": int(time.time()) + 3600,
     }
 
-    developer_token = pyjwt.encode(payload, private_key, algorithm="ES256", headers=headers)
-    AppleAuth.objects.add_auth(developer_token)
-    return developer_token
+    try:
+        developer_token = pyjwt.encode(payload, private_key, algorithm="ES256", headers=headers)
+        AppleAuth.objects.add_auth(developer_token)
+        return developer_token
+    except Exception as e:
+        log_error(f"Failed to encode Apple Music token: {e}")
+        return None
 
 def get_newest_auth():
     '''Get the newest auth token from database.'''
-    return AppleAuth.objects.order_by('-created').first().auth
+    newest = AppleAuth.objects.order_by('-created').first()
+    return newest.auth if newest else ""
 
 def apple_request(endpoint, params=None, base_url=os.environ['apple_artist_details_url'], default={}):
     """Make a request to Apple Music API"""

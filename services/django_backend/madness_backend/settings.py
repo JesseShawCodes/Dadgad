@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load environment variables from .env file
-load_dotenv(os.path.join(BASE_DIR, '.env')) # This line loads the .env file
+load_dotenv(os.path.join(BASE_DIR, '.env'), override=True)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -139,11 +139,11 @@ else:
   DATABASES = {
       'default': {
           'ENGINE': 'django.db.backends.postgresql',
-          'NAME': os.environ['database_name'],
-          'USER': os.environ['database_user'],
-          'HOST': os.environ['database_host'],
-          'PORT': 5432,
-          'PASSWORD': os.environ['database_password']
+          'NAME': os.environ.get('database_name', 'maddness'),
+          'USER': os.environ.get('database_user', 'postgres'),
+          'HOST': os.environ.get('database_host', '127.0.0.1'),
+          'PORT': os.environ.get('database_port', 5432),
+          'PASSWORD': os.environ.get('database_password', 'postgres')
       }
   }
 

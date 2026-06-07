@@ -1,10 +1,18 @@
-.PHONY: start migrate setup update-requirements
+.PHONY: start migrate setup update-requirements install
 
 PYTHON=.venv/bin/python
 
-setup: migrate start
+setup: install migrate start
+
+install:
+	python3 -m venv .venv
+	$(PYTHON) -m pip install --upgrade pip
+	$(PYTHON) -m pip install -r requirements.txt
+
+start: app-start
 
 app-start:
+	# Start Django and Celeryw
 	$(MAKE) django-start &
 	$(MAKE) celery
 

@@ -1,9 +1,15 @@
+
 start:
-	docker-compose up -d
+	docker compose up -d
 
 stop:
-	docker-compose down
+	docker compose down
 
+colima-start:
+	colima start --memory 16
+
+colima-stop:
+	colima stop
 stop-dadgad:
 	@echo "Stopping all Dadgad processes"
 	-@kill -9 $$(lsof -ti :3000) 2>/dev/null || true
@@ -19,10 +25,10 @@ stop-dadgad:
 	$(MAKE) -C services/dadgad stop &
 
 	@echo "Stopping docker containers (redis, database, php - admin)"
-	docker-compose down
+	docker compose down
 
 postgres-shell:
-	docker-compose exec db psql -U shawjd -d madness
+	docker compose exec db psql -U postgres -d maddness
 
 dadgad: 
 	@echo "Starting all Dadgad processes"
@@ -33,7 +39,7 @@ dadgad:
 	-@kill -9 $$(lsof -ti :8000) 2>/dev/null || true
 	-@kill -9 $$(lsof -ti :8888) 2>/dev/null || true
 	@echo "Starting docker containers..."
-	docker-compose up -d
+	docker compose up -d
 	@echo "Starting django backend..."
 	$(MAKE) -C services/django_backend app-start &
 	@echo "Starting dadgad frontend..."
