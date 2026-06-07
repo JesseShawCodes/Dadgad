@@ -5,6 +5,7 @@ import useSWR from 'swr';
 import Loading from '../components/Loading';
 import ArtistCardSkeleton from '../components/skeleton_loaders/ArtistCardSkeleton';
 import ArtistSearchCard from '../components/ArtistSearchCard';
+import { API_BASE_URL } from '../services/apiConfig';
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -15,7 +16,7 @@ function SearchPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data: statusData, error: swrError } = useSWR(
-    taskId ? `${process.env.NEXT_PUBLIC_SERVER}/api/task-status?q=${taskId}` : null,
+    taskId ? `${API_BASE_URL}/api/task-status?q=${taskId}` : null,
     fetcher,
     { 
       refreshInterval: (data) => (data?.status === 'SUCCESS' || data?.status === 'FAILURE') ? 0 : 2000,
@@ -29,7 +30,7 @@ function SearchPage() {
     setError(null);
     setIsSubmitting(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER}/artist?q=${query}`);
+      const res = await fetch(`${API_BASE_URL}/artist?q=${query}`);
       const result = await res.json();
       setTaskId(result.task_id);
     } catch (err) {

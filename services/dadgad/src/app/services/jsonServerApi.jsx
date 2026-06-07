@@ -1,9 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { API_BASE_URL } from './apiConfig';
+
 // https://redux-toolkit.js.org/rtk-query/usage/queries
 export const jsonServerApi = createApi({
   reducerPath: 'jsonServerApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_SERVER,
+    baseUrl: API_BASE_URL,
   }),
   refetchOnMountOrArgChange: true,
   tagTypes: ['Artists'],
