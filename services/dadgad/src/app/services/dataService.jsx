@@ -17,7 +17,7 @@ export function generateFinalRound(winnersList) {
   return nextRound;
 }
 
-function getNextRoundMatchups(songList = [], round) {
+function getNextRoundMatchups(songList, round) {
   debugger;
   const nextRound = [];
   for (let i = 0; i < songList.length; i += 2) {
@@ -131,7 +131,7 @@ function getFinalFourMatchup(finalFourSongs) {
   return getNextRoundMatchups(fourSongs);
 }
 
-function compileListOfWinners(matchups = [], winnersGroup = []) {
+function compileListOfWinners(matchups, winnersGroup = []) {
   for (let i = 0; i < matchups.length; i++) {
     typeof (matchups[i].attributes.winner) !== 'undefined' ? winnersGroup.push(matchups[i].attributes.winner) : null;
   }

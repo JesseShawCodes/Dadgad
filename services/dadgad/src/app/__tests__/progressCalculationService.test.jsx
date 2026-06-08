@@ -74,7 +74,7 @@ describe("progressCalculation", () => {
       expect(result).toBe(25);
     });
 
-    it("should return NaN if length is 0 (division by zero)", () => {
+    it('should return Infinity if length is 0 (division by zero)', () => {
       const state = {
         round: 1,
         bracket: {
@@ -84,5 +84,31 @@ describe("progressCalculation", () => {
       const result = progressCalculation(state, 0, 0, false);
       expect(result).toBe(Infinity); // 50 / 0
     });
+
+    it('should use default parameters for groupProg and championship', () => {
+      const state = {
+        round: 1,
+        bracket: {
+          match1: { round1: { progress: 50 } },
+        },
+      };
+      // Not passing groupProg (will be 0) and championship (will be false)
+      const result = progressCalculation(state, undefined, 1);
+      expect(result).toBe(50);
+    });
+
+    it('should skip missing progress (hitting else branch of the typeof check)', () => {
+      const state = {
+        round: 1,
+        bracket: {
+          match1: { round1: { /* progress missing */ } },
+          match2: { round1: { progress: 100 } },
+        },
+      };
+      // It should skip match1 and only add match2's progress
+      const result = progressCalculation(state, 0, 2, false);
+      expect(result).toBe(50); // 100 / 2
+    });
   });
 });
+

@@ -22,8 +22,8 @@ function bracketContentSong(
   songName,
   textColor,
   position,
-  fontSize = 18,
-  rectangleHeight = 40,
+  fontSize,
+  rectangleHeight,
 ) {
   offScreenCanvas.textSize(fontSize);
 
@@ -73,8 +73,8 @@ function bracketContent(
   color,
   position,
   height,
-  fontSize = 45,
-  rectangleHeight = 40,
+  fontSize,
+  rectangleHeight,
 ) {
   let songAttrs = getSongAttributes(group, iteration, 'song1');
   offScreenCanvas.stroke(color);
@@ -121,8 +121,8 @@ const round = (
   position,
   height,
   heightRatio = 1,
-  fontSize = 24,
-  rectangleHeight = 50,
+  fontSize,
+  rectangleHeight,
 ) => {
   const groups = [groupA, groupB];
   let yStartAdjusted = yStart;

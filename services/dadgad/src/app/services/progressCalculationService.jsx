@@ -6,7 +6,7 @@ export function progressCalculation(state, groupProg=0, length, championship=fal
     return groupProg;
   }
   for (const key in state.bracket) {
-    if (typeof state.bracket[key][`round${state.round}`].progress != undefined) {
+    if (typeof state.bracket[key][`round${state.round}`].progress !== 'undefined') {
       groupProg += state.bracket[key][`round${state.round}`].progress;
     }
   }
