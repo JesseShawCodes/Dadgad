@@ -8,9 +8,11 @@ class BracketService:
         Creates a bracket and its initial matchups.
         Currently supports power-of-2 sized brackets (e.g., 16, 32).
         """
-        # Limit to 16 or 32 songs for now to keep it manageable
+        # Limit to 16, 32 or 64 songs for now to keep it manageable
         num_songs = len(songs)
-        if num_songs >= 32:
+        if num_songs >= 64:
+            bracket_size = 64
+        elif num_songs >= 32:
             bracket_size = 32
         elif num_songs >= 16:
             bracket_size = 16
