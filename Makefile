@@ -1,8 +1,7 @@
-
-start:
+docker-start:
 	docker compose up -d
 
-stop:
+docker-stop:
 	docker compose down
 
 colima-start:
@@ -10,37 +9,24 @@ colima-start:
 
 colima-stop:
 	colima stop
-stop-dadgad:
-	@echo "Stopping all Dadgad processes"
-	-@kill -9 $$(lsof -ti :3000) 2>/dev/null || true
-	-@kill -9 $$(lsof -ti :5432) 2>/dev/null || true
-	-@kill -9 $$(lsof -ti :6379) 2>/dev/null || true
-	-@kill -9 $$(lsof -ti :8000) 2>/dev/null || true
-	-@kill -9 $$(lsof -ti :8888) 2>/dev/null || true
-	
-	@echo "Stopping django backend (celery & django)"
-	$(MAKE) -C services/django_backend app-stop &
 
-	@echo "Stopping frontend (Next.js)"
-	$(MAKE) -C services/dadgad stop &
+colima-stop-force:
+	colima stop --force
 
-	@echo "Stopping docker containers (redis, database, php - admin)"
-	docker compose down
+django-start:
+	$(MAKE) -C services/django_backend app-start
+
+django-stop:
+	$(MAKE) -C services/django_backend app-stop
+
+django-migrate:
+	$(MAKE) -C services/django_backend migrate
+
+dadgad-start:
+	$(MAKE) -C services/dadgad dev
+
+dadgad-stop:
+	$(MAKE) -C services/dadgad stop
 
 postgres-shell:
 	docker compose exec db psql -U postgres -d maddness
-
-dadgad: 
-	@echo "Starting all Dadgad processes"
-	@echo "Forcibly freeing up ports..."
-	-@kill -9 $$(lsof -ti :3000) 2>/dev/null || true
-	-@kill -9 $$(lsof -ti :5432) 2>/dev/null || true
-	-@kill -9 $$(lsof -ti :6379) 2>/dev/null || true
-	-@kill -9 $$(lsof -ti :8000) 2>/dev/null || true
-	-@kill -9 $$(lsof -ti :8888) 2>/dev/null || true
-	@echo "Starting docker containers..."
-	docker compose up -d
-	@echo "Starting django backend..."
-	$(MAKE) -C services/django_backend app-start &
-	@echo "Starting dadgad frontend..."
-	$(MAKE) -C services/dadgad dev
