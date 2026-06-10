@@ -15,13 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from apple_search.views import artist_search_view, artist_page_view, task_status_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('artist', artist_search_view),
     path('artist-page/<str:artist_name>', artist_page_view),
+
+    # Bracket URLs
+    path('api/', include('brackets.urls')),
 
     # Task Status checks
     path('api/task-status', task_status_view, name='task-status')

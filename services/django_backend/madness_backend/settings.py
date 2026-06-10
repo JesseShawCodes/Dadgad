@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'corsheaders',
 
     'apple_search.apps.AppleSearchConfig',
+    'brackets.apps.BracketsConfig',
 
     'allauth',
     'allauth.account',
