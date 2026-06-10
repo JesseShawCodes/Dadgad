@@ -1,5 +1,5 @@
 from django.test import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from django.core.cache import cache
 from apple_search.artist_page import (
     artist_content,
