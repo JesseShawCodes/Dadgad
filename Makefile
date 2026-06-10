@@ -22,6 +22,9 @@ django-stop:
 django-migrate:
 	$(MAKE) -C services/django_backend migrate
 
+django-test:
+	$(MAKE) -C services/django_backend test
+
 dadgad-start:
 	$(MAKE) -C services/dadgad dev
 
