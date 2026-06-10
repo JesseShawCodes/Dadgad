@@ -1,14 +1,22 @@
 from django.test import TestCase
-from .services import BracketService
+from rest_framework.test import APIClient
+
 
 class BracketLogicTest(TestCase):
     def test_seeding_logic(self):
-        # We can't easily test the full create_bracket without a DB, 
-        # but we can test the seeding order logic if we expose it or test it indirectly.
-        # For now, this is a placeholder to ensure the file exists and imports work.
+        # Placeholder for seeding logic test
         pass
 
-    def test_bracket_size_logic(self):
-        # Test how many songs are selected based on input list size
-        # This might still need a DB because it calls Bracket.objects.create
-        pass
+
+class BracketViewTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+    def test_bracket_create_from_artist_mock(self):
+        response = self.client.get("/api/brackets/from-artist/Deftones/")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["artist_name"], "Deftones")
+        self.assertEqual(response.data["artist_id"], "mock_id_123")
+        self.assertEqual(len(response.data["top_songs_list"]), 64)
+        self.assertEqual(len(response.data["matchups"]), 32)

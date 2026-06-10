@@ -5,22 +5,28 @@ from apple_search.artist_search import artist_search
 
 from celery.result import AsyncResult
 
+
 def artist_search_view(request):
-    data = request.GET.get('q', '')
+    data = request.GET.get("q", "")
     # Potential task functions / returns
     task = fetch_artist_data.delay(data)
     return JsonResponse({"task_id": task.id, "status": "queued"})
 
+
 def artist_page_view(request, artist_name):
-    artist_name = artist_name.replace('-', ' ')
+    artist_name = artist_name.replace("-", " ")
     search_results = artist_search(artist_name)
     artist_id = None
-    if search_results.get('results') and search_results['results'].get('artists') and search_results['results']['artists'].get('data'):
-        for artist in search_results['results']['artists']['data']:
-            if artist['attributes']['name'] == artist_name:
-                artist_id = artist['id']
+    if (
+        search_results.get("results")
+        and search_results["results"].get("artists")
+        and search_results["results"]["artists"].get("data")
+    ):
+        for artist in search_results["results"]["artists"]["data"]:
+            if artist["attributes"]["name"] == artist_name:
+                artist_id = artist["id"]
                 break
-    
+
     if artist_id:
         data = artist_content(artist_id)
     else:
@@ -28,19 +34,17 @@ def artist_page_view(request, artist_name):
 
     return JsonResponse(data)
 
+
 def task_status_view(request):
-  task_id = request.GET.get('q')
-  result = AsyncResult(task_id)
+    task_id = request.GET.get("q")
+    result = AsyncResult(task_id)
 
-  response_data = {
-      "status": result.status,
-      "request_id": task_id
-  }
+    response_data = {"status": result.status, "request_id": task_id}
 
-  if result.ready():
-     if result.successful():
-         response_data['result'] = result.result
-     else:
-         response_data['error'] = str(result.result)
-  
-  return JsonResponse(response_data)
+    if result.ready():
+        if result.successful():
+            response_data["result"] = result.result
+        else:
+            response_data["error"] = str(result.result)
+
+    return JsonResponse(response_data)

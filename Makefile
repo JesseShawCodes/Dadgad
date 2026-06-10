@@ -25,6 +25,12 @@ django-migrate:
 django-test:
 	$(MAKE) -C services/django_backend test
 
+django-ruff-check:
+	$(MAKE) -C services/django_backend ruff-check
+
+django-ruff-check-fix:
+	$(MAKE) -C services/django_backend ruff-check-fix
+
 dadgad-start:
 	$(MAKE) -C services/dadgad dev
 

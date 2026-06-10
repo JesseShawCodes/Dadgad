@@ -43,3 +43,10 @@ test:
 
 update-requirements:
 	$(PYTHON) -m pip install --upgrade -r requirements.txt
+
+# Ruff Lint
+ruff-check:
+	$(PYTHON) -m ruff check .
+
+ruff-check-fix:
+	$(PYTHON) -m ruff check --fix .
