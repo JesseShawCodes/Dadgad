@@ -10,7 +10,7 @@ from apple_search.artist_search import artist_search
 
 class BracketCreateFromArtistView(APIView):
     renderer_classes = [JSONRenderer]
-    def get(self, request, artist_name, artist_id):
+    def get(self, request,  artist_id, artist_name="Bruce Springsteen"):
         items = []
         matchups = []
         featured_albums = {}
@@ -19,7 +19,7 @@ class BracketCreateFromArtistView(APIView):
         data = {
             "name": f"{artist_name.replace('-', ' ').title()} Madness (Mock)",
             "artist_name": artist_name.replace('-', ' ').title(),
-            "artist_id": artist_id,
+            "artist_id": 112409820948,
             "featured_albums": featured_albums,
             "top_songs_list": items,
             "matchups": matchups

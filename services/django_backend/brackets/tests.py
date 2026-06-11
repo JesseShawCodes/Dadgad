@@ -6,7 +6,7 @@ class BracketViewTests(TestCase):
         self.client = APIClient()
 
     def test_bracket_create_from_artist_mock(self):
-        response = self.client.get("/api/brackets/artist/Deftones/123456789")
+        response = self.client.get("/api/brackets/artist/123456789")
 
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.data["artist_name"], str)
