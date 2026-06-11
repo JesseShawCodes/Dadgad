@@ -7,7 +7,7 @@ from .views import (
 
 urlpatterns = [
     path(
-        "brackets/from-artist/<str:artist_name>/",
+        "brackets/artist/<str:artist_name>/<int:artist_id>",
         BracketCreateFromArtistView.as_view(),
         name="bracket-create-from-artist",
     ),
