@@ -8,28 +8,6 @@ from .services import BracketService
 from apple_search.artist_page import artist_content
 from apple_search.artist_search import artist_search
 
-class BracketCreateView(APIView):
-    renderer_classes = [JSONRenderer]
-    def post(self, request):
-        artist_id = request.data.get('artist_id')
-        if not artist_id:
-            return Response({"error": "artist_id is required"}, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Fetch artist data using existing logic in apple_search
-        data = artist_content(artist_id)
-        if "error" in data:
-            return Response(data, status=status.HTTP_404_NOT_FOUND)
-        
-        songs = data.get('top_songs_list', [])
-        artist_name = data.get('artist_name')
-        
-        if not songs:
-            return Response({"error": "No songs found for this artist"}, status=status.HTTP_400_BAD_REQUEST)
-            
-        bracket = BracketService.create_bracket(artist_id, artist_name, songs)
-        serializer = BracketSerializer(bracket)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 class BracketCreateFromArtistView(APIView):
     renderer_classes = [JSONRenderer]
     def get(self, request, artist_name):

@@ -1,13 +1,6 @@
 from django.test import TestCase
 from rest_framework.test import APIClient
 
-
-class BracketLogicTest(TestCase):
-    def test_seeding_logic(self):
-        # Placeholder for seeding logic test
-        pass
-
-
 class BracketViewTests(TestCase):
     def setUp(self):
         self.client = APIClient()

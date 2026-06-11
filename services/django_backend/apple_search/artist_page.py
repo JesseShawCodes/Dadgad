@@ -13,6 +13,7 @@ def artist_content(artist_id):
     if cached:
         return cached
     output = {}
+    # Use ThreadPoolExecutor to run the functions concurrently
     with concurrent.futures.ThreadPoolExecutor() as executer:
         future_artist = executer.submit(get_artist_high_level_details, artist_id)
         future_albums = executer.submit(featured_album_details, artist_id)
@@ -22,6 +23,7 @@ def artist_content(artist_id):
         albums = future_albums.result()
         songs = future_songs.result()
 
+    # Check if artist details are valid
     if (
         not artist_details
         or not artist_details.get("name")
