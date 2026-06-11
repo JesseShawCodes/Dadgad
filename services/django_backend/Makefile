@@ -25,6 +25,9 @@ app-stop:
 django-start:
 	$(PYTHON) manage.py runserver
 
+django-shell:
+	$(PYTHON) manage.py shell -i ipython
+
 python-start:
 	$(PYTHON)
 
