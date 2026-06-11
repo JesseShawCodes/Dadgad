@@ -9,6 +9,7 @@ function MatchupSongButton({thissong, boxShadow, setBoxShadow, selectWinner, win
       style={{ 
         color: `#${thissong.song.attributes.artwork.textColor1}`, 
         backgroundColor: `#${bgColor}`,
+        backgroundImage: `linear-gradient(to left, #${bgColor} 0%, color-mix(in srgb, #${bgColor}, black 10%) 90%)`,
         boxShadow: boxShadow,
       }}
       onFocus={() =>
