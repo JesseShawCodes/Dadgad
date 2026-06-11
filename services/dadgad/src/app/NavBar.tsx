@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import myImage from './logo.png';
+import { appName } from './services/envConfig';
 
 function NavBar() {
   return (
@@ -9,7 +10,7 @@ function NavBar() {
       <div className="container">
         <Link href="/" className="nav-link navbar-brand">
           <Image src={myImage} alt="Dadgad logo" role="presentation" className="me-2" style={{width: '30px', height: 'auto'}}/>
-          {process.env.NEXT_PUBLIC_NAME}
+          {appName}
         </Link>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span className="navbar-toggler-icon" />
