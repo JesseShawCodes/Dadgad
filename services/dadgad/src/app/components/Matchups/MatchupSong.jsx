@@ -2,14 +2,11 @@
 import { React, useContext, useState } from 'react';
 import { useParams } from 'next/navigation';
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
 import MatchupSongButton from './MatchupSongButton';
 import { Context } from '../../context/BracketContext';
 import { findObjectById, generateNextRound } from '../../services/dataService';
 import { progressCalculation } from '../../services/progressCalculationService';
-import { nextRound as nextRoundExternal } from '../../services/nextRound';
 
 export default function MatchupSong({
   thissong, opponent, matchupId, round, group, winner,
@@ -32,7 +29,6 @@ export default function MatchupSong({
   }
 
   const nextRound = () => {
-    nextRoundExternal();
     var len = Object.keys(currentPositionBracket).length;
     var groupProg = 0;
 
