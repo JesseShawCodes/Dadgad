@@ -6,6 +6,7 @@ from .models import Bracket
 from .serializers import BracketSerializer, MatchupSerializer
 from .services import BracketService
 from apple_search.artist_page import artist_content
+from apple_search.artist_search import artist_search
 
 class BracketCreateView(APIView):
     renderer_classes = [JSONRenderer]
@@ -32,7 +33,7 @@ class BracketCreateView(APIView):
 class BracketCreateFromArtistView(APIView):
     renderer_classes = [JSONRenderer]
     def get(self, request, artist_name):
-        # Temporary mock data implementation with 64 items and 32 matchups
+              # Temporary mock data implementation with 64 items and 32 matchups
         items = [
             {
               "id": "1099848811",
@@ -186,15 +187,18 @@ class BracketCreateFromArtistView(APIView):
     }
   ]
 }
-        mock_data = {
+
+        artist_name = artist_name.replace('-', ' ').title()
+        data = {
             "name": f"{artist_name.replace('-', ' ').title()} Madness (Mock)",
             "artist_name": artist_name.replace('-', ' ').title(),
             "artist_id": "mock_id_123",
             "featured_albums": featured_albums,
             "top_songs_list": items,
-            "matchups": matchups
+            "matchups": matchups,
+            "search_results": artist_search(artist_name)
         }
-        return Response(mock_data, status=status.HTTP_200_OK)
+        return Response(data, status=status.HTTP_200_OK)
 
 class BracketDetailView(APIView):
     renderer_classes = [JSONRenderer]
