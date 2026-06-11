@@ -19,7 +19,7 @@ class BracketCreateFromArtistView(APIView):
         data = {
             "name": f"{artist_name.replace('-', ' ').title()} Madness (Mock)",
             "artist_name": artist_name.replace('-', ' ').title(),
-            "artist_id": 112409820948,
+            "artist_id": artist_id,
             "featured_albums": featured_albums,
             "top_songs_list": items,
             "matchups": matchups
