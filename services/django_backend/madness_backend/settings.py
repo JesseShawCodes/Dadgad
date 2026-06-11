@@ -29,7 +29,6 @@ load_dotenv(os.path.join(BASE_DIR, ".env"), override=True)
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 ALLOWED_HOSTS = [
-    "localhost:3000",
     "localhost",
     "127.0.0.1",
     "music-march-maddness.onrender.com",
@@ -77,6 +76,7 @@ ACCOUNT_FORMS = {
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -84,18 +84,14 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    # AWS Related Middleware
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
-    # Add the account middleware:
     "allauth.account.middleware.AccountMiddleware",
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:1207",
     "http://localhost:8080",
     "http://localhost:3000",
+    "http://127.0.0.1:3000",
     "https://dadgad.netlify.app",
 ]
 
@@ -220,9 +216,10 @@ CELERY_RESULT_EXPIRES = 3600
 if os.environ.get("environment") == "production":
     # Production settings
     DEBUG = False
-    CELERY_TASKS_ALWAYS_EAGER = True
+    CELERY_TASKS_ALWAYS_EAGER = False
     CELERY_TASKS_EAGER_PROPAGATES = True
 else:
     # Development settings
     DEBUG = True
-    CELERY_TASKS_ALWAYS_EAGER = True
+    CELERY_TASKS_ALWAYS_EAGER = False
+
