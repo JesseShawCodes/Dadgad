@@ -41,6 +41,10 @@ celery:
 test:
 	$(PYTHON) manage.py test
 
+test-coverage:
+	coverage run manage.py test --keepdb
+	coverage report
+
 update-requirements:
 	$(PYTHON) -m pip install --upgrade -r requirements.txt
 

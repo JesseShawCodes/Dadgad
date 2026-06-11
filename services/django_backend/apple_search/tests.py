@@ -1,6 +1,7 @@
-from django.test import TestCase
-from unittest.mock import patch
+from django.test import TestCase, Client
+from unittest.mock import patch, MagicMock
 from django.core.cache import cache
+from django.urls import reverse
 from apple_search.artist_page import (
     artist_content,
     get_artist_high_level_details,
@@ -484,3 +485,132 @@ class ArtistPageTests(TestCase):
         for connection in connections.all():
             connection.close()
         super().tearDownClass()
+
+
+class AppleSearchViewTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    @patch("apple_search.views.fetch_artist_data.delay")
+    def test_artist_search_view(self, mock_delay):
+        mock_task = MagicMock()
+        mock_task.id = "test-task-id"
+        mock_delay.return_value = mock_task
+
+        response = self.client.get("/artist", {"q": "Deftones"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(), {"task_id": "test-task-id", "status": "queued"}
+        )
+        mock_delay.assert_called_once_with("Deftones")
+
+    @patch("apple_search.views.artist_content")
+    @patch("apple_search.views.artist_search")
+    def test_artist_page_view_success(self, mock_artist_search, mock_artist_content):
+        mock_artist_search.return_value = {
+            "results": {
+                "artists": {"data": [{"attributes": {"name": "Deftones"}, "id": "123"}]}
+            }
+        }
+        mock_artist_content.return_value = {"name": "Deftones", "id": "123"}
+
+        response = self.client.get("/artist-page/Deftones")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"name": "Deftones", "id": "123"})
+        mock_artist_search.assert_called_once_with("Deftones")
+        mock_artist_content.assert_called_once_with("123")
+
+    @patch("apple_search.views.artist_content")
+    @patch("apple_search.views.artist_search")
+    def test_artist_page_view_hyphen(self, mock_artist_search, mock_artist_content):
+        mock_artist_search.return_value = {
+            "results": {
+                "artists": {
+                    "data": [{"attributes": {"name": "The Deftones"}, "id": "123"}]
+                }
+            }
+        }
+        mock_artist_content.return_value = {"name": "The Deftones", "id": "123"}
+
+        response = self.client.get("/artist-page/The-Deftones")
+
+        self.assertEqual(response.status_code, 200)
+        mock_artist_search.assert_called_once_with("The Deftones")
+
+    @patch("apple_search.views.artist_search")
+    def test_artist_page_view_not_found(self, mock_artist_search):
+        mock_artist_search.return_value = {"results": {"artists": {"data": []}}}
+
+        response = self.client.get("/artist-page/Unknown")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"error": "Artist not found"})
+
+    @patch("apple_search.views.artist_search")
+    def test_artist_page_view_name_mismatch(self, mock_artist_search):
+        mock_artist_search.return_value = {
+            "results": {
+                "artists": {
+                    "data": [{"attributes": {"name": "Other Artist"}, "id": "123"}]
+                }
+            }
+        }
+
+        response = self.client.get("/artist-page/Deftones")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {"error": "Artist not found"})
+
+    @patch("apple_search.views.AsyncResult")
+    def test_task_status_view_pending(self, mock_async_result):
+        mock_result = MagicMock()
+        mock_result.status = "PENDING"
+        mock_result.ready.return_value = False
+        mock_async_result.return_value = mock_result
+
+        response = self.client.get(reverse("task-status"), {"q": "test-id"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(), {"status": "PENDING", "request_id": "test-id"}
+        )
+
+    @patch("apple_search.views.AsyncResult")
+    def test_task_status_view_success(self, mock_async_result):
+        mock_result = MagicMock()
+        mock_result.status = "SUCCESS"
+        mock_result.ready.return_value = True
+        mock_result.successful.return_value = True
+        mock_result.result = {"data": "ok"}
+        mock_async_result.return_value = mock_result
+
+        response = self.client.get(reverse("task-status"), {"q": "test-id"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {"status": "SUCCESS", "request_id": "test-id", "result": {"data": "ok"}},
+        )
+
+    @patch("apple_search.views.AsyncResult")
+    def test_task_status_view_failure(self, mock_async_result):
+        mock_result = MagicMock()
+        mock_result.status = "FAILURE"
+        mock_result.ready.return_value = True
+        mock_result.successful.return_value = False
+        mock_result.result = "Error message"
+        mock_async_result.return_value = mock_result
+
+        response = self.client.get(reverse("task-status"), {"q": "test-id"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.json(),
+            {
+                "status": "FAILURE",
+                "request_id": "test-id",
+                "error": "Error message",
+            },
+        )
