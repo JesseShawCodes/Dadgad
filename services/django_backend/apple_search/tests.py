@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from unittest.mock import patch, MagicMock
 from django.core.cache import cache
 from django.urls import reverse
+import requests
 from apple_search.artist_page import (
     artist_content,
     get_artist_high_level_details,
@@ -11,6 +12,150 @@ from apple_search.artist_page import (
     featured_album_details,
     add_weight_to_songs,
 )
+from apple_search.artist_search import artist_search, format_image
+
+
+class ArtistSearchTests(TestCase):
+    @patch("apple_search.artist_search.get_newest_auth")
+    @patch("apple_search.artist_search.requests.get")
+    @patch("apple_search.artist_search.os.environ")
+    def test_artist_search_success(self, mock_environ, mock_get, mock_get_newest_auth):
+        mock_get_newest_auth.return_value = "token123"
+        mock_environ.__getitem__.side_effect = (
+            lambda key: "http://api.apple.com/" if key == "apple_search_url" else key
+        )
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {
+            "results": {
+                "artists": {
+                    "data": [
+                        {
+                            "attributes": {
+                                "artwork": {"url": "http://example.com/{w}x{h}.jpg"}
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+        mock_get.return_value = mock_response
+
+        result = artist_search("Deftones")
+
+        self.assertEqual(
+            result["results"]["artists"]["data"][0]["attributes"]["artwork"]["url"],
+            "http://example.com/400x400.jpg",
+        )
+        mock_get.assert_called_once()
+
+    @patch("apple_search.artist_search.get_auth_token")
+    @patch("apple_search.artist_search.get_newest_auth")
+    @patch("apple_search.artist_search.requests.get")
+    @patch("apple_search.artist_search.os.environ")
+    def test_artist_search_retry_on_error(
+        self, mock_environ, mock_get, mock_get_newest_auth, mock_get_auth_token
+    ):
+        mock_get_newest_auth.return_value = "expired_token"
+        mock_get_auth_token.return_value = "new_token"
+        mock_environ.__getitem__.side_effect = (
+            lambda key: "http://api.apple.com/" if key == "apple_search_url" else key
+        )
+
+        mock_response_fail = MagicMock()
+        mock_response_fail.status_code = 401
+
+        mock_response_success = MagicMock()
+        mock_response_success.status_code = 200
+        mock_response_success.json.return_value = {"results": {"artists": {"data": []}}}
+
+        mock_get.side_effect = [mock_response_fail, mock_response_success]
+
+        result = artist_search("Deftones")
+
+        self.assertEqual(mock_get.call_count, 2)
+        self.assertEqual(result, {"results": {"artists": {"data": []}}})
+
+    @patch("apple_search.artist_search.get_auth_token")
+    @patch("apple_search.artist_search.get_newest_auth")
+    @patch("apple_search.artist_search.requests.get")
+    @patch("apple_search.artist_search.os.environ")
+    def test_artist_search_retry_fails_no_token(
+        self, mock_environ, mock_get, mock_get_newest_auth, mock_get_auth_token
+    ):
+        mock_get_newest_auth.return_value = "expired_token"
+        mock_get_auth_token.return_value = None
+        mock_environ.__getitem__.side_effect = (
+            lambda key: "http://api.apple.com/" if key == "apple_search_url" else key
+        )
+
+        mock_response_fail = MagicMock()
+        mock_response_fail.status_code = 401
+        mock_get.return_value = mock_response_fail
+
+        result = artist_search("Deftones")
+
+        self.assertEqual(result, {})
+        self.assertEqual(mock_get.call_count, 1)
+
+    @patch("apple_search.artist_search.get_newest_auth")
+    @patch("apple_search.artist_search.requests.get")
+    @patch("apple_search.artist_search.os.environ")
+    def test_artist_search_json_decode_error(
+        self, mock_environ, mock_get, mock_get_newest_auth
+    ):
+        mock_get_newest_auth.return_value = "token123"
+        mock_environ.__getitem__.side_effect = (
+            lambda key: "http://api.apple.com/" if key == "apple_search_url" else key
+        )
+
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.side_effect = requests.exceptions.JSONDecodeError(
+            "msg", "doc", 0
+        )
+        mock_get.return_value = mock_response
+
+        result = artist_search("Deftones")
+        self.assertEqual(result, {})
+
+    def test_format_image(self):
+        url = "http://example.com/{w}x{h}.jpg"
+        self.assertEqual(format_image(url), "http://example.com/400x400.jpg")
+
+    @patch("apple_search.artist_search.get_newest_auth")
+    @patch("apple_search.artist_search.requests.get")
+    @patch("apple_search.artist_search.os.environ")
+    def test_artist_search_missing_fields(
+        self, mock_environ, mock_get, mock_get_newest_auth
+    ):
+        mock_get_newest_auth.return_value = "token123"
+        mock_environ.__getitem__.side_effect = (
+            lambda key: "http://api.apple.com/" if key == "apple_search_url" else key
+        )
+
+        # Missing results
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {}
+        mock_get.return_value = mock_response
+        self.assertEqual(artist_search("Deftones"), {})
+
+        # Missing artists
+        mock_response.json.return_value = {"results": {}}
+        self.assertEqual(artist_search("Deftones"), {"results": {}})
+
+        # Missing data
+        mock_response.json.return_value = {"results": {"artists": {}}}
+        self.assertEqual(artist_search("Deftones"), {"results": {"artists": {}}})
+
+        # Missing artwork
+        mock_response.json.return_value = {
+            "results": {"artists": {"data": [{"attributes": {}}]}}
+        }
+        result = artist_search("Deftones")
+        self.assertEqual(result["results"]["artists"]["data"][0]["attributes"], {})
 
 
 class ArtistPageTests(TestCase):
