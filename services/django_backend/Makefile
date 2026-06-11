@@ -54,3 +54,13 @@ ruff-check:
 
 ruff-check-fix:
 	$(PYTHON) -m ruff check --fix .
+
+# venv
+venv-create:
+	python3 -m venv .venv
+
+venv-activate:
+	source .venv/bin/activate
+
+venv-deactivate:
+	deactivate
