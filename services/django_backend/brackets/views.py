@@ -35,10 +35,52 @@ class BracketCreateFromArtistView(APIView):
         # Temporary mock data implementation with 64 items and 32 matchups
         items = [
             {
-                "name": f"Mock Song {i}", 
-                "seed": i, 
-                "apple_id": f"s{i}", 
-                "image_url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/96/51/57/96515710-cf91-0663-6f5a-942acf6ea31b/093624919797.jpg/300x300bb.jpg"
+              "id": "1099848811",
+              "type": "songs",
+              "href": "/v1/catalog/us/songs/1099848811",
+              "attributes": {
+                "albumName": "White Pony",
+                "artistName": "Deftones",
+                "artwork": {
+                  "bgColor": "3a4784",
+                  "height": 1425,
+                  "textColor1": "dadff3",
+                  "textColor2": "bfc7ea",
+                  "textColor3": "bac0dd",
+                  "textColor4": "a4add5",
+                  "url": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/96/51/57/96515710-cf91-0663-6f5a-942acf6ea31b/093624919797.jpg/{w}x{h}bb.jpg",
+                  "width": 1425
+                },
+                "composerName": "Abe Cunningham, Chi Cheng, Chino Moreno, Frank Delgado & Stephen Carpenter",
+                "discNumber": 1,
+                "durationInMillis": 299587,
+                "genreNames": [
+                  "Hard Rock",
+                  "Music",
+                  "Rock",
+                  "Alternative",
+                  "Adult Alternative",
+                  "Metal"
+                ],
+                "hasLyrics": True,
+                "isAppleDigitalMaster": True,
+                "isrc": "USRE11600104",
+                "name": "Change (In the House of Flies)",
+                "playParams": {
+                  "id": "1099848811",
+                  "kind": "song"
+                },
+                "previews": [
+                  {
+                    "url": "https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview115/v4/58/3d/ca/583dcad3-e2ca-e229-f089-637b0ab7d328/mzaf_14300378853874282579.plus.aac.p.m4a"
+                  }
+                ],
+                "releaseDate": "2000-06-20",
+                "trackNumber": 11,
+                "url": "https://music.apple.com/us/album/change-in-the-house-of-flies/1099848709?i=1099848811"
+              },
+              "rank": i,
+              "featured_album": True
             }
             for i in range(1, 65)
         ]
