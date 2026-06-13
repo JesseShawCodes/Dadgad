@@ -222,4 +222,3 @@ else:
     # Development settings
     DEBUG = True
     CELERY_TASKS_ALWAYS_EAGER = False
-
