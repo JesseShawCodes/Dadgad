@@ -15,7 +15,7 @@ cryptography==46.0.2
 decorator==5.3.1
 dj-database-url==3.0.1
 Django==5.2.15
-django-allauth>=65.13.1
+django-allauth==65.13.1
 django-cors-headers==4.9.0
 django-filter==25.1
 django_celery_results==2.6.0
