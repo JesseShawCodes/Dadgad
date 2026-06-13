@@ -2,7 +2,7 @@ amqp==5.3.1
 asgiref==3.9.2
 asttokens==3.0.1
 billiard==4.2.4
-celery==5.4.0
+celery==5.6.3
 certifi==2025.8.3
 cffi==2.0.0
 charset-normalizer==3.4.3
@@ -28,7 +28,7 @@ idna==3.10
 ipython==9.14.1
 ipython_pygments_lexers==1.1.1
 jedi==0.20.0
-kombu==5.5.4
+kombu==5.6.2
 matplotlib-inline==0.2.2
 mccabe==0.7.0
 packaging==25.0
