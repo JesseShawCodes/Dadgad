@@ -5,8 +5,6 @@ from rest_framework.renderers import JSONRenderer
 from .models import Bracket
 from .serializers import BracketSerializer, MatchupSerializer
 from .services import BracketService
-from apple_search.artist_page import artist_content
-from apple_search.artist_search import artist_search
 
 class BracketCreateFromArtistView(APIView):
     renderer_classes = [JSONRenderer]
