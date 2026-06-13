@@ -15,12 +15,11 @@ cryptography==46.0.2
 decorator==5.3.1
 dj-database-url==3.0.1
 Django==5.2.15
-django-allauth==65.11.2
+django-allauth>=65.13.1
 django-cors-headers==4.9.0
 django-filter==25.1
 django_celery_results==2.6.0
-djangorestframework==3.16.1
-dotenv==0.9.9
+djangorestframework==3.17.0
 entrypoints==0.4
 executing==2.2.1
 flake8==7.3.0
@@ -62,4 +61,4 @@ urllib3==2.5.0
 vine==5.1.0
 wcwidth==0.2.14
 wheel==0.45.1
-whitenoise==6.11.0
+whitenoise==6.12.0
