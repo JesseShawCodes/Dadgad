@@ -5,6 +5,7 @@ from rest_framework.renderers import JSONRenderer
 from .models import Bracket
 from .serializers import BracketSerializer, MatchupSerializer
 from .services import BracketService
+from apple_search.artist_page import top_songs_list_builder, featured_album_details
 
 
 class BracketCreateFromArtistView(APIView):
@@ -20,8 +21,8 @@ class BracketCreateFromArtistView(APIView):
             "name": f"{artist_name.replace('-', ' ').title()} Madness (Mock)",
             "artist_name": artist_name.replace('-', ' ').title(),
             "artist_id": artist_id,
-            "featured_albums": featured_albums,
-            "top_songs_list": items,
+            "featured_albums": featured_album_details(artist_id),
+            "top_songs_list": top_songs_list_builder(artist_id),
             "matchups": matchups
         }
         return Response(data, status=status.HTTP_200_OK)
