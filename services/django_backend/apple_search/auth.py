@@ -13,13 +13,18 @@ def log_error(e):
 
 
 def get_auth_token():
-    """Initial Get Auth Token. This should run if newest auth_token has expired"""
+    """
+    Initial Get Auth Token. This should run if newest auth_token has expired
+    """
     private_key = os.environ.get("apple_auth_key", "").replace("\\n", "\n")
     key_id = os.environ.get("apple_key_id", "")
     team_id = os.environ.get("apple_team_id", "")
 
     if not private_key or not key_id or not team_id:
-        print("Apple Music API credentials missing. Skipping auth token generation.")
+        print(
+            "Apple Music API credentials missing. "
+            "Skipping auth token generation."
+        )
         return None
 
     headers = {"alg": "ES256", "kid": key_id}
@@ -48,7 +53,10 @@ def get_newest_auth():
 
 
 def apple_request(
-    endpoint, params=None, base_url=os.environ["apple_artist_details_url"], default={}
+    endpoint,
+    params=None,
+    base_url=os.environ["apple_artist_details_url"],
+    default={},
 ):
     """Make a request to Apple Music API"""
     try:

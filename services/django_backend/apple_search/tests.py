@@ -19,10 +19,12 @@ class ArtistSearchTests(TestCase):
     @patch("apple_search.artist_search.get_newest_auth")
     @patch("apple_search.artist_search.requests.get")
     @patch("apple_search.artist_search.os.environ")
-    def test_artist_search_success(self, mock_environ, mock_get, mock_get_newest_auth):
+    def test_artist_search_success(
+        self, mock_environ, mock_get, mock_get_newest_auth
+    ):
         mock_get_newest_auth.return_value = "token123"
-        mock_environ.__getitem__.side_effect = (
-            lambda key: "http://api.apple.com/" if key == "apple_search_url" else key
+        mock_environ.__getitem__.side_effect = lambda key: (
+            "http://api.apple.com/" if key == "apple_search_url" else key
         )
 
         mock_response = MagicMock()
@@ -33,7 +35,9 @@ class ArtistSearchTests(TestCase):
                     "data": [
                         {
                             "attributes": {
-                                "artwork": {"url": "http://example.com/{w}x{h}.jpg"}
+                                "artwork": {
+                                    "url": "http://example.com/{w}x{h}.jpg"
+                                }
                             }
                         }
                     ]
@@ -45,7 +49,9 @@ class ArtistSearchTests(TestCase):
         result = artist_search("Deftones")
 
         self.assertEqual(
-            result["results"]["artists"]["data"][0]["attributes"]["artwork"]["url"],
+            result["results"]["artists"]["data"][0]["attributes"]["artwork"][
+                "url"
+            ],
             "http://example.com/400x400.jpg",
         )
         mock_get.assert_called_once()
@@ -59,8 +65,8 @@ class ArtistSearchTests(TestCase):
     ):
         mock_get_newest_auth.return_value = "expired_token"
         mock_get_auth_token.return_value = "new_token"
-        mock_environ.__getitem__.side_effect = (
-            lambda key: "http://api.apple.com/" if key == "apple_search_url" else key
+        mock_environ.__getitem__.side_effect = lambda key: (
+            "http://api.apple.com/" if key == "apple_search_url" else key
         )
 
         mock_response_fail = MagicMock()
@@ -68,7 +74,9 @@ class ArtistSearchTests(TestCase):
 
         mock_response_success = MagicMock()
         mock_response_success.status_code = 200
-        mock_response_success.json.return_value = {"results": {"artists": {"data": []}}}
+        mock_response_success.json.return_value = {
+            "results": {"artists": {"data": []}}
+        }
 
         mock_get.side_effect = [mock_response_fail, mock_response_success]
 
@@ -86,8 +94,8 @@ class ArtistSearchTests(TestCase):
     ):
         mock_get_newest_auth.return_value = "expired_token"
         mock_get_auth_token.return_value = None
-        mock_environ.__getitem__.side_effect = (
-            lambda key: "http://api.apple.com/" if key == "apple_search_url" else key
+        mock_environ.__getitem__.side_effect = lambda key: (
+            "http://api.apple.com/" if key == "apple_search_url" else key
         )
 
         mock_response_fail = MagicMock()
@@ -106,8 +114,8 @@ class ArtistSearchTests(TestCase):
         self, mock_environ, mock_get, mock_get_newest_auth
     ):
         mock_get_newest_auth.return_value = "token123"
-        mock_environ.__getitem__.side_effect = (
-            lambda key: "http://api.apple.com/" if key == "apple_search_url" else key
+        mock_environ.__getitem__.side_effect = lambda key: (
+            "http://api.apple.com/" if key == "apple_search_url" else key
         )
 
         mock_response = MagicMock()
@@ -131,8 +139,8 @@ class ArtistSearchTests(TestCase):
         self, mock_environ, mock_get, mock_get_newest_auth
     ):
         mock_get_newest_auth.return_value = "token123"
-        mock_environ.__getitem__.side_effect = (
-            lambda key: "http://api.apple.com/" if key == "apple_search_url" else key
+        mock_environ.__getitem__.side_effect = lambda key: (
+            "http://api.apple.com/" if key == "apple_search_url" else key
         )
 
         # Missing results
@@ -148,14 +156,18 @@ class ArtistSearchTests(TestCase):
 
         # Missing data
         mock_response.json.return_value = {"results": {"artists": {}}}
-        self.assertEqual(artist_search("Deftones"), {"results": {"artists": {}}})
+        self.assertEqual(
+            artist_search("Deftones"), {"results": {"artists": {}}}
+        )
 
         # Missing artwork
         mock_response.json.return_value = {
             "results": {"artists": {"data": [{"attributes": {}}]}}
         }
         result = artist_search("Deftones")
-        self.assertEqual(result["results"]["artists"]["data"][0]["attributes"], {})
+        self.assertEqual(
+            result["results"]["artists"]["data"][0]["attributes"], {}
+        )
 
 
 class ArtistPageTests(TestCase):
@@ -198,7 +210,9 @@ class ArtistPageTests(TestCase):
         self.assertEqual(result, {})
 
     @patch("apple_search.artist_page.apple_request")
-    def test_get_artist_high_level_details_missing_keys(self, mock_apple_request):
+    def test_get_artist_high_level_details_missing_keys(
+        self, mock_apple_request
+    ):
         # Missing attributes
         mock_apple_request.return_value = {"data": [{"id": "12345"}]}
         result = get_artist_high_level_details("12345")
@@ -209,7 +223,9 @@ class ArtistPageTests(TestCase):
             "data": [
                 {
                     "id": "12345",
-                    "attributes": {"artwork": {"url": "http://example.com/image.jpg"}},
+                    "attributes": {
+                        "artwork": {"url": "http://example.com/image.jpg"}
+                    },
                 }
             ]
         }
@@ -226,7 +242,10 @@ class ArtistPageTests(TestCase):
         # Missing artwork url
         mock_apple_request.return_value = {
             "data": [
-                {"id": "12345", "attributes": {"name": "Test Artist", "artwork": {}}}
+                {
+                    "id": "12345",
+                    "attributes": {"name": "Test Artist", "artwork": {}},
+                }
             ]
         }
         result = get_artist_high_level_details("12345")
@@ -267,19 +286,28 @@ class ArtistPageTests(TestCase):
         # Test with empty list
         self.assertEqual(dedupe_songs([]), [])
 
-        # Test with songs having no id (these are filtered out by the current logic)
+        # Test with songs having no id
+        # (these are filtered out by the current logic)
         songs_no_id = [
             {"type": "songs", "title": "Song A"},
             {"type": "songs", "title": "Song B"},
         ]
-        self.assertEqual(dedupe_songs(songs_no_id), [])  # Corrected expectation
+        self.assertEqual(
+            dedupe_songs(songs_no_id), []
+        )  # Corrected expectation
 
     def test_check_substrings(self):
-        self.assertTrue(check_substrings("Artist Essentials Playlist", ["Essentials"]))
         self.assertTrue(
-            check_substrings("Deep Cuts Collection", ["Essentials", "Deep Cuts"])
+            check_substrings("Artist Essentials Playlist", ["Essentials"])
         )
-        self.assertFalse(check_substrings("Top Hits", ["Essentials", "Deep Cuts"]))
+        self.assertTrue(
+            check_substrings(
+                "Deep Cuts Collection", ["Essentials", "Deep Cuts"]
+            )
+        )
+        self.assertFalse(
+            check_substrings("Top Hits", ["Essentials", "Deep Cuts"])
+        )
         self.assertFalse(check_substrings("Any String", []))
         self.assertFalse(check_substrings("", ["Essentials"]))
 
@@ -292,8 +320,14 @@ class ArtistPageTests(TestCase):
             # First call for playlists
             {
                 "data": [
-                    {"id": "playlist1", "attributes": {"name": "Artist Essentials"}},
-                    {"id": "playlist2", "attributes": {"name": "Other Playlist"}},
+                    {
+                        "id": "playlist1",
+                        "attributes": {"name": "Artist Essentials"},
+                    },
+                    {
+                        "id": "playlist2",
+                        "attributes": {"name": "Other Playlist"},
+                    },
                     {"id": "playlist3", "attributes": {"name": "Deep Cuts"}},
                 ]
             },
@@ -318,10 +352,16 @@ class ArtistPageTests(TestCase):
                 ]
             },
             # Calls for top-songs offset=0
-            {"data": [{"id": "ts1", "type": "songs"}, {"id": "ts2", "type": "songs"}]},
+            {
+                "data": [
+                    {"id": "ts1", "type": "songs"},
+                    {"id": "ts2", "type": "songs"},
+                ]
+            },
             # Calls for top-songs offset=10
             {"data": [{"id": "ts3", "type": "songs"}]},
-            # Subsequent calls should return empty data to stop the loop (8 more for a total of 12)
+            # Subsequent calls should return empty data to stop the loop
+            # (8 more for a total of 12)
             {"data": []},
             {"data": []},
             {"data": []},
@@ -346,7 +386,9 @@ class ArtistPageTests(TestCase):
         self.assertEqual(mock_dedupe_songs.call_count, 1)
 
     @patch("apple_search.artist_page.apple_request")
-    def test_top_songs_list_builder_no_playlists_or_songs(self, mock_apple_request):
+    def test_top_songs_list_builder_no_playlists_or_songs(
+        self, mock_apple_request
+    ):
         mock_apple_request.side_effect = [
             {"data": []},  # No playlists
             {"data": []},  # Call for playlists?ids= (even if empty)
@@ -384,14 +426,21 @@ class ArtistPageTests(TestCase):
         self.assertEqual(result, [])
 
     @patch("apple_search.artist_page.apple_request")
-    def test_top_songs_list_builder_no_tracks_in_playlist(self, mock_apple_request):
+    def test_top_songs_list_builder_no_tracks_in_playlist(
+        self, mock_apple_request
+    ):
         mock_apple_request.side_effect = [
             {
                 "data": [
-                    {"id": "playlist1", "attributes": {"name": "Artist Essentials"}}
+                    {
+                        "id": "playlist1",
+                        "attributes": {"name": "Artist Essentials"},
+                    }
                 ]
             },
-            {"data": [{"relationships": {"tracks": {"data": []}}}]},  # Empty tracks
+            {
+                "data": [{"relationships": {"tracks": {"data": []}}}]
+            },  # Empty tracks
             {"data": []},
             {"data": []},
             {"data": []},
@@ -408,7 +457,9 @@ class ArtistPageTests(TestCase):
 
     @patch("apple_search.artist_page.apple_request")
     def test_featured_album_details_success(self, mock_apple_request):
-        mock_apple_request.return_value = {"data": [{"type": "albums", "id": "a1"}]}
+        mock_apple_request.return_value = {
+            "data": [{"type": "albums", "id": "a1"}]
+        }
         result = featured_album_details("artist1")
         self.assertEqual(result, {"data": [{"type": "albums", "id": "a1"}]})
         mock_apple_request.assert_called_once_with(
@@ -439,13 +490,21 @@ class ArtistPageTests(TestCase):
         ]
         result = add_weight_to_songs(songs, albums)
         expected = [
-            {"attributes": {"albumName": "Album A"}, "rank": 1, "featured_album": True},
+            {
+                "attributes": {"albumName": "Album A"},
+                "rank": 1,
+                "featured_album": True,
+            },
             {
                 "attributes": {"albumName": "Album B"},
                 "rank": 2,
                 "featured_album": False,
             },
-            {"attributes": {"albumName": "Album C"}, "rank": 3, "featured_album": True},
+            {
+                "attributes": {"albumName": "Album C"},
+                "rank": 3,
+                "featured_album": True,
+            },
             {"rank": 4},
         ]
         self.assertEqual(result, expected)
@@ -478,7 +537,10 @@ class ArtistPageTests(TestCase):
     @patch("apple_search.artist_page.featured_album_details")
     @patch("apple_search.artist_page.top_songs_list_builder")
     @patch("apple_search.artist_page.get_artist_high_level_details")
-    @patch("apple_search.artist_page.format_image", return_value="formatted_image_url")
+    @patch(
+        "apple_search.artist_page.format_image",
+        return_value="formatted_image_url",
+    )
     def test_artist_content_cache_hit(
         self,
         mock_format_image,
@@ -497,12 +559,19 @@ class ArtistPageTests(TestCase):
 
     @patch("apple_search.artist_page.cache")
     @patch(
-        "apple_search.artist_page.add_weight_to_songs", return_value="weighted_songs"
+        "apple_search.artist_page.add_weight_to_songs",
+        return_value="weighted_songs",
     )
     @patch("apple_search.artist_page.featured_album_details")
-    @patch("apple_search.artist_page.top_songs_list_builder", return_value="top_songs")
+    @patch(
+        "apple_search.artist_page.top_songs_list_builder",
+        return_value="top_songs",
+    )
     @patch("apple_search.artist_page.get_artist_high_level_details")
-    @patch("apple_search.artist_page.format_image", return_value="formatted_image_url")
+    @patch(
+        "apple_search.artist_page.format_image",
+        return_value="formatted_image_url",
+    )
     def test_artist_content_success_with_albums(
         self,
         mock_format_image,
@@ -518,7 +587,9 @@ class ArtistPageTests(TestCase):
             "artist_id": "123",
             "image_url": "http://example.com/raw.jpg",
         }
-        mock_featured_album_details.return_value = {"data": [{"name": "Album1"}]}
+        mock_featured_album_details.return_value = {
+            "data": [{"name": "Album1"}]
+        }
 
         result = artist_content("123")
         expected_output = {
@@ -542,12 +613,19 @@ class ArtistPageTests(TestCase):
 
     @patch("apple_search.artist_page.cache")
     @patch(
-        "apple_search.artist_page.add_weight_to_songs", return_value="weighted_songs"
+        "apple_search.artist_page.add_weight_to_songs",
+        return_value="weighted_songs",
     )
     @patch("apple_search.artist_page.featured_album_details")
-    @patch("apple_search.artist_page.top_songs_list_builder", return_value="top_songs")
+    @patch(
+        "apple_search.artist_page.top_songs_list_builder",
+        return_value="top_songs",
+    )
     @patch("apple_search.artist_page.get_artist_high_level_details")
-    @patch("apple_search.artist_page.format_image", return_value="formatted_image_url")
+    @patch(
+        "apple_search.artist_page.format_image",
+        return_value="formatted_image_url",
+    )
     def test_artist_content_success_no_albums(
         self,
         mock_format_image,
@@ -587,7 +665,8 @@ class ArtistPageTests(TestCase):
         self, mock_format_image, mock_get_artist_high_level_details, mock_cache
     ):
         mock_cache.get.return_value = None
-        mock_get_artist_high_level_details.return_value = {}  # Artist not found or missing critical data
+        # Artist not found or missing critical data
+        mock_get_artist_high_level_details.return_value = {}
 
         result = artist_content("123")
         self.assertEqual(result, {"error": "Artist not found"})
@@ -596,12 +675,19 @@ class ArtistPageTests(TestCase):
 
     @patch("apple_search.artist_page.cache")
     @patch(
-        "apple_search.artist_page.add_weight_to_songs", return_value="weighted_songs"
+        "apple_search.artist_page.add_weight_to_songs",
+        return_value="weighted_songs",
     )
     @patch("apple_search.artist_page.featured_album_details")
-    @patch("apple_search.artist_page.top_songs_list_builder", return_value="top_songs")
+    @patch(
+        "apple_search.artist_page.top_songs_list_builder",
+        return_value="top_songs",
+    )
     @patch("apple_search.artist_page.get_artist_high_level_details")
-    @patch("apple_search.artist_page.format_image", return_value="formatted_image_url")
+    @patch(
+        "apple_search.artist_page.format_image",
+        return_value="formatted_image_url",
+    )
     def test_artist_content_artist_id_conversion(
         self,
         mock_format_image,
@@ -617,7 +703,9 @@ class ArtistPageTests(TestCase):
             "artist_id": "123",
             "image_url": "http://example.com/raw.jpg",
         }
-        mock_featured_album_details.return_value = {"data": [{"name": "Album1"}]}
+        mock_featured_album_details.return_value = {
+            "data": [{"name": "Album1"}]
+        }
 
         result = artist_content("123")
         self.assertIsInstance(result["artist_id"], int)
@@ -652,10 +740,14 @@ class AppleSearchViewTests(TestCase):
 
     @patch("apple_search.views.artist_content")
     @patch("apple_search.views.artist_search")
-    def test_artist_page_view_success(self, mock_artist_search, mock_artist_content):
+    def test_artist_page_view_success(
+        self, mock_artist_search, mock_artist_content
+    ):
         mock_artist_search.return_value = {
             "results": {
-                "artists": {"data": [{"attributes": {"name": "Deftones"}, "id": "123"}]}
+                "artists": {
+                    "data": [{"attributes": {"name": "Deftones"}, "id": "123"}]
+                }
             }
         }
         mock_artist_content.return_value = {"name": "Deftones", "id": "123"}
@@ -669,15 +761,22 @@ class AppleSearchViewTests(TestCase):
 
     @patch("apple_search.views.artist_content")
     @patch("apple_search.views.artist_search")
-    def test_artist_page_view_hyphen(self, mock_artist_search, mock_artist_content):
+    def test_artist_page_view_hyphen(
+        self, mock_artist_search, mock_artist_content
+    ):
         mock_artist_search.return_value = {
             "results": {
                 "artists": {
-                    "data": [{"attributes": {"name": "The Deftones"}, "id": "123"}]
+                    "data": [
+                        {"attributes": {"name": "The Deftones"}, "id": "123"}
+                    ]
                 }
             }
         }
-        mock_artist_content.return_value = {"name": "The Deftones", "id": "123"}
+        mock_artist_content.return_value = {
+            "name": "The Deftones",
+            "id": "123",
+        }
 
         response = self.client.get("/artist-page/The-Deftones")
 
@@ -686,7 +785,9 @@ class AppleSearchViewTests(TestCase):
 
     @patch("apple_search.views.artist_search")
     def test_artist_page_view_not_found(self, mock_artist_search):
-        mock_artist_search.return_value = {"results": {"artists": {"data": []}}}
+        mock_artist_search.return_value = {
+            "results": {"artists": {"data": []}}
+        }
 
         response = self.client.get("/artist-page/Unknown")
 
@@ -698,7 +799,9 @@ class AppleSearchViewTests(TestCase):
         mock_artist_search.return_value = {
             "results": {
                 "artists": {
-                    "data": [{"attributes": {"name": "Other Artist"}, "id": "123"}]
+                    "data": [
+                        {"attributes": {"name": "Other Artist"}, "id": "123"}
+                    ]
                 }
             }
         }
@@ -736,7 +839,11 @@ class AppleSearchViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(),
-            {"status": "SUCCESS", "request_id": "test-id", "result": {"data": "ok"}},
+            {
+                "status": "SUCCESS",
+                "request_id": "test-id",
+                "result": {"data": "ok"},
+            },
         )
 
     @patch("apple_search.views.AsyncResult")

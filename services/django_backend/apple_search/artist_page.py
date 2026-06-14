@@ -15,7 +15,9 @@ def artist_content(artist_id):
     output = {}
     # Use ThreadPoolExecutor to run the functions concurrently
     with concurrent.futures.ThreadPoolExecutor() as executer:
-        future_artist = executer.submit(get_artist_high_level_details, artist_id)
+        future_artist = executer.submit(
+            get_artist_high_level_details, artist_id
+        )
         future_albums = executer.submit(featured_album_details, artist_id)
         future_songs = executer.submit(top_songs_list_builder, artist_id)
 
@@ -38,7 +40,9 @@ def artist_content(artist_id):
         output["top_songs_list"] = add_weight_to_songs(songs, [])
     else:
         output["featured_albums"] = albums
-        output["top_songs_list"] = add_weight_to_songs(songs, albums.get("data", []))
+        output["top_songs_list"] = add_weight_to_songs(
+            songs, albums.get("data", [])
+        )
 
     # Cache result for 1 hour
     cache.set(cache_key, output, timeout=3600)
@@ -83,7 +87,9 @@ def dedupe_songs(songs):
 
 
 def check_substrings(string, substrings):
-    """Substring check. Used to filter out playlists that do not have useful data."""
+    """
+    Substring check. Used to filter out playlists that do not have useful data.
+    """
     return any(sub in string for sub in substrings)
 
 
@@ -99,11 +105,14 @@ def top_songs_list_builder(artist_id):
                 and item.get("attributes")
                 and item["attributes"].get("name")
                 and check_substrings(
-                    item["attributes"]["name"], ["Essentials", "Deep Cuts", "Set List"]
+                    item["attributes"]["name"],
+                    ["Essentials", "Deep Cuts", "Set List"],
                 )
             ):
                 artist_playlist_ids.append(item["id"])
-    playlists_content = apple_request(f"playlists?ids={','.join(artist_playlist_ids)}")
+    playlists_content = apple_request(
+        f"playlists?ids={','.join(artist_playlist_ids)}"
+    )
     if playlists_content and playlists_content.get("data"):
         for song_list in playlists_content.get("data", []):
             if (
@@ -115,7 +124,9 @@ def top_songs_list_builder(artist_id):
                     top_songs_list.append(song)
     # loop by intervals of 10
     for page in range(0, 100, 10):
-        request = apple_request(f"artists/{artist_id}/view/top-songs?offset={page}")
+        request = apple_request(
+            f"artists/{artist_id}/view/top-songs?offset={page}"
+        )
         if not request or "errors" in request.keys():
             break
         for song in request.get("data", []):
@@ -135,10 +146,14 @@ def add_weight_to_songs(songs_list, albums_list):
     albums_name_list = {
         album["attributes"]["name"]
         for album in albums_list
-        if album and album.get("attributes") and album["attributes"].get("name")
+        if album
+        and album.get("attributes")
+        and album["attributes"].get("name")
     }
     for idx, song in enumerate(songs_list):
         song["rank"] = idx + 1
         if song.get("attributes") and song["attributes"].get("albumName"):
-            song["featured_album"] = song["attributes"]["albumName"] in albums_name_list
+            song["featured_album"] = (
+                song["attributes"]["albumName"] in albums_name_list
+            )
     return songs_list

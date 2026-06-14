@@ -17,7 +17,11 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-from apple_search.views import artist_search_view, artist_page_view, task_status_view
+from apple_search.views import (
+    artist_search_view,
+    artist_page_view,
+    task_status_view,
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),

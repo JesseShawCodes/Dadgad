@@ -1,4 +1,7 @@
-"""Search functions to perform the initial artist search from the application search page."""
+"""
+Search functions to perform the initial artist search from the
+application search page.
+"""
 
 import os
 import requests
@@ -9,8 +12,12 @@ def artist_search(artist_name):
     """Search for Artist Function"""
     auth_token = get_newest_auth()
     headers = {"Authorization": f"Bearer {auth_token}"}
+    url = (
+        f"{os.environ['apple_search_url']}{artist_name}"
+        "&types=artists&limit=20"
+    )
     r = requests.get(
-        f"{os.environ['apple_search_url']}{artist_name}&types=artists&limit=20",
+        url,
         headers=headers,
         timeout=5,
     )
@@ -19,8 +26,12 @@ def artist_search(artist_name):
         if not auth_token:
             return {}
         headers = {"Authorization": f"Bearer {auth_token}"}
+        url = (
+            f"{os.environ['apple_search_url']}{artist_name}"
+            "&types=artists&limit=20"
+        )
         r = requests.get(
-            f"{os.environ['apple_search_url']}{artist_name}&types=artists&limit=20",
+            url,
             headers=headers,
             timeout=5,
         )
@@ -38,7 +49,9 @@ def artist_search(artist_name):
         for result in result1["results"]["artists"]["data"]:
             if "artwork" in result["attributes"]:
                 formatted_url = result["attributes"]["artwork"]["url"]
-                result["attributes"]["artwork"]["url"] = format_image(formatted_url)
+                result["attributes"]["artwork"]["url"] = format_image(
+                    formatted_url
+                )
     return result1
 
 
