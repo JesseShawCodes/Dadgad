@@ -5,16 +5,15 @@ from rest_framework.renderers import JSONRenderer
 from .models import Bracket
 from .serializers import BracketSerializer, MatchupSerializer
 from .services import BracketService
-from apple_search.artist_page import top_songs_list_builder, featured_album_details
+from apple_search.artist_page import top_songs_list_builder
+from apple_search.artist_page import featured_album_details
 
 
 class BracketCreateFromArtistView(APIView):
     renderer_classes = [JSONRenderer]
 
     def get(self, request,  artist_id, artist_name="Bruce Springsteen"):
-        items = []
         matchups = []
-        featured_albums = {}
         artist_name = artist_name.replace('-', ' ').title()
 
         data = {
