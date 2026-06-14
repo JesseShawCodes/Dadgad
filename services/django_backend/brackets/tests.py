@@ -1,7 +1,9 @@
 from django.test import TestCase
 from rest_framework.test import APIClient
 
+
 class BracketViewTests(TestCase):
+    """Test the bracket creation view"""
     def setUp(self):
         self.client = APIClient()
 

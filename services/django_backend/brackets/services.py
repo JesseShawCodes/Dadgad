@@ -25,7 +25,9 @@ class BracketService:
         selected_songs = songs[:bracket_size]
 
         bracket = Bracket.objects.create(
-            name=f"{artist_name} Madness", artist_id=artist_id, artist_name=artist_name
+            name=f"{artist_name} Madness",
+            artist_id=artist_id,
+            artist_name=artist_name,
         )
 
         # Create items
@@ -66,17 +68,17 @@ class BracketService:
 
         # Link matchups to their next_matchup
         for r in range(1, num_rounds):
-            for m in range(len(matchups_by_round[r])):
-                next_match_index = m // 2
-                matchups_by_round[r][m].next_matchup = matchups_by_round[r + 1][
-                    next_match_index
-                ]
-                matchups_by_round[r][m].save()
+            next_round = matchups_by_round[r + 1]
+            for m, matchup in enumerate(matchups_by_round[r]):
+                next_idx = m // 2
+                matchup.next_matchup = next_round[next_idx]
+                matchup.save()
 
         # Assign Round 1 items based on seeding
         # Standard tournament seeding (1 vs 16, 8 vs 9, etc.)
         # For a simple implementation, let's just do 1 vs 16, 2 vs 15 ...
-        # Better: [1, 16], [8, 9], [5, 12], [4, 13], [3, 14], [6, 11], [7, 10], [2, 15]
+        # Better: [1, 16], [8, 9], [5, 12], [4, 13],
+        # [3, 14], [6, 11], [7, 10], [2, 15]
 
         def get_seeding_order(size):
             if size == 1:
@@ -118,9 +120,9 @@ class BracketService:
 
         if matchup.next_matchup:
             next_m = matchup.next_matchup
-            # If matchup_number is even, winner becomes item1 in next_matchup
-            # If matchup_number is odd, winner becomes item2 in next_matchup
-            if matchup.matchup_number % 2 == 0:
+            # If matchup_num is even, winner becomes item1 in next_matchup
+            # If matchup_num is odd, winner becomes item2 in next_matchup
+            if matchup.matchup_num % 2 == 0:
                 next_m.item1 = winner
             else:
                 next_m.item2 = winner

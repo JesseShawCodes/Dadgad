@@ -56,7 +56,11 @@ class Migration(migrations.Migration):
                 ),
                 ("name", models.CharField(max_length=255)),
                 ("apple_id", models.CharField(max_length=255)),
-                ("image_url", models.URLField(blank=True, max_length=1000, null=True)),
+                ("image_url", models.URLField(
+                    blank=True,
+                    max_length=1000,
+                    null=True,
+                )),
                 ("seed", models.IntegerField()),
                 (
                     "bracket",
@@ -84,7 +88,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("round_number", models.IntegerField()),
-                ("matchup_number", models.IntegerField()),
+                ("matchup_num", models.IntegerField()),
                 (
                     "bracket",
                     models.ForeignKey(

@@ -20,7 +20,7 @@ class MatchupAdmin(admin.ModelAdmin):
     list_display = (
         "bracket",
         "round_number",
-        "matchup_number",
+        "matchup_num",
         "item1",
         "item2",
         "winner",

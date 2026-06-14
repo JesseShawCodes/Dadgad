@@ -9,7 +9,11 @@ class Bracket(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     owner = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="brackets"
     )
     is_completed = models.BooleanField(default=False)
 
@@ -18,7 +22,11 @@ class Bracket(models.Model):
 
 
 class BracketItem(models.Model):
-    bracket = models.ForeignKey(Bracket, related_name="items", on_delete=models.CASCADE)
+    bracket = models.ForeignKey(
+        Bracket,
+        related_name="items",
+        on_delete=models.CASCADE
+    )
     name = models.CharField(max_length=255)
     apple_id = models.CharField(max_length=255)
     image_url = models.URLField(max_length=1000, null=True, blank=True)
@@ -36,7 +44,7 @@ class Matchup(models.Model):
         Bracket, related_name="matchups", on_delete=models.CASCADE
     )
     round_number = models.IntegerField()
-    matchup_number = models.IntegerField()  # index within the round
+    matchup_num = models.IntegerField()  # index within the round
 
     item1 = models.ForeignKey(
         BracketItem,
@@ -70,7 +78,7 @@ class Matchup(models.Model):
     )
 
     class Meta:
-        ordering = ["round_number", "matchup_number"]
+        ordering = ["round_number", "matchup_num"]
 
     def __str__(self):
-        return f"Bracket {self.bracket_id} - Round {self.round_number} Match {self.matchup_number}"
+        return f"B{self.bracket_id} R{self.round_number} M{self.matchup_num}"
