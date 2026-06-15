@@ -13,16 +13,26 @@ class BracketCreateFromArtistView(APIView):
     renderer_classes = [JSONRenderer]
 
     def get(self, request,  artist_id, artist_name="Bruce Springsteen"):
-        matchups = []
         artist_name = artist_name.replace('-', ' ').title()
+        songs = top_songs_list_builder(artist_id)
+
+        bracket = BracketService.create_bracket(
+            artist_id,
+            artist_name,
+            songs
+        )
 
         data = {
-            "name": f"{artist_name.replace('-', ' ').title()} Madness (Mock)",
-            "artist_name": artist_name.replace('-', ' ').title(),
+            "name": f"{artist_name} Madness (Mock)",
+            "artist_name": artist_name,
             "artist_id": artist_id,
             "featured_albums": featured_album_details(artist_id),
-            "top_songs_list": top_songs_list_builder(artist_id),
-            "matchups": matchups
+            "top_songs_list": songs,
+            "matchups": MatchupSerializer(
+                bracket.matchups.all(),
+                many=True
+            ).data,
+            "bracket_id": bracket.id,
         }
         return Response(data, status=status.HTTP_200_OK)
 

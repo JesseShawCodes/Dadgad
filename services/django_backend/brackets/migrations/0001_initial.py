@@ -88,7 +88,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("round_number", models.IntegerField()),
-                ("matchup_num", models.IntegerField()),
+                ("matchup_number", models.IntegerField()),
                 (
                     "bracket",
                     models.ForeignKey(

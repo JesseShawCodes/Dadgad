@@ -30,6 +30,9 @@ class BracketService:
             artist_name=artist_name,
         )
 
+        if len(songs) < 2:
+            return bracket
+
         # Create items
         bracket_items = []
         for i, song in enumerate(selected_songs):
@@ -62,7 +65,7 @@ class BracketService:
             matchups_by_round[r] = []
             for m in range(num_matches_in_round):
                 matchup = Matchup.objects.create(
-                    bracket=bracket, round_number=r, matchup_number=m
+                    bracket=bracket, round_number=r, matchup_num=m
                 )
                 matchups_by_round[r].append(matchup)
 
@@ -134,3 +137,11 @@ class BracketService:
             bracket.save()
 
         return matchup
+
+    @staticmethod
+    def create_matchups(songs, round_number, round_name):
+        """
+        Creates the matchups for a bracket.
+        """
+
+        return {"Test": "Hello"}
