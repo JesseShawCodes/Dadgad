@@ -9,6 +9,11 @@ class BracketService:
         Creates a bracket and its initial matchups.
         Currently supports power-of-2 sized brackets (e.g., 16, 32).
         """
+        # Check if bracket already exists for this artist
+        existing_bracket = Bracket.objects.filter(artist_id=artist_id).first()
+        if existing_bracket:
+            return existing_bracket
+
         # Limit to 16, 32 or 64 songs for now to keep it manageable
         num_songs = len(songs)
         if num_songs >= 64:
