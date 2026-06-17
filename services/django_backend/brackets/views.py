@@ -100,3 +100,16 @@ class MatchupWinnerView(APIView):
                 {"error": str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class SelectMatchupWinnerView(APIView):
+    renderer_classes = [JSONRenderer]
+
+    def post(self, request):
+        print("--------------------------------")
+        print(request.data)
+        print("--------------------------------")
+        # The bracket should be updated with the new winner.
+        # The bracket should be returned to the frontend.
+        bracket = BracketService.update_bracket(request.data)
+        return Response({"message": "Success!!"}, status=status.HTTP_200_OK)

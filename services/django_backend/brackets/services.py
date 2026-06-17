@@ -254,4 +254,3 @@ class BracketService:
             )
 
         return structured_data
-

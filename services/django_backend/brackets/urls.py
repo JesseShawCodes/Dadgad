@@ -3,6 +3,7 @@ from .views import (
     BracketDetailView,
     MatchupWinnerView,
     BracketCreateFromArtistView,
+    SelectMatchupWinnerView,
 )
 
 urlpatterns = [
@@ -20,5 +21,10 @@ urlpatterns = [
         "matchups/<int:pk>/winner/",
         MatchupWinnerView.as_view(),
         name="matchup-winner",
+    ),
+    path(
+        "brackets/select-matchup-winner/",
+        SelectMatchupWinnerView.as_view(),
+        name="select-matchup-winner",
     ),
 ]
