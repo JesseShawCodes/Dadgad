@@ -197,7 +197,6 @@ class BracketCacheTests(TestCase):
         mock_songs,
         mock_get_id,
         mock_cache,
-        mock_update_bracket
     ):
         # Setup mock cache miss
         mock_cache.get.return_value = None
