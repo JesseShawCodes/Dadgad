@@ -255,10 +255,3 @@ class BracketService:
 
         return structured_data
 
-    @staticmethod
-    def create_matchups(songs, round_number, round_name):
-        """
-        Creates the matchups for a bracket.
-        """
-
-        return {"Test": "Hello"}
