@@ -11,7 +11,7 @@ class BracketViewTests(TestCase):
         self.client = APIClient()
 
     def test_bracket_create_from_artist_mock(self):
-        response = self.client.get("/api/brackets/artist/123456789")
+        response = self.client.get("/api/brackets/artist/deftones")
 
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.data["artist_name"], str)
@@ -158,14 +158,16 @@ class BracketCacheTests(TestCase):
         self.client = APIClient()
 
     @patch("brackets.views.cache")
+    @patch("brackets.views.get_artist_id_by_name")
     @patch("brackets.views.top_songs_list_builder")
     @patch("brackets.views.featured_album_details")
     @patch("brackets.views.BracketService.create_bracket")
     def test_bracket_create_cache_hit(
-        self, mock_create, mock_albums, mock_songs, mock_cache
+        self, mock_create, mock_albums, mock_songs, mock_get_id, mock_cache
     ):
         # Setup mock cache hit
         mock_cache.get.return_value = {"cached": "data"}
+        mock_get_id.return_value = "12345"
 
         response = self.client.get("/api/brackets/artist/12345")
 
@@ -181,15 +183,17 @@ class BracketCacheTests(TestCase):
         mock_create.assert_not_called()
 
     @patch("brackets.views.cache")
+    @patch("brackets.views.get_artist_id_by_name")
     @patch("brackets.views.top_songs_list_builder")
     @patch("brackets.views.featured_album_details")
     @patch("brackets.views.BracketService.create_bracket")
     @patch("brackets.views.BracketService.get_structured_bracket")
     def test_bracket_create_cache_miss(
-        self, mock_structured, mock_create, mock_albums, mock_songs, mock_cache
+        self, mock_structured, mock_create, mock_albums, mock_songs, mock_get_id, mock_cache
     ):
         # Setup mock cache miss
         mock_cache.get.return_value = None
+        mock_get_id.return_value = "12345"
         mock_songs.return_value = []
         mock_albums.return_value = {"data": []}
 

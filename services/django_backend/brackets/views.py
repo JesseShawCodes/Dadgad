@@ -17,7 +17,8 @@ from apple_search.artist_page import (
 class BracketCreateFromArtistView(APIView):
     renderer_classes = [JSONRenderer]
 
-    def get(self, request,  artist_id, artist_name="Bruce Springsteen"):
+    def get(self, request, artist_name):
+        artist_id = get_artist_id_by_name(artist_name)
         cache_key = f"bracket_create:{artist_id}"
         cached_data = cache.get(cache_key)
         if cached_data:
