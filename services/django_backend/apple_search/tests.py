@@ -866,3 +866,41 @@ class AppleSearchViewTests(TestCase):
                 "error": "Error message",
             },
         )
+
+
+class ArtistIDLookupTests(TestCase):
+    @patch("apple_search.views.artist_search")
+    def test_get_artist_id_by_name_success(self, mock_artist_search):
+        from apple_search.views import get_artist_id_by_name
+        mock_artist_search.return_value = {
+            "results": {
+                "artists": {
+                    "data": [{"attributes": {"name": "Deftones"}, "id": "123"}]
+                }
+            }
+        }
+        self.assertEqual(get_artist_id_by_name("Deftones"), "123")
+        mock_artist_search.assert_called_once_with("Deftones")
+
+    @patch("apple_search.views.artist_search")
+    def test_get_artist_id_by_name_hyphen(self, mock_artist_search):
+        from apple_search.views import get_artist_id_by_name
+        mock_artist_search.return_value = {
+            "results": {
+                "artists": {
+                    "data": [
+                        {"attributes": {"name": "The Deftones"}, "id": "123"}
+                    ]
+                }
+            }
+        }
+        self.assertEqual(get_artist_id_by_name("The-Deftones"), "123")
+        mock_artist_search.assert_called_once_with("The Deftones")
+
+    @patch("apple_search.views.artist_search")
+    def test_get_artist_id_by_name_not_found(self, mock_artist_search):
+        from apple_search.views import get_artist_id_by_name
+        mock_artist_search.return_value = {
+            "results": {"artists": {"data": []}}
+        }
+        self.assertIsNone(get_artist_id_by_name("Unknown"))

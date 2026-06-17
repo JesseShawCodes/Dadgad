@@ -2,19 +2,34 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
+from django.core.cache import cache
 from .models import Bracket
 from .serializers import BracketSerializer, MatchupSerializer
 from .services import BracketService
-from apple_search.artist_page import top_songs_list_builder
-from apple_search.artist_page import featured_album_details
+from apple_search.artist_page import (
+    top_songs_list_builder,
+    featured_album_details,
+    add_weight_to_songs,
+)
 
 
 class BracketCreateFromArtistView(APIView):
     renderer_classes = [JSONRenderer]
 
     def get(self, request,  artist_id, artist_name="Bruce Springsteen"):
+        cache_key = f"bracket_create:{artist_id}"
+        cached_data = cache.get(cache_key)
+        if cached_data:
+            return Response(cached_data, status=status.HTTP_200_OK)
+
         artist_name = artist_name.replace('-', ' ').title()
         songs = top_songs_list_builder(artist_id)
+        albums = featured_album_details(artist_id)
+        # Add weights (rank and featured_album status) to songs
+        songs = add_weight_to_songs(
+            songs,
+            albums.get("data", []) if albums and "data" in albums else []
+        )
 
         bracket = BracketService.create_bracket(
             artist_id,
@@ -26,14 +41,16 @@ class BracketCreateFromArtistView(APIView):
             "name": f"{artist_name} Madness (Mock)",
             "artist_name": artist_name,
             "artist_id": artist_id,
-            "featured_albums": featured_album_details(artist_id),
+            "featured_albums": albums,
             "top_songs_list": songs,
             "matchups": MatchupSerializer(
                 bracket.matchups.all(),
                 many=True
             ).data,
             "bracket_id": bracket.id,
+            "bracket": BracketService.get_structured_bracket(bracket, songs)
         }
+        cache.set(cache_key, data, timeout=3600)
         return Response(data, status=status.HTTP_200_OK)
 
 
