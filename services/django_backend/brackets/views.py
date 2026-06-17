@@ -10,6 +10,7 @@ from apple_search.artist_page import (
     top_songs_list_builder,
     featured_album_details,
     add_weight_to_songs,
+    get_artist_id_by_name,
 )
 
 
@@ -25,6 +26,7 @@ class BracketCreateFromArtistView(APIView):
         artist_name = artist_name.replace('-', ' ').title()
         songs = top_songs_list_builder(artist_id)
         albums = featured_album_details(artist_id)
+        artist_id = get_artist_id_by_name(artist_name)
         # Add weights (rank and featured_album status) to songs
         songs = add_weight_to_songs(
             songs,

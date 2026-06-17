@@ -15,7 +15,7 @@ class BracketViewTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(response.data["artist_name"], str)
-        self.assertIsInstance(response.data["artist_id"], int)
+        self.assertIsInstance(response.data["artist_id"], str)
         self.assertEqual(len(response.data["top_songs_list"]), 0)
         self.assertEqual(len(response.data["matchups"]), 0)
 

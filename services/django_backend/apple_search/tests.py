@@ -739,7 +739,7 @@ class AppleSearchViewTests(TestCase):
         mock_delay.assert_called_once_with("Deftones")
 
     @patch("apple_search.views.artist_content")
-    @patch("apple_search.views.artist_search")
+    @patch("apple_search.artist_page.artist_search")
     def test_artist_page_view_success(
         self, mock_artist_search, mock_artist_content
     ):
@@ -760,7 +760,7 @@ class AppleSearchViewTests(TestCase):
         mock_artist_content.assert_called_once_with("123")
 
     @patch("apple_search.views.artist_content")
-    @patch("apple_search.views.artist_search")
+    @patch("apple_search.artist_page.artist_search")
     def test_artist_page_view_hyphen(
         self, mock_artist_search, mock_artist_content
     ):
@@ -783,7 +783,7 @@ class AppleSearchViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         mock_artist_search.assert_called_once_with("The Deftones")
 
-    @patch("apple_search.views.artist_search")
+    @patch("apple_search.artist_page.artist_search")
     def test_artist_page_view_not_found(self, mock_artist_search):
         mock_artist_search.return_value = {
             "results": {"artists": {"data": []}}
@@ -794,7 +794,7 @@ class AppleSearchViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"error": "Artist not found"})
 
-    @patch("apple_search.views.artist_search")
+    @patch("apple_search.artist_page.artist_search")
     def test_artist_page_view_name_mismatch(self, mock_artist_search):
         mock_artist_search.return_value = {
             "results": {
@@ -869,9 +869,9 @@ class AppleSearchViewTests(TestCase):
 
 
 class ArtistIDLookupTests(TestCase):
-    @patch("apple_search.views.artist_search")
+    @patch("apple_search.artist_page.artist_search")
     def test_get_artist_id_by_name_success(self, mock_artist_search):
-        from apple_search.views import get_artist_id_by_name
+        from apple_search.artist_page import get_artist_id_by_name
         mock_artist_search.return_value = {
             "results": {
                 "artists": {
@@ -882,9 +882,9 @@ class ArtistIDLookupTests(TestCase):
         self.assertEqual(get_artist_id_by_name("Deftones"), "123")
         mock_artist_search.assert_called_once_with("Deftones")
 
-    @patch("apple_search.views.artist_search")
+    @patch("apple_search.artist_page.artist_search")
     def test_get_artist_id_by_name_hyphen(self, mock_artist_search):
-        from apple_search.views import get_artist_id_by_name
+        from apple_search.artist_page import get_artist_id_by_name
         mock_artist_search.return_value = {
             "results": {
                 "artists": {
@@ -897,9 +897,9 @@ class ArtistIDLookupTests(TestCase):
         self.assertEqual(get_artist_id_by_name("The-Deftones"), "123")
         mock_artist_search.assert_called_once_with("The Deftones")
 
-    @patch("apple_search.views.artist_search")
+    @patch("apple_search.artist_page.artist_search")
     def test_get_artist_id_by_name_not_found(self, mock_artist_search):
-        from apple_search.views import get_artist_id_by_name
+        from apple_search.artist_page import get_artist_id_by_name
         mock_artist_search.return_value = {
             "results": {"artists": {"data": []}}
         }

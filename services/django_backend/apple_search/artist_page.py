@@ -3,7 +3,21 @@
 import concurrent.futures
 from django.core.cache import cache
 from apple_search.auth import apple_request
-from apple_search.artist_search import format_image
+from apple_search.artist_search import format_image, artist_search
+
+
+def get_artist_id_by_name(artist_name):
+    artist_name = artist_name.replace("-", " ")
+    search_results = artist_search(artist_name)
+    if (
+        search_results.get("results")
+        and search_results["results"].get("artists")
+        and search_results["results"]["artists"].get("data")
+    ):
+        for artist in search_results["results"]["artists"]["data"]:
+            if artist["attributes"]["name"] == artist_name:
+                return artist["id"]
+    return None
 
 
 def artist_content(artist_id):

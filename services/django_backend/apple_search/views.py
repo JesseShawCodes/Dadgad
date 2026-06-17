@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from apple_search.artist_page import artist_content
+from apple_search.artist_page import artist_content, get_artist_id_by_name
 from apple_search.tasks import fetch_artist_data
 from apple_search.artist_search import artist_search
 
@@ -11,20 +11,6 @@ def artist_search_view(request):
     # Potential task functions / returns
     task = fetch_artist_data.delay(data)
     return JsonResponse({"task_id": task.id, "status": "queued"})
-
-
-def get_artist_id_by_name(artist_name):
-    artist_name = artist_name.replace("-", " ")
-    search_results = artist_search(artist_name)
-    if (
-        search_results.get("results")
-        and search_results["results"].get("artists")
-        and search_results["results"]["artists"].get("data")
-    ):
-        for artist in search_results["results"]["artists"]["data"]:
-            if artist["attributes"]["name"] == artist_name:
-                return artist["id"]
-    return None
 
 
 def artist_page_view(request, artist_name):
