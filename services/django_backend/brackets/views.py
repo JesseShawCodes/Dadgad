@@ -19,15 +19,19 @@ class BracketCreateFromArtistView(APIView):
 
     def get(self, request, artist_name):
         artist_id = get_artist_id_by_name(artist_name)
+        if not artist_id:
+            return Response(
+                {"error": "Artist not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
         cache_key = f"bracket_create:{artist_id}"
         cached_data = cache.get(cache_key)
         if cached_data:
             return Response(cached_data, status=status.HTTP_200_OK)
 
-        artist_name = artist_name.replace('-', ' ').title()
         songs = top_songs_list_builder(artist_id)
         albums = featured_album_details(artist_id)
-        artist_id = get_artist_id_by_name(artist_name)
         # Add weights (rank and featured_album status) to songs
         songs = add_weight_to_songs(
             songs,
@@ -36,13 +40,13 @@ class BracketCreateFromArtistView(APIView):
 
         bracket = BracketService.create_bracket(
             artist_id,
-            artist_name,
+            artist_name.replace('-', ' ').title(),
             songs
         )
 
         data = {
-            "name": f"{artist_name} Madness (Mock)",
-            "artist_name": artist_name,
+            "name": f"{artist_name.replace('-', ' ').title()} Madness (Mock)",
+            "artist_name": artist_name.replace('-', ' ').title(),
             "artist_id": artist_id,
             "featured_albums": albums,
             "top_songs_list": songs,

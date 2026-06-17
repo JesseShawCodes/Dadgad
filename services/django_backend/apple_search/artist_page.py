@@ -7,16 +7,16 @@ from apple_search.artist_search import format_image, artist_search
 
 
 def get_artist_id_by_name(artist_name):
-    artist_name = artist_name.replace("-", " ")
-    search_results = artist_search(artist_name)
+    search_query = artist_name.replace("-", " ")
+    search_results = artist_search(search_query)
     if (
         search_results.get("results")
         and search_results["results"].get("artists")
         and search_results["results"]["artists"].get("data")
     ):
-        for artist in search_results["results"]["artists"]["data"]:
-            if artist["attributes"]["name"] == artist_name:
-                return artist["id"]
+        # Return the first artist found, assuming the search engine
+        # returns the most relevant result first.
+        return search_results["results"]["artists"]["data"][0]["id"]
     return None
 
 
