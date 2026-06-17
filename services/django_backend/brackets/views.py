@@ -45,7 +45,6 @@ class BracketCreateFromArtistView(APIView):
         )
 
         data = {
-            "name": f"{artist_name.replace('-', ' ').title()} Madness (Mock)",
             "artist_name": artist_name.replace('-', ' ').title(),
             "artist_id": artist_id,
             "featured_albums": albums,
