@@ -25,7 +25,7 @@ def get_auth_token():
             "Apple Music API credentials missing. "
             "Skipping auth token generation."
         )
-        return None
+        return "Apple Music API credentials missing."
 
     headers = {"alg": "ES256", "kid": key_id}
 

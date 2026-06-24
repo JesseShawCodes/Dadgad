@@ -34,10 +34,6 @@ python-start:
 migrate:
 	$(PYTHON) manage.py migrate
 
-# django Shell
-django-shell:
-	$(PYTHON) manage.py shell
-
 celery:
 	.venv/bin/celery -A madness_backend worker -l info
 

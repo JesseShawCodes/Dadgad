@@ -9,6 +9,11 @@ from apple_search.artist_search import format_image, artist_search
 def get_artist_id_by_name(artist_name):
     search_query = artist_name.replace("-", " ")
     search_results = artist_search(search_query)
+    """
+    There should be a check here if search_results is a string and return the string if it is.
+    """
+    if isinstance(search_results, str):
+        return search_results
     if (
         search_results.get("results")
         and search_results["results"].get("artists")

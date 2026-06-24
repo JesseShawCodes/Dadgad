@@ -19,6 +19,11 @@ class BracketCreateFromArtistView(APIView):
 
     def get(self, request, artist_name):
         artist_id = get_artist_id_by_name(artist_name)
+        if isinstance(artist_id, str) and not artist_id.isdigit():
+            return Response(
+                {"error": artist_id},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         if not artist_id:
             return Response(
                 {"error": "Artist not found"},
@@ -111,5 +116,5 @@ class SelectMatchupWinnerView(APIView):
         print("--------------------------------")
         # The bracket should be updated with the new winner.
         # The bracket should be returned to the frontend.
-        bracket = BracketService.update_bracket(request.data)
+        # bracket = BracketService.update_bracket(request.data)
         return Response({"message": "Success!!"}, status=status.HTTP_200_OK)

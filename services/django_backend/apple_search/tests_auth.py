@@ -23,7 +23,7 @@ class AppleAuthTests(TestCase):
         # Test case for lines 24-28
         mock_env_get.return_value = ""
         result = get_auth_token()
-        self.assertIsNone(result)
+        self.assertEqual(result, "Apple Music API credentials missing.")
 
     @patch("apple_search.auth.pyjwt.encode")
     @patch("apple_search.auth.os.environ.get")

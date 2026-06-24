@@ -39,7 +39,7 @@ def artist_search(artist_name):
     try:
         result1 = r.json()
     except requests.exceptions.JSONDecodeError:
-        return {}
+        return "There was an error decoding the JSON. It is possible that the API credentials are missing."
 
     if (
         result1.get("results")

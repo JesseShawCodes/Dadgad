@@ -126,7 +126,7 @@ class ArtistSearchTests(TestCase):
         mock_get.return_value = mock_response
 
         result = artist_search("Deftones")
-        self.assertEqual(result, {})
+        self.assertEqual(result, "There was an error decoding the JSON. It is possible that the API credentials are missing.")
 
     def test_format_image(self):
         url = "http://example.com/{w}x{h}.jpg"
