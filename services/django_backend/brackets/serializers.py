@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Bracket, BracketItem, Matchup
+from .models import Bracket, BracketItem, Matchup, SessionMatchupPick
 
 
 class BracketItemSerializer(serializers.ModelSerializer):
@@ -24,4 +24,13 @@ class BracketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bracket
+        fields = "__all__"
+
+
+class SessionMatchupPickSerializer(serializers.ModelSerializer):
+    winner = BracketItemSerializer(read_only=True)
+    matchup = MatchupSerializer(read_only=True)
+
+    class Meta:
+        model = SessionMatchupPick
         fields = "__all__"

@@ -1,34 +1,81 @@
 "use client"
-import { React, useContext, useEffect } from 'react';
+import { React, useContext, useEffect, useState } from 'react';
 
 import { Context } from '../context/BracketContext';
 import BracketTable from './BracketTable';
-import { useGetArtistInfoQuery } from '../services/jsonServerApi';
+import { useGetArtistPageQuery } from '../services/jsonServerApi';
 import Loading from './Loading';
 import { useParams } from 'next/navigation';
 import SongCardSkeleton from './skeleton_loaders/SongCardSkeleton';
 import CheckIsIos from '../services/CheckIsIos';
 import WarningMessage from './WarningMessage';
-import {checkForArtistBracket} from '../services/userBracketLocalStorage';
+import { checkForArtistBracket, clearArtistBracketLocalStorage } from '../services/userBracketLocalStorage';
 import InProgressBracket from './song_list/InProgressBracket';
-import { createMatchups } from '../services/createBracket';
+import { useSession } from '../context/SessionContext';
+import {
+  applySessionBracketState,
+  resetSessionBracket,
+} from '../services/bracketSessionService';
 
 function ArtistPageForm() {
   const { handle } = useParams();
   const value = useContext(Context);
   const [state, dispatch] = value;
+  const { sessionId, loading: sessionLoading } = useSession();
+  const [generating, setGenerating] = useState(false);
+  const [localBracketExists, setLocalBracketExists] = useState(false);
+  const {
+    data: musicQuery = {},
+  } = useGetArtistPageQuery(handle);
 
-  // generateBracket only runs on initial build of a bracket.
-  const generateBracket = () => {
-    const matchups = createMatchups(state.values.top_songs_list.slice(0, 64), 1, `round${state.round}`);
-    dispatch({ type: 'setBracket', payload: { bracket: matchups } });
+  const refreshLocalBracketFlag = () => {
+    const localBrackets = JSON.parse(localStorage.getItem("userBracket")) || [];
+    setLocalBracketExists(checkForArtistBracket(handle, localBrackets));
+  };
+
+  useEffect(() => {
+    refreshLocalBracketFlag();
+  }, [handle, state.bracket]);
+
+  const generateBracket = async () => {
+    if (!musicQuery.bracket_id || !sessionId) {
+      return;
+    }
+
+    setGenerating(true);
+    try {
+      clearArtistBracketLocalStorage(handle);
+      const sessionState = await resetSessionBracket(
+        musicQuery.bracket_id,
+        sessionId,
+      );
+      applySessionBracketState(dispatch, sessionState, musicQuery.top_songs_list);
+      refreshLocalBracketFlag();
+    } catch (error) {
+      console.error("Failed to reset session bracket:", error);
+      clearArtistBracketLocalStorage(handle);
+      dispatch({
+        type: 'setBracket',
+        payload: { bracket: structuredClone(musicQuery.bracket) },
+      });
+      dispatch({
+        type: 'setChampionshipBracket',
+        payload: { championshipBracket: {} },
+      });
+      dispatch({ type: 'setRound', payload: { round: 1 } });
+      dispatch({
+        type: 'setCurrentRoundProgres',
+        payload: { currentRoundProgres: 0 },
+      });
+      dispatch({ type: 'setChampion', payload: { champion: undefined } });
+      refreshLocalBracketFlag();
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const checkLocalBrackets = () => {
-    // Check brackets in local storage.
-    const localBrackets = JSON.parse(localStorage.getItem("userBracket"));
-    let initialLocalBracketCheck = checkForArtistBracket(handle, localBrackets);
-    if (initialLocalBracketCheck) {
+    if (localBracketExists) {
       return <InProgressBracket />;
     }
     return null;
@@ -48,10 +95,6 @@ function ArtistPageForm() {
 
     return () => clearInterval(saveInterval);
   }, [state, dispatch, handle]);
-
-  const {
-    data: musicQuery = {},
-  } = useGetArtistInfoQuery(handle);
 
   useEffect(() => {
     if (Object.keys(musicQuery).length > 0) {
@@ -85,8 +128,13 @@ function ArtistPageForm() {
               {
                 CheckIsIos() ? <WarningMessage message={"This feature may not work as expected on iOS devices. We are actively working to improve this experience"} /> : null
               }
-              <button type="button" className="btn btn-primary" onClick={generateBracket}>
-                Generate Bracket
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={generateBracket}
+                disabled={generating || sessionLoading || !sessionId}
+              >
+                {generating ? 'Generating...' : 'Generate Bracket'}
               </button>
               {checkLocalBrackets()}            
               <div className="my-3 fst-italic">

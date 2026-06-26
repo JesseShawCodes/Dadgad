@@ -20,6 +20,11 @@ export const jsonServerApi = createApi({
         url: `/artist-page/${artistName}`,
       }),
     }),
+    getArtistPage: builder.query({
+      query: (artistId) => ({
+        url: `/api/brackets/artist/${artistId}`,
+      }),
+    }),
     getTaskStatus: builder.query({
       query: (taskId) => `/api/task-status?q=${taskId}`,
       keepUnusedDataFor: 0,
@@ -35,7 +40,7 @@ export const jsonServerApi = createApi({
 
 export const {
   useGetArtistsQuery,
-  useGetArtistInfoQuery,
+  useGetArtistPageQuery,
   useGetTaskStatusQuery,
   useLazyGetTaskStatusQuery,
   useStartSearchMutation,

@@ -76,9 +76,59 @@ class Matchup(models.Model):
         blank=True,
         related_name="previous_matchups",
     )
+    next_slot = models.IntegerField(null=True, blank=True)
+    is_championship = models.BooleanField(default=False)
+    feeder1 = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="championship_feeder1_matchups",
+    )
+    feeder2 = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="championship_feeder2_matchups",
+    )
 
     class Meta:
         ordering = ["round_number", "matchup_num"]
 
     def __str__(self):
         return f"B{self.bracket_id} R{self.round_number} M{self.matchup_num}"
+
+
+class SessionMatchupPick(models.Model):
+    """
+    One row per winner a session chose in a matchup.
+    Bracket progress is derived from these picks plus the shared Matchup tree.
+    """
+    session_key = models.CharField(max_length=40, db_index=True)
+    matchup = models.ForeignKey(
+        Matchup,
+        on_delete=models.CASCADE,
+        related_name="session_picks",
+    )
+    winner = models.ForeignKey(
+        BracketItem,
+        on_delete=models.CASCADE,
+        related_name="session_matchup_wins",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["session_key", "matchup"],
+                name="unique_session_matchup_pick",
+            ),
+        ]
+
+    def __str__(self):
+        return (
+            f"{self.session_key} "
+            f"Matchup {self.matchup_id} → {self.winner.name}"
+        )

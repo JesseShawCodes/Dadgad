@@ -3,7 +3,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import { 
   jsonServerApi,
   useGetArtistsQuery,
-  useGetArtistInfoQuery,
   useGetTaskStatusQuery,
   useLazyGetTaskStatusQuery,
   useStartSearchMutation,
@@ -125,7 +124,6 @@ describe('jsonServerApi', () => {
   describe('Exported hooks', () => {
     it('should export all expected hooks', () => {
       expect(useGetArtistsQuery).toBeDefined();
-      expect(useGetArtistInfoQuery).toBeDefined();
       expect(useGetTaskStatusQuery).toBeDefined();
       expect(useLazyGetTaskStatusQuery).toBeDefined();
       expect(useStartSearchMutation).toBeDefined();

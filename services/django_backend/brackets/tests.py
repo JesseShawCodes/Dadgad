@@ -153,6 +153,19 @@ class BracketServiceTests(TestCase):
         self.assertEqual(r1_m1["matchupId"], "s1s4")
         self.assertEqual(r1_m1["attributes"]["song1"]["song"]["id"], "s1")
 
+    def test_next_slot_populated(self):
+        """Test that next_slot is populated correctly"""
+        bracket = BracketService.create_bracket(
+            self.artist_id, self.artist_name, self.songs
+        )
+        # Matchups in round 1, next_matchup should have next_slot
+        r1_matchups = Matchup.objects.filter(bracket=bracket, round_number=1)
+        for m in r1_matchups:
+            if m.next_matchup:
+                # Based on create_bracket logic: next_slot = 1 if m % 2 == 0 else 2
+                expected_slot = 1 if m.matchup_num % 2 == 0 else 2
+                self.assertEqual(m.next_slot, expected_slot)
+
 
 class BracketCacheTests(TestCase):
     def setUp(self):

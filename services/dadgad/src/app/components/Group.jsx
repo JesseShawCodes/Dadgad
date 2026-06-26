@@ -9,12 +9,17 @@ function Group({ groupName, matchups, round }) {
   const value = useContext(Context);
   const [state] = value;
 
+  if (!matchups?.roundMatchups) {
+    return null;
+  }
+
   const groupMatchups = matchups.roundMatchups;
+  const roundProgress = state.bracket[groupName]?.[round]?.progress;
   return (
     <div className={groupName} key={groupName}>
       <h2 className="mt-1">
         {groupName}
-        {state.bracket[groupName][round].progress === 1 ? <FontAwesomeIcon icon={faCheckCircle} className="text-success" /> : null}
+        {roundProgress === 1 ? <FontAwesomeIcon icon={faCheckCircle} className="text-success" /> : null}
       </h2>
       <ul className="list-group">
         {groupMatchups.map((matchup, index) => (

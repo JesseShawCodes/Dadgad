@@ -25,7 +25,10 @@ function BracketTable() {
     }
     const round = `round${stateContainer.round}`;
 
-    const matchups = stateContainer.bracket[group][round];
+    const matchups = stateContainer.bracket[group]?.[round];
+    if (!matchups?.roundMatchups) {
+      return null;
+    }
 
     return <Group groupName={group} matchups={matchups} key={group} round={round} />;
   };

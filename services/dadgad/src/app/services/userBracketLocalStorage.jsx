@@ -33,3 +33,11 @@ export function updateUserBracketLocalStorage(currentBracket) {
     localStorage.setItem("userBracket", JSON.stringify(updatedBracket));
   }
 }
+
+export function clearArtistBracketLocalStorage(artist) {
+  const userBracketStored = JSON.parse(localStorage.getItem("userBracket")) || [];
+  const updatedBrackets = userBracketStored.filter(
+    (bracket) => bracket.artist !== artist,
+  );
+  localStorage.setItem("userBracket", JSON.stringify(updatedBrackets));
+}

@@ -1,10 +1,11 @@
 import React, { useContext } from 'react';
 import { Context } from '../context/BracketContext';
+import { calculateDisplayProgress } from '../services/progressCalculationService';
 
 function ProgressCircle() {
-  const value = useContext(Context);
-  const [state] = value;
-  const progress = Math.round(state.currentRoundProgres * 100);
+  const [state] = useContext(Context);
+  const currentRoundProgres = calculateDisplayProgress(state);
+  const progress = Math.round(currentRoundProgres * 100);
 
   return (
     <>

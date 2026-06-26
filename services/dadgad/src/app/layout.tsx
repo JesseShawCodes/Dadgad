@@ -9,6 +9,7 @@ import BootstrapClient from "./components/BootstrapClient";
 import FloatingControls from './components/FloatingControls/FloatingControls';
 import MaintenancePageContent from "./components/MaintenancePageContent";
 import Head from "next/head";
+import { SessionProvider } from "./context/SessionContext";
 
 export const metadata = {
   title: "Dadgad",
@@ -22,6 +23,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const mainLayout = (
+    <SessionProvider>
     <ReduxProvider>
       <BracketContext>
       <ThemeProvider>
@@ -37,6 +39,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </ThemeProvider>
       </BracketContext>
     </ReduxProvider>
+    </SessionProvider>
   )
   return (
     <html lang="en">
