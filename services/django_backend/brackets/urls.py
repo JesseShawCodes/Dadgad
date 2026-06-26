@@ -4,6 +4,8 @@ from .views import (
     MatchupWinnerView,
     BracketCreateFromArtistView,
     SelectMatchupWinnerView,
+    SessionBracketView,
+    SessionBracketResetView,
 )
 
 urlpatterns = [
@@ -16,6 +18,16 @@ urlpatterns = [
         "brackets/<int:pk>/",
         BracketDetailView.as_view(),
         name="bracket-detail",
+    ),
+    path(
+        "brackets/<int:pk>/session/",
+        SessionBracketView.as_view(),
+        name="session-bracket",
+    ),
+    path(
+        "brackets/<int:pk>/session/reset/",
+        SessionBracketResetView.as_view(),
+        name="session-bracket-reset",
     ),
     path(
         "matchups/<int:pk>/winner/",

@@ -29,6 +29,8 @@ urlpatterns = [
     path("artist-page/<str:artist_name>", artist_page_view),
     # Bracket URLs
     path("api/", include("brackets.urls")),
+    # Session URLs
+    path("api/sessions/", include("sessions.urls")),
     # Task Status checks
     path("api/task-status", task_status_view, name="task-status"),
 ]

@@ -6,13 +6,15 @@ import { Context } from '../context/BracketContext';
 function Championship() {
   const value = useContext(Context);
   const [state] = value;
+  const roundData = state.championshipBracket[`round${state.round}`];
+  const roundMatchups = roundData?.roundMatchups;
 
   return (
     <>
       {
-        state.champion ? null : <div key="Championship Round">
+        state.champion || !roundMatchups ? null : <div key="Championship Round">
         <div>
-          {state.championshipBracket[`round${state.round}`].roundMatchups.map((matchup, index) => (
+          {roundMatchups.map((matchup, index) => (
             <Matchup
               song1={matchup.attributes.song1}
               song2={matchup.attributes.song2}

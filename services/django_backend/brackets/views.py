@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from django.core.cache import cache
-from .models import Bracket
+from .models import Bracket, BracketItem
 from .serializers import BracketSerializer, MatchupSerializer
 from .services import BracketService
 from apple_search.artist_page import (
@@ -85,6 +85,86 @@ class BracketDetailView(APIView):
             )
 
 
+class SessionBracketView(APIView):
+    renderer_classes = [JSONRenderer]
+
+    def get(self, request, pk):
+        session_key = request.query_params.get("sessionId")
+        if not session_key:
+            return Response(
+                {"error": "sessionId is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            bracket = Bracket.objects.prefetch_related(
+                "items",
+                "matchups__item1",
+                "matchups__item2",
+            ).get(pk=pk)
+        except Bracket.DoesNotExist:
+            return Response(
+                {"error": "Bracket not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        songs = BracketService.get_songs_for_bracket(bracket)
+        session_state = BracketService.get_session_bracket_state(
+            bracket,
+            session_key,
+            songs,
+        )
+
+        return Response(
+            {
+                "bracket_id": bracket.id,
+                "sessionId": session_key,
+                **session_state,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class SessionBracketResetView(APIView):
+    renderer_classes = [JSONRenderer]
+
+    def post(self, request, pk):
+        session_key = request.data.get("sessionId")
+        if not session_key:
+            return Response(
+                {"error": "sessionId is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            bracket = Bracket.objects.prefetch_related(
+                "items",
+                "matchups__item1",
+                "matchups__item2",
+            ).get(pk=pk)
+        except Bracket.DoesNotExist:
+            return Response(
+                {"error": "Bracket not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        songs = BracketService.get_songs_for_bracket(bracket)
+        session_state = BracketService.reset_session_picks(
+            bracket,
+            session_key,
+            songs,
+        )
+
+        return Response(
+            {
+                "bracket_id": bracket.id,
+                "sessionId": session_key,
+                **session_state,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
 class MatchupWinnerView(APIView):
     renderer_classes = [JSONRenderer]
 
@@ -111,10 +191,65 @@ class SelectMatchupWinnerView(APIView):
     renderer_classes = [JSONRenderer]
 
     def post(self, request):
-        print("--------------------------------")
-        print(request.data)
-        print("--------------------------------")
-        # The bracket should be updated with the new winner.
-        # The bracket should be returned to the frontend.
-        # bracket = BracketService.update_bracket(request.data)
-        return Response({"message": "Success!!"}, status=status.HTTP_200_OK)
+        session_key = request.data.get("sessionId")
+        matchup_id_str = request.data.get("matchupId")
+        selected_song = request.data.get("selectedSong")
+
+        if not session_key or not matchup_id_str or not selected_song:
+            return Response(
+                {"error": "sessionId, matchupId, and selectedSong are required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        winner_apple_id = selected_song.get("song", {}).get("id")
+        if not winner_apple_id:
+            return Response(
+                {"error": "selectedSong.song.id is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            winner_item = BracketItem.objects.get(apple_id=winner_apple_id)
+            bracket = winner_item.bracket
+            matchup = BracketService.find_matchup_by_matchup_id(
+                bracket,
+                matchup_id_str,
+                session_key,
+            )
+            if not matchup:
+                return Response(
+                    {"error": "Matchup not found"},
+                    status=status.HTTP_404_NOT_FOUND,
+                )
+
+            BracketService.record_session_pick(
+                session_key,
+                matchup,
+                winner_item,
+            )
+            songs = BracketService.get_songs_for_bracket(bracket)
+            session_state = BracketService.get_session_bracket_state(
+                bracket,
+                session_key,
+                songs,
+            )
+
+            return Response(
+                {
+                    "message": "Success!!",
+                    "bracket_id": bracket.id,
+                    "sessionId": session_key,
+                    **session_state,
+                },
+                status=status.HTTP_200_OK,
+            )
+        except BracketItem.DoesNotExist:
+            return Response(
+                {"error": "Winner not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except ValueError as exc:
+            return Response(
+                {"error": str(exc)},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

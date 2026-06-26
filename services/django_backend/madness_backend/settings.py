@@ -95,6 +95,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://dadgad.netlify.app",
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 ROOT_URLCONF = "madness_backend.urls"
 
 REST_FRAMEWORK = {
@@ -234,7 +236,13 @@ if os.environ.get("environment") == "production":
     DEBUG = False
     CELERY_TASKS_ALWAYS_EAGER = False
     CELERY_TASKS_EAGER_PROPAGATES = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
 else:
     # Development settings
     DEBUG = True
     CELERY_TASKS_ALWAYS_EAGER = False
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SECURE = False
+    SESSION_COOKIE_SAMESITE = 'Lax'

@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import Bracket, BracketItem, Matchup
+from .models import (
+    Bracket,
+    BracketItem,
+    Matchup,
+    SessionMatchupPick,
+)
 
 
 @admin.register(Bracket)
@@ -26,3 +31,10 @@ class MatchupAdmin(admin.ModelAdmin):
         "winner",
     )
     list_filter = ("bracket", "round_number")
+
+
+@admin.register(SessionMatchupPick)
+class SessionMatchupPickAdmin(admin.ModelAdmin):
+    list_display = ("session_key", "matchup", "winner", "updated_at")
+    list_filter = ("matchup__bracket",)
+    search_fields = ("session_key", "winner__name")
