@@ -1,9 +1,9 @@
 import { React } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
 function MatchupSongButton({
-  thissong, boxShadow, setBoxShadow, selectWinner, winner, isSelecting,
+  thissong, boxShadow, setBoxShadow, selectWinner, winner,
 }) {
   const artwork = thissong.song.attributes.artwork || {};
   const bgColor = artwork.bgColor || '333333';
@@ -26,14 +26,10 @@ function MatchupSongButton({
       onBlur={() => setBoxShadow('none')}
       data-song-id={thissong.song.id}
       onClick={selectWinner}
-      aria-busy={isSelecting}
     >
       {thissong.song.attributes.name}
       {' '}
-      {isSelecting ? (
-        <FontAwesomeIcon icon={faSpinner} className="fa-spin" aria-label="Saving selection" />
-      ) : null}
-      {!isSelecting && isWinner ? (
+      {isWinner ? (
         <FontAwesomeIcon icon={faCheckCircle} className="text-success" />
       ) : null}
     </button>

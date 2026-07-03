@@ -6,6 +6,7 @@ from .views import (
     SelectMatchupWinnerView,
     SessionBracketView,
     SessionBracketResetView,
+    SessionBracketSyncView,
 )
 
 urlpatterns = [
@@ -28,6 +29,11 @@ urlpatterns = [
         "brackets/<int:pk>/session/reset/",
         SessionBracketResetView.as_view(),
         name="session-bracket-reset",
+    ),
+    path(
+        "brackets/<int:pk>/session/sync/",
+        SessionBracketSyncView.as_view(),
+        name="session-bracket-sync",
     ),
     path(
         "matchups/<int:pk>/winner/",

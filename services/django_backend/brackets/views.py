@@ -165,6 +165,54 @@ class SessionBracketResetView(APIView):
         )
 
 
+class SessionBracketSyncView(APIView):
+    renderer_classes = [JSONRenderer]
+
+    def post(self, request, pk):
+        session_key = request.data.get("sessionId")
+        picks = request.data.get("picks")
+
+        if not session_key:
+            return Response(
+                {"error": "sessionId is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if picks is None or not isinstance(picks, list):
+            return Response(
+                {"error": "picks must be a list"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            bracket = Bracket.objects.prefetch_related(
+                "items",
+                "matchups__item1",
+                "matchups__item2",
+            ).get(pk=pk)
+        except Bracket.DoesNotExist:
+            return Response(
+                {"error": "Bracket not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        songs = BracketService.get_songs_for_bracket(bracket)
+        session_state = BracketService.sync_session_picks(
+            bracket,
+            session_key,
+            picks,
+            songs,
+        )
+
+        return Response(
+            {
+                "bracket_id": bracket.id,
+                "sessionId": session_key,
+                **session_state,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
 class MatchupWinnerView(APIView):
     renderer_classes = [JSONRenderer]
 

@@ -5,62 +5,40 @@ import PropTypes from 'prop-types';
 
 import MatchupSongButton from './MatchupSongButton';
 import { Context } from '../../context/BracketContext';
-
-import axios from 'axios';
-import { apiBaseUrl } from '../../services/envConfig';
-import { useSession } from '../../context/SessionContext';
-import { applySessionBracketState } from '../../services/bracketSessionService';
+import { applyLocalMatchupPick } from '../../services/bracketLocalUpdate';
 
 export default function MatchupSong({
   thissong, opponent, matchupId, round, group, winner,
 }) {
   const { handle } = useParams();
-  const { sessionId } = useSession();
   const [state, dispatch] = useContext(Context);
   const [boxShadow, setBoxShadow] = useState('none');
-  const [isSelecting, setIsSelecting] = useState(false);
 
-  const handleSelectMatchupWinner = async () => {
-    const response = await axios.post(
-      `${apiBaseUrl}/api/brackets/select-matchup-winner/`,
-      {
-        selectedSong: thissong,
-        opponentSong: opponent,
-        matchupId: matchupId,
-        round: round,
-        group: group,
-        winner: winner,
-        sessionId: sessionId,
-      },
-      { withCredentials: true },
-    );
-    applySessionBracketState(dispatch, response.data, state.values.top_songs_list);
-    return response;
-  };
+  const selectWinner = () => {
+    applyLocalMatchupPick({
+      dispatch,
+      state,
+      thissong,
+      opponent,
+      matchupId,
+      round,
+      group,
+    });
 
-  const selectWinner = async () => {
-    setIsSelecting(true);
-    try {
-      await handleSelectMatchupWinner();
-      dispatch({
-        type: 'setUserBracket',
-        payload: {
-          userBracket: {
-            artist: handle,
-            bracket: state.bracket,
-            round: state.round,
-            currentRoundProgres: state.currentRoundProgres,
-          },
+    dispatch({
+      type: 'setUserBracket',
+      payload: {
+        userBracket: {
+          artist: handle,
+          bracket: state.bracket,
+          round: state.round,
+          currentRoundProgres: state.currentRoundProgres,
         },
-      });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsSelecting(false);
-    }
+      },
+    });
   };
 
-  winner = typeof (winner) !== "undefined" ? winner.id : null
+  winner = typeof (winner) !== "undefined" ? winner.id : null;
 
   return (
     <MatchupSongButton
@@ -69,7 +47,6 @@ export default function MatchupSong({
       setBoxShadow={setBoxShadow}
       selectWinner={selectWinner}
       winner={winner}
-      isSelecting={isSelecting}
     />
   );
 }

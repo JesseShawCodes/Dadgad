@@ -176,5 +176,79 @@ export async function resetSessionBracket(bracketId, sessionId) {
     { sessionId },
     { withCredentials: true },
   );
+  clearBracketSyncDirty();
+  return response.data;
+}
+
+const SYNC_INTERVAL_MS = 20000;
+let syncDirty = false;
+
+export function markBracketSyncDirty() {
+  syncDirty = true;
+}
+
+export function clearBracketSyncDirty() {
+  syncDirty = false;
+}
+
+export function isBracketSyncDirty() {
+  return syncDirty;
+}
+
+export function getBracketSyncIntervalMs() {
+  return SYNC_INTERVAL_MS;
+}
+
+function extractPicksFromRoundMatchups(roundMatchups, roundNumber) {
+  const picks = [];
+
+  for (const matchup of roundMatchups || []) {
+    const winner = matchup.attributes?.winner;
+    if (matchup.attributes?.matchupComplete && winner?.id) {
+      picks.push({
+        matchupId: matchup.matchupId,
+        winnerSongId: String(winner.id),
+        round: roundNumber ?? matchup.round,
+      });
+    }
+  }
+
+  return picks;
+}
+
+export function extractPicksFromBracketState(state) {
+  const picks = [];
+
+  for (const groupData of Object.values(state.bracket || {})) {
+    for (const [roundKey, roundData] of Object.entries(groupData || {})) {
+      const roundNumber = Number(roundKey.replace('round', ''));
+      picks.push(
+        ...extractPicksFromRoundMatchups(roundData?.roundMatchups, roundNumber),
+      );
+    }
+  }
+
+  for (const roundKey of ['round5', 'round6']) {
+    const roundData = state.championshipBracket?.[roundKey];
+    if (roundData?.roundMatchups) {
+      const roundNumber = Number(roundKey.replace('round', ''));
+      picks.push(
+        ...extractPicksFromRoundMatchups(roundData.roundMatchups, roundNumber),
+      );
+    }
+  }
+
+  picks.sort((a, b) => (a.round || 0) - (b.round || 0));
+  return picks;
+}
+
+export async function syncBracketToBackend(bracketId, sessionId, state) {
+  const picks = extractPicksFromBracketState(state);
+  const response = await axios.post(
+    `${apiBaseUrl}/api/brackets/${bracketId}/session/sync/`,
+    { sessionId, picks },
+    { withCredentials: true },
+  );
+  clearBracketSyncDirty();
   return response.data;
 }

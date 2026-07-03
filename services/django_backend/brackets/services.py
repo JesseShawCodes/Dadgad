@@ -555,6 +555,51 @@ class BracketService:
         )
 
     @classmethod
+    def sync_session_picks(cls, bracket, session_key, picks, songs_list=None):
+        if songs_list is None:
+            songs_list = cls.get_songs_for_bracket(bracket)
+
+        cls.ensure_championship_matchups(bracket)
+
+        sorted_picks = sorted(
+            picks,
+            key=lambda pick: pick.get("round") or 0,
+        )
+
+        for pick in sorted_picks:
+            matchup_id_str = pick.get("matchupId")
+            winner_apple_id = pick.get("winnerSongId")
+            if not matchup_id_str or not winner_apple_id:
+                continue
+
+            try:
+                winner_item = BracketItem.objects.get(
+                    bracket=bracket,
+                    apple_id=winner_apple_id,
+                )
+            except BracketItem.DoesNotExist:
+                continue
+
+            matchup = cls.find_matchup_by_matchup_id(
+                bracket,
+                matchup_id_str,
+                session_key,
+            )
+            if not matchup:
+                continue
+
+            try:
+                cls.record_session_pick(session_key, matchup, winner_item)
+            except ValueError:
+                continue
+
+        return cls.get_session_bracket_state(
+            bracket,
+            session_key,
+            songs_list,
+        )
+
+    @classmethod
     def record_session_pick(cls, session_key, matchup, winner_item):
         picks = cls._load_session_picks(matchup.bracket, session_key)
         item1, item2 = cls._resolve_participants(matchup, picks)

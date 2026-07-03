@@ -86,6 +86,27 @@ class SessionBracketViewTests(TestCase):
         self.assertEqual(response.data["round"], 1)
         self.assertEqual(response.data["championshipBracket"], {})
 
+    def test_session_bracket_sync_applies_picks(self):
+        response = self.client.post(
+            f"/api/brackets/{self.bracket.id}/session/sync/",
+            {
+                "sessionId": self.session_key,
+                "picks": [
+                    {
+                        "matchupId": "s1s4",
+                        "winnerSongId": "s1",
+                        "round": 1,
+                    },
+                ],
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 200)
+        r1_m1 = response.data["bracket"]["group1"]["round1"]["roundMatchups"][0]
+        self.assertTrue(r1_m1["attributes"]["matchupComplete"])
+        self.assertEqual(r1_m1["attributes"]["winner"]["id"], "s1")
+
         response = self.client.post(
             "/api/brackets/select-matchup-winner/",
             {

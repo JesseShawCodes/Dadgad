@@ -1,5 +1,5 @@
 "use client"
-import { React, useContext, useEffect, useState } from 'react';
+import { React, useContext, useEffect, useRef, useState } from 'react';
 
 import { Context } from '../context/BracketContext';
 import BracketTable from './BracketTable';
@@ -14,7 +14,10 @@ import InProgressBracket from './song_list/InProgressBracket';
 import { useSession } from '../context/SessionContext';
 import {
   applySessionBracketState,
+  getBracketSyncIntervalMs,
+  isBracketSyncDirty,
   resetSessionBracket,
+  syncBracketToBackend,
 } from '../services/bracketSessionService';
 
 function ArtistPageForm() {
@@ -27,6 +30,37 @@ function ArtistPageForm() {
   const {
     data: musicQuery = {},
   } = useGetArtistPageQuery(handle);
+  const stateRef = useRef(state);
+  stateRef.current = state;
+
+  const syncBracketToServer = async () => {
+    const currentState = stateRef.current;
+    const bracketId = currentState.values?.bracket_id;
+
+    if (
+      !sessionId
+      || !bracketId
+      || Object.keys(currentState.bracket).length === 0
+      || !isBracketSyncDirty()
+    ) {
+      return;
+    }
+
+    try {
+      const data = await syncBracketToBackend(
+        bracketId,
+        sessionId,
+        currentState,
+      );
+      applySessionBracketState(
+        dispatch,
+        data,
+        currentState.values.top_songs_list,
+      );
+    } catch (error) {
+      console.error('Failed to sync bracket to server:', error);
+    }
+  };
 
   const refreshLocalBracketFlag = () => {
     const localBrackets = JSON.parse(localStorage.getItem("userBracket")) || [];
@@ -91,10 +125,25 @@ function ArtistPageForm() {
         } catch (error) {
           console.error("Error saving to local storage:", error);
         }
-    }, 10000);
+    }, getBracketSyncIntervalMs());
 
     return () => clearInterval(saveInterval);
   }, [state, dispatch, handle]);
+
+  useEffect(() => {
+    if (!sessionId || !state.values?.bracket_id) {
+      return undefined;
+    }
+
+    const syncInterval = setInterval(() => {
+      syncBracketToServer();
+    }, getBracketSyncIntervalMs());
+
+    return () => {
+      clearInterval(syncInterval);
+      syncBracketToServer();
+    };
+  }, [sessionId, state.values?.bracket_id, dispatch]);
 
   useEffect(() => {
     if (Object.keys(musicQuery).length > 0) {
