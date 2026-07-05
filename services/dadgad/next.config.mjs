@@ -13,6 +13,15 @@ const nextConfig = {
       }
     ]
   },
+  sassOptions: {
+    quietDeps: true,
+    silenceDeprecations: [
+      'import',
+      'global-builtin',
+      'color-functions',
+      'if-function',
+    ],
+  },
   async headers() {
     return [
       {
