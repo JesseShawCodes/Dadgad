@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </SessionProvider>
   )
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <Head>
         <meta name="theme-color" content="#ff06f8"/>
         <meta name="apple-mobile-web-app-capable" content="yes" />
