@@ -131,13 +131,40 @@ function enrichChampion(champion, topSongsList) {
   return enrichSongMetadata(champion, songsById);
 }
 
-export function applySessionBracketState(dispatch, data, topSongsList = []) {
+export function normalizeChampionForState(champion) {
+  if (!champion) {
+    return undefined;
+  }
+
+  if (champion.song) {
+    return champion;
+  }
+
+  return { song: champion };
+}
+
+export function applySessionBracketState(
+  dispatch,
+  data,
+  topSongsList = [],
+  previousState = null,
+) {
   const bracket = enrichGroupedBracket(data.bracket, topSongsList);
   const championshipBracket = enrichChampionshipBracket(
     data.championshipBracket || {},
     topSongsList,
   );
-  const champion = enrichChampion(data.champion, topSongsList);
+  const serverChampion = normalizeChampionForState(
+    enrichChampion(data.champion, topSongsList),
+  );
+  const localChampion = normalizeChampionForState(previousState?.champion);
+  const champion = serverChampion ?? localChampion;
+
+  const serverRound = data.round || 1;
+  const round =
+    localChampion && !serverChampion
+      ? previousState.round
+      : serverRound;
 
   if (bracket) {
     dispatch({ type: 'setBracket', payload: { bracket } });
@@ -150,13 +177,14 @@ export function applySessionBracketState(dispatch, data, topSongsList = []) {
   });
   dispatch({
     type: 'setRound',
-    payload: { round: data.round || 1 },
+    payload: { round },
   });
 
   const progressState = {
     bracket: bracket || {},
     championshipBracket,
-    round: data.round || 1,
+    round,
+    champion,
   };
   dispatch({
     type: 'setCurrentRoundProgres',

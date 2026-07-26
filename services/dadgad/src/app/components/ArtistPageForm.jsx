@@ -47,16 +47,13 @@ function ArtistPageForm() {
     }
 
     try {
-      const data = await syncBracketToBackend(
+      await syncBracketToBackend(
         bracketId,
         sessionId,
         currentState,
       );
-      applySessionBracketState(
-        dispatch,
-        data,
-        currentState.values.top_songs_list,
-      );
+      // Client state is authoritative during play; do not replace it from the
+      // sync response (server may lag or omit picks the UI already has).
     } catch (error) {
       console.error('Failed to sync bracket to server:', error);
     }

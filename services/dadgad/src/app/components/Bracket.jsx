@@ -48,7 +48,9 @@ function P5Image() {
 
   return (
     <div className='bracket-canvas-continer'>
-      <p>Image may appear smaller on mobile. Click the button below to download to your device.</p>
+      {isIOS && (
+        <p>Image may appear smaller on mobile. Click the button below to download to your device.</p>
+      )}
       <button onClick={downloadBracket} className='btn btn-primary mb-3 ms-3'>
         Download Bracket
       </button>

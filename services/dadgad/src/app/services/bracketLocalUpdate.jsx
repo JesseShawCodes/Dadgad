@@ -97,6 +97,21 @@ export function applyLocalMatchupPick({
     && state.championshipBracket.round6?.roundMatchups;
 
   if (finalTwo) {
+    const updatedChampionship = structuredClone(state.championshipBracket);
+    const roundGroup = updatedChampionship[`round${state.round}`];
+    const findObject = findObjectById(roundGroup, matchupId);
+    if (findObject) {
+      findObject.attributes.winner = thissong.song;
+      findObject.attributes.loser = opponent.song;
+      findObject.attributes.matchupComplete = true;
+      roundGroup.progress = updateRoundProgress(roundGroup);
+
+      dispatch({
+        type: 'setChampionshipBracket',
+        payload: { championshipBracket: updatedChampionship },
+      });
+    }
+
     dispatch({
       type: 'setChampion',
       payload: { champion: thissong },
