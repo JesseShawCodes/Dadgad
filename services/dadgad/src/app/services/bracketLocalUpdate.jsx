@@ -29,8 +29,7 @@ function maybeAdvanceRound(dispatch, state, championship) {
   }
 
   dispatch({ type: 'setRound', payload: { round: state.round + 1 } });
-  const nextRoundState = { ...state, round: state.round + 1 };
-  const nextRound = generateNextRound(nextRoundState);
+  const nextRound = generateNextRound(state);
 
   if (Array.isArray(nextRound)) {
     let updatedChampionship = { ...state.championshipBracket };
