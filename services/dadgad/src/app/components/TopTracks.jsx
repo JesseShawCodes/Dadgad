@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import Song from '../pages/Song';
+import Song from './Song';
 import { Context } from '../context/BracketContext';
 import { isObjectEmpty } from '../services/dataService';
 

@@ -5,29 +5,29 @@ import myImage from '../logo.png';
 import { faMusic } from '@fortawesome/free-solid-svg-icons';
 
 type ArtistAttributes = {
-  genreNames: string[];
+  genreNames?: string[];
   name: string;
-  url: string;
+  url?: string;
   artwork?: {
-      url: string;
+      url?: string;
       width?: number;
       height?: number;
   }
 };
 
 type ArtistRelationships = {
-  albums: {
-    href: string;
-    data: any[];
+  albums?: {
+    href?: string;
+    data?: unknown[];
   };
 };
 
 type Artist = {
   id: string;
-  type: string;
-  href: string;
+  type?: string;
+  href?: string;
   attributes: ArtistAttributes;
-  relationships: ArtistRelationships;
+  relationships?: ArtistRelationships;
 };
 
 type ArtistSearchCardProps = {
