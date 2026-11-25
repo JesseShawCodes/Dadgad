@@ -6,7 +6,8 @@ export const jsonServerApi = createApi({
   reducerPath: 'jsonServerApi',
   baseQuery: fetchBaseQuery({
     baseUrl: apiBaseUrl,
-    credentials: 'include',
+    // Public catalog endpoints do not need cookies. Keep credentialed calls in
+    // api/client.ts for write paths that may rely on session cookies later.
   }),
   refetchOnMountOrArgChange: true,
   tagTypes: ['Artists', 'Bracket'],
