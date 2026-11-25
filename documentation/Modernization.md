@@ -373,6 +373,6 @@ Phase 1 deliverables
 * [documentation/modernization-roadmap.md](./modernization-roadmap.md) — prioritized backlog (T001+)
 * Root README corrected; pgAdmin credentials moved to env; `.env.example` / `.gitignore` hardened
 
-Phase 2 complete (see modernization-roadmap.md and frontend-guidelines.md): unused deps removed, RTK Query standardized, typed API client + TS migrations for core modules, component hierarchy clarified, artist page uses server bracket create, and select-matchup-winner persists picks (client still owns round progression UX).
+Phase 2 complete (see modernization-roadmap.md and frontend-guidelines.md): unused deps removed, RTK Query standardized, typed API client + TS migrations for core modules, component hierarchy clarified, artist page uses server bracket create. Matchup play remains client-local for now; server pick persistence is ready on the backend but not wired in the UI yet.
 
 Next: start Phase 3 with T020 (split Django settings), avoiding simultaneous architecture + major version upgrades.

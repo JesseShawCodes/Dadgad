@@ -45,8 +45,8 @@ Rules:
 ## Bracket state
 
 - **Create:** Django `BracketCreateFromArtistView` via RTK `getArtistPage` (`/api/brackets/artist/...`). Generate uses server round-1 structure when present (`serverBracket.buildInitialBracket`), with `createMatchups` as fallback.
-- **During play:** local updates via `bracketLocalUpdate` for snappy UX; best-effort persist via `POST /api/brackets/select-matchup-winner/`.
-- **Resume:** localStorage “in progress” UI today. Session-scoped server resume is a later milestone (needs backend session APIs).
+- **During play:** local updates via `bracketLocalUpdate` only. Server pick persistence is deferred until M6 wiring is intentional.
+- **Resume:** localStorage “in progress” UI today. Session-scoped server resume is a later milestone.
 
 ## Accessibility baseline
 

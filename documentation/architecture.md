@@ -59,7 +59,7 @@ Dadgad/
 
 1. **Artist search** — user submits query → RTK `startSearch` (`GET /artist?q=`) → poll `getTaskStatus` until SUCCESS/FAILURE.
 2. **Artist page** — `GET /api/brackets/artist/<name>` loads songs + structured bracket; Generate prefers server round-1 (falls back to `createMatchups`).
-3. **Bracket play** — local progression in Context; best-effort `POST /api/brackets/select-matchup-winner/`; resume via localStorage.
+3. **Bracket play** — local progression in Context + localStorage resume. Server pick persistence is available via `select-matchup-winner` but not wired in the UI yet.
 
 ### Dependency notes (frontend)
 

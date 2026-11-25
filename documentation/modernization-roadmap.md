@@ -73,7 +73,7 @@ Priority: **P0** = do next / unblockers · **P1** = core modernization · **P2**
 | T013 | Introduce a typed API client module | **Done** — `api/client.ts` | M4 ✓ |
 | T014 | Clarify component hierarchy | **Done** | M4 ✓ |
 | T015 | Centralize bracket state | **Done** — keep Context; documented | M4 ✓ |
-| T016 | Wire UI to server bracket APIs | **Partial** — create + select-winner wired; full server-driven progression/resume later | M6 |
+| T016 | Wire UI to server bracket APIs | **Partial** — create path wired; pick persistence / full progression deferred | M6 |
 | T017 | Accessibility pass on matchup selection | **Partial** — aria on matchup buttons | M9-prep |
 
 ### P1 — Backend modernization (Phase 3)
@@ -95,7 +95,7 @@ Priority: **P0** = do next / unblockers · **P1** = core modernization · **P2**
 | ID | Task | Notes | Milestone |
 | --- | --- | --- | --- |
 | T030 | Backend: create tournament + initial matchups | UI uses create-from-artist | M6 ✓ |
-| T031 | Backend: record match selections and advance rounds | `select-matchup-winner` implemented; UI calls it | M6 ✓ |
+| T031 | Backend: record match selections and advance rounds | Backend endpoint implemented; UI wiring deferred (local play for now) | M6 partial |
 | T032 | Backend: return structured bracket payload the UI can render | `get_structured_bracket` | M6 ✓ |
 | T033 | Frontend: replace local `createMatchups` as sole create path | Prefers server round-1; `createMatchups` remains fallback | M6 partial |
 | T034 | Persist championship / final rounds on server as UX source of truth | Still client-driven for championship UX | M6 |

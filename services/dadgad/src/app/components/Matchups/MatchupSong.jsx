@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import MatchupSongButton from './MatchupSongButton';
 import { Context } from '../../context/BracketContext';
 import { applyLocalMatchupPick } from '../../services/bracketLocalUpdate';
-import { selectMatchupWinnerRequest } from '../../api/client';
 
 export default function MatchupSong({
   thissong, opponent, matchupId, round, group, winner,
@@ -14,15 +13,8 @@ export default function MatchupSong({
   const { handle } = useParams();
   const [state, dispatch] = useContext(Context);
   const [boxShadow, setBoxShadow] = useState('none');
-  const [submitting, setSubmitting] = useState(false);
 
-  const selectWinner = async () => {
-    if (submitting) {
-      return;
-    }
-
-    setSubmitting(true);
-
+  const selectWinner = () => {
     applyLocalMatchupPick({
       dispatch,
       state,
@@ -44,22 +36,6 @@ export default function MatchupSong({
         },
       },
     });
-
-    // Persist pick on the server when we have a bracket id (best-effort).
-    const bracketId = state.values?.bracket_id;
-    if (bracketId && thissong?.song?.id) {
-      try {
-        await selectMatchupWinnerRequest({
-          bracket_id: bracketId,
-          matchupId,
-          selectedSong: thissong,
-        });
-      } catch (error) {
-        console.error('Failed to persist matchup winner:', error);
-      }
-    }
-
-    setSubmitting(false);
   };
 
   const winnerId = typeof winner !== 'undefined' && winner !== null ? winner.id : null;
@@ -71,7 +47,6 @@ export default function MatchupSong({
       setBoxShadow={setBoxShadow}
       selectWinner={selectWinner}
       winner={winnerId}
-      disabled={submitting}
     />
   );
 }
