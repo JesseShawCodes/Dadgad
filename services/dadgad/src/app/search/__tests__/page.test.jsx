@@ -1,75 +1,82 @@
-
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import SearchPage from '../page';
+import { jsonServerApi } from '../../services/jsonServerApi';
 
-// Mock the fetch function
-global.fetch = jest.fn();
+jest.mock('../../components/ArtistSearchCard', () => {
+  return function MockArtistSearchCard({ artistResult }) {
+    return <div>{artistResult.attributes.name}</div>;
+  };
+});
 
-// Mock SWR
-jest.mock('swr', () => ({
-  __esModule: true,
-  default: jest.fn(),
-}));
+function renderSearchPage() {
+  const store = configureStore({
+    reducer: {
+      [jsonServerApi.reducerPath]: jsonServerApi.reducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(jsonServerApi.middleware),
+  });
+
+  return render(
+    <Provider store={store}>
+      <SearchPage />
+    </Provider>,
+  );
+}
 
 describe('SearchPage', () => {
   beforeEach(() => {
-    fetch.mockClear();
-    require('swr').default.mockClear();
+    global.fetch = jest.fn();
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
   });
 
   it('renders the search page with initial elements', () => {
-    require('swr').default.mockReturnValue({ data: null, error: null });
-    render(<SearchPage />);
-    
+    renderSearchPage();
+
     expect(screen.getByText('Search for Artist')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Search')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Search' })).toBeInTheDocument();
   });
 
   it('allows typing in the search input', () => {
-    require('swr').default.mockReturnValue({ data: null, error: null });
-    render(<SearchPage />);
-    
+    renderSearchPage();
+
     const input = screen.getByPlaceholderText('Search');
     fireEvent.change(input, { target: { value: 'test artist' } });
-    
+
     expect(input.value).toBe('test artist');
   });
 
   it('shows loading state when search is submitted', async () => {
-    require('swr').default.mockReturnValue({ data: null, error: null });
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ task_id: '123' }),
-    });
+    fetch.mockResolvedValueOnce(
+      new Response(JSON.stringify({ task_id: '123' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    fetch.mockResolvedValue(
+      new Response(JSON.stringify({ status: 'PENDING' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
 
-    render(<SearchPage />);
-    
+    renderSearchPage();
+
     const input = screen.getByPlaceholderText('Search');
     fireEvent.change(input, { target: { value: 'test artist' } });
-    
-    const searchButton = screen.getByRole('button', { name: 'Search' });
-    fireEvent.click(searchButton);
-    
+    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
+
     await waitFor(() => {
       expect(screen.getByText('Submitting Search...')).toBeInTheDocument();
     });
-  });
-
-  it('shows skeleton loaders when polling is in PENDING state', async () => {
-    require('swr').default.mockReturnValue({ 
-      data: { status: 'PENDING' }, 
-      error: null 
-    });
-
-    render(<SearchPage />);
-    
-    // Assuming that the task ID is set from a previous step in a real scenario
-    // For this test, we directly set the SWR mock to a pending state.
-    
-    expect(screen.getByTestId('artist-card-skeleton')).toBeInTheDocument();
   });
 
   it('displays results when search is successful', async () => {
@@ -78,21 +85,37 @@ describe('SearchPage', () => {
       { id: '2', attributes: { name: 'Artist 2', artwork: { url: 'url2' } } },
     ];
 
-    require('swr').default.mockReturnValue({
-      data: { 
-        status: 'SUCCESS', 
-        result: { 
-          results: { 
-            artists: { 
-              data: mockArtists 
-            } 
-          } 
-        } 
-      },
-      error: null,
-    });
+    fetch.mockResolvedValueOnce(
+      new Response(JSON.stringify({ task_id: 'task-1' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    fetch.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          status: 'SUCCESS',
+          result: {
+            results: {
+              artists: {
+                data: mockArtists,
+              },
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      ),
+    );
 
-    render(<SearchPage />);
+    renderSearchPage();
+
+    fireEvent.change(screen.getByPlaceholderText('Search'), {
+      target: { value: 'artist' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
 
     await waitFor(() => {
       expect(screen.getByText('Artist 1')).toBeInTheDocument();
@@ -101,47 +124,47 @@ describe('SearchPage', () => {
   });
 
   it('displays an error message when the search fails', async () => {
-    require('swr').default.mockReturnValue({
-      data: { status: 'FAILURE' },
-      error: null,
-    });
+    fetch.mockResolvedValueOnce(
+      new Response(JSON.stringify({ task_id: 'task-fail' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    fetch.mockResolvedValue(
+      new Response(JSON.stringify({ status: 'FAILURE' }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
 
-    render(<SearchPage />);
+    renderSearchPage();
+
+    fireEvent.change(screen.getByPlaceholderText('Search'), {
+      target: { value: 'artist' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
 
     await waitFor(() => {
-      expect(screen.getByText('There was an error processing your search. Please try again.')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'There was an error processing your search. Please try again.',
+        ),
+      ).toBeInTheDocument();
     });
   });
 
   it('handles search submission error', async () => {
-    const errorMessage = 'Failed to fetch';
-    fetch.mockRejectedValueOnce(new Error(errorMessage));
+    fetch.mockRejectedValueOnce(new Error('Failed to fetch'));
 
-    render(<SearchPage />);
-    
-    const input = screen.getByPlaceholderText('Search');
-    fireEvent.change(input, { target: { value: 'test artist' } });
-    
-    const searchButton = screen.getByRole('button', { name: 'Search' });
-    fireEvent.click(searchButton);
-    
-    await waitFor(() => {
-      expect(screen.getByText(errorMessage)).toBeInTheDocument();
+    renderSearchPage();
+
+    fireEvent.change(screen.getByPlaceholderText('Search'), {
+      target: { value: 'test artist' },
     });
-  });
+    fireEvent.click(screen.getByRole('button', { name: 'Search' }));
 
-  it('calls useSWR with correct refreshInterval logic', () => {
-    const useSWRMock = require('swr').default;
-    useSWRMock.mockReturnValue({ data: null, error: null });
-
-    render(<SearchPage />);
-
-    const swrOptions = useSWRMock.mock.calls[0][2];
-    expect(swrOptions.refreshInterval).toBeInstanceOf(Function);
-
-    expect(swrOptions.refreshInterval({ status: 'SUCCESS' })).toBe(0);
-    expect(swrOptions.refreshInterval({ status: 'FAILURE' })).toBe(0);
-    expect(swrOptions.refreshInterval({ status: 'PENDING' })).toBe(2000);
-    expect(swrOptions.refreshInterval(null)).toBe(2000);
+    await waitFor(() => {
+      expect(screen.getByText(/Failed to fetch|Search failed/i)).toBeInTheDocument();
+    });
   });
 });

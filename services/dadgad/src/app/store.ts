@@ -6,9 +6,13 @@ const store = configureStore({
   reducer: {
     [jsonServerApi.reducerPath]: jsonServerApi.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(jsonServerApi.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(jsonServerApi.middleware),
 });
 
 setupListeners(store.dispatch);
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export default store;

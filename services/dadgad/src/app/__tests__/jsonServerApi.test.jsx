@@ -42,7 +42,7 @@ describe('jsonServerApi', () => {
       const url = typeof request === 'string' ? request : request.url;
       const method = typeof request === 'string' ? fetch.mock.calls[0][1]?.method : request.method;
 
-      expect(url).toContain('/artist?q=Test Artist');
+      expect(url).toContain('/artist?q=Test%20Artist');
       expect(method).toBe('GET');
     });
 
@@ -103,7 +103,7 @@ describe('jsonServerApi', () => {
       const url = typeof request === 'string' ? request : request.url;
       const method = typeof request === 'string' ? fetch.mock.calls[0][1]?.method : request.method;
 
-      expect(url).toContain('/artist?q=Search Query');
+      expect(url).toContain('/artist?q=Search%20Query');
       expect(method).toBe('GET');
     });
   });

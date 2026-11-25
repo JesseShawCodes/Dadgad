@@ -3,7 +3,8 @@
 Prioritized backlog derived from the Phase 1 codebase audit. Prefer small, reversible milestones: do not combine dependency upgrades with architectural rewrites in the same change set.
 
 Source plan: [Modernization.md](./Modernization.md)  
-Baseline architecture: [architecture.md](./architecture.md)
+Baseline architecture: [architecture.md](./architecture.md)  
+Frontend guidelines: [frontend-guidelines.md](./frontend-guidelines.md)
 
 ---
 
@@ -11,33 +12,24 @@ Baseline architecture: [architecture.md](./architecture.md)
 
 | Phase | Focus | Status |
 | --- | --- | --- |
-| 1 | Codebase audit and baseline | **Complete** (this doc + architecture + README/Compose fixes) |
-| 2 | Frontend modernization | Not started |
+| 1 | Codebase audit and baseline | **Complete** |
+| 2 | Frontend modernization | **Complete** (M3 + M4 + server create path / pick persistence) |
 | 3 | Backend modernization | Not started |
 | 4 | Testing and reliability | Not started |
 | 5 | Infrastructure and deployment | Not started |
 | 6 | Product and UX improvements | Not started |
 
-### Phase 1 audit checklist
+### Phase 2 changes shipped
 
-| Area | Reviewed |
-| --- | --- |
-| Frontend architecture | Done |
-| Frontend dependencies | Done |
-| Backend architecture | Done |
-| Database | Done |
-| Bracket engine | Done |
-| Apple Music integration | Done |
-| Infrastructure | Done |
-| Testing and CI/CD | Done |
-
-### Phase 1 changes shipped with the baseline
-
-- Corrected root README (Django / Next.js / PostgreSQL / Redis — not Flask/MySQL/WebSockets)
-- Moved pgAdmin credentials to environment variables
-- Expanded `.env.example` (aligned `POSTGRES_*` and `database_*`)
-- Hardened `.gitignore` (`.venv`, `node_modules`, `.env.production`, Apple key patterns)
-- Added `documentation/architecture.md` and this roadmap
+- Removed unused frontend packages (`firebase`, `axios`, `swr`, `@p5-wrapper/*`, `p5js`)
+- Standardized search + polling on RTK Query
+- Added typed API client (`src/app/api/client.ts`) and shared types
+- Migrated core services/context/store to TypeScript
+- Clarified component hierarchy (dropped legacy `pages/` leftovers; guidelines doc)
+- Documented bracket state choice: Context for play state, RTK Query for server cache
+- Artist page loads via `/api/brackets/artist/...`; Generate prefers server round-1 structure
+- Implemented `SelectMatchupWinnerView` and wired UI picks to it (local progression still drives UX)
+- Added `documentation/frontend-guidelines.md`
 
 ---
 
@@ -47,10 +39,10 @@ Baseline architecture: [architecture.md](./architecture.md)
 | --- | --- | --- |
 | M1 | Repository audit and dependency inventory | 1 ✓ |
 | M2 | Updated development environment docs/config | 1 ✓ |
-| M3 | Frontend dependency modernization | 2 |
-| M4 | Frontend architecture cleanup | 2 |
+| M3 | Frontend dependency modernization | 2 ✓ |
+| M4 | Frontend architecture cleanup | 2 ✓ |
 | M5 | Backend architecture cleanup | 3 |
-| M6 | Server-side bracket generation as source of truth | 2–3 |
+| M6 | Server-side bracket generation as source of truth | 2–3 (create + pick persist ✓; session resume / full server progression remaining) |
 | M7 | Automated test coverage (esp. bracket progression) | 4 |
 | M8 | CI/CD and deployment improvements | 5 |
 | M9 | UI/UX redesign | 6 |
@@ -69,20 +61,20 @@ Priority: **P0** = do next / unblockers · **P1** = core modernization · **P2**
 | T002 | Copy Apple credentials into `services/django_backend/.env` or symlink root `.env` | Django loads dotenv from the backend package dir | M2 |
 | T003 | Verify `make docker-start` + migrate + `dadgad-start` + Celery end-to-end | Smoke-test the documented quick start | M2 |
 | T004 | Remove `"*"` from production `ALLOWED_HOSTS` | Security | M8 |
-| T005 | Implement or delete stub `SelectMatchupWinnerView` | Currently returns fake success | M6 |
+| T005 | Implement or delete stub `SelectMatchupWinnerView` | **Done** — advances via `BracketService.advance_winner` | M6 ✓ |
 
 ### P1 — Frontend modernization (Phase 2)
 
 | ID | Task | Notes | Milestone |
 | --- | --- | --- | --- |
-| T010 | Inventory and remove unused deps (`firebase`, `axios`, unused p5 wrappers) | Shrink install surface before upgrades | M3 |
-| T011 | Standardize on one data-fetching approach | Prefer RTK Query for API; keep or migrate SWR polling | M3 / M4 |
-| T012 | Migrate remaining JSX → TypeScript | Start with services + context | M3 |
-| T013 | Introduce a typed API client module | Wrap bracket + artist endpoints consistently | M4 |
-| T014 | Clarify component hierarchy | pages / features / ui; reduce `pages/` vs App Router duplication | M4 |
-| T015 | Centralize bracket state | Keep Context or move domain state into Redux; document the choice | M4 |
-| T016 | Wire UI to server bracket APIs | Stop calling `createMatchups` as source of truth once M6 lands | M6 |
-| T017 | Accessibility pass on matchup selection | Keyboard + semantic controls | M9-prep |
+| T010 | Inventory and remove unused deps | **Done** | M3 ✓ |
+| T011 | Standardize on one data-fetching approach | **Done** — RTK Query only | M3 / M4 ✓ |
+| T012 | Migrate remaining JSX → TypeScript | **Partial** — services, context, store, search, API client | M3 ✓ |
+| T013 | Introduce a typed API client module | **Done** — `api/client.ts` | M4 ✓ |
+| T014 | Clarify component hierarchy | **Done** | M4 ✓ |
+| T015 | Centralize bracket state | **Done** — keep Context; documented | M4 ✓ |
+| T016 | Wire UI to server bracket APIs | **Partial** — create path wired; pick persistence / full progression deferred | M6 |
+| T017 | Accessibility pass on matchup selection | **Partial** — aria on matchup buttons | M9-prep |
 
 ### P1 — Backend modernization (Phase 3)
 
@@ -102,11 +94,11 @@ Priority: **P0** = do next / unblockers · **P1** = core modernization · **P2**
 
 | ID | Task | Notes | Milestone |
 | --- | --- | --- | --- |
-| T030 | Backend: create tournament + initial matchups (already largely in `BracketService`) | Expose as the create path the UI uses | M6 |
-| T031 | Backend: record match selections and advance rounds | Use `/matchups/<pk>/winner/` end-to-end | M6 |
-| T032 | Backend: return structured bracket payload the UI can render | Reuse / refine `get_structured_bracket` | M6 |
-| T033 | Frontend: replace local `createMatchups` progression with API responses | Keep localStorage as cache/offline only if needed | M6 |
-| T034 | Persist championship / final rounds on server | Mirror frontend championship state | M6 |
+| T030 | Backend: create tournament + initial matchups | UI uses create-from-artist | M6 ✓ |
+| T031 | Backend: record match selections and advance rounds | Backend endpoint implemented; UI wiring deferred (local play for now) | M6 partial |
+| T032 | Backend: return structured bracket payload the UI can render | `get_structured_bracket` | M6 ✓ |
+| T033 | Frontend: replace local `createMatchups` as sole create path | Prefers server round-1; `createMatchups` remains fallback | M6 partial |
+| T034 | Persist championship / final rounds on server as UX source of truth | Still client-driven for championship UX | M6 |
 
 ### P1 — Testing (Phase 4)
 
@@ -114,7 +106,7 @@ Priority: **P0** = do next / unblockers · **P1** = core modernization · **P2**
 | --- | --- | --- | --- |
 | T040 | End-to-end bracket progression tests (64 → champion) | Highest-value backend tests | M7 |
 | T041 | DRF APIClient integration tests for bracket endpoints | Create, select, advance, complete | M7 |
-| T042 | Frontend tests for API-driven bracket flow | After M6 | M7 |
+| T042 | Frontend tests for API-driven bracket flow | After fuller M6 | M7 |
 | T043 | Add Playwright smoke for search → artist → first pick | Optional but valuable | M7 |
 | T044 | Consider pytest + pytest-django | Optional migration from `manage.py test` | M7 |
 
@@ -134,31 +126,29 @@ Priority: **P0** = do next / unblockers · **P1** = core modernization · **P2**
 | --- | --- | --- | --- |
 | T060 | Visual identity (type, color, spacing, artwork) | After architecture is stable | M9 |
 | T061 | Responsive bracket navigation | | M9 |
-| T062 | Saved tournaments / history / sharing | Needs server-side brackets (M6) | M9 |
+| T062 | Saved tournaments / history / sharing | Needs fuller server-side brackets | M9 |
 | T063 | Music discovery UX improvements | Search + metadata | M9 |
 
 ---
 
-## Suggested next session (start of Phase 2)
+## Suggested next session (start of Phase 3)
 
-1. **T010** — Remove unused frontend packages and verify `npm test` / `npm run build`.
-2. **T011** — Decide RTK Query vs SWR for task polling; implement one path.
-3. **T005 + T030–T032** — Spike: call existing `BracketCreateFromArtistView` from the artist page and render server matchups (read-only) before switching writes.
+1. **T020** — Split Django settings into base/local/production.
+2. **T021 / T022** — Thin views + normalize `/api/` error shapes.
+3. **T023 / T024 / T034** — Multi-bracket ownership, transactional picks, championship as server truth.
 
-Do not upgrade React/Next while restructuring components in the same PR.
+Do not upgrade Django majors while restructuring apps in the same PR.
 
 ---
 
 ## Claude / Cursor working agreements
 
-Recommended project docs (add when the corresponding phase starts):
-
 ```
 documentation/
-├── Modernization.md           # Original plan
-├── architecture.md            # Baseline (Phase 1)
-├── modernization-roadmap.md   # This backlog
-├── frontend-guidelines.md     # Phase 2
+├── Modernization.md
+├── architecture.md
+├── modernization-roadmap.md
+├── frontend-guidelines.md     # Phase 2 ✓
 ├── backend-guidelines.md      # Phase 3
 └── testing-strategy.md        # Phase 4
 ```

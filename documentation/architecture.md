@@ -47,19 +47,19 @@ Dadgad/
 | Framework | Next.js `^16.2.7`, React `^19.2.7`, App Router |
 | Rendering | Mostly client components (`"use client"`); home page is client-rendered |
 | Routing | App Router: `/`, `/search`, `/about`, `/artist/[handle]` |
-| API client | RTK Query (`jsonServerApi.jsx`) for artist search / artist page / task status; SWR also used on search page for polling |
-| Bracket state | React Context + reducer (`BracketContext.jsx`); persisted to `localStorage` |
+| API client | RTK Query (`jsonServerApi.ts`) for search / artist bracket / task status; typed `api/client.ts` for matchup writes |
+| Bracket state | React Context + reducer (`BracketContext.tsx`); localStorage for in-progress resume |
 | Styling | Bootstrap 5.3 + SCSS (`App.scss`); some CSS modules |
-| TypeScript | Partial — a few `.tsx` files; majority still `.jsx` |
+| TypeScript | Core services/context/API in TS; many presentational components still JSX |
 | Visualization | p5.js canvas via `react-p5` (`bracketService.jsx`, `p5Sketch.jsx`) |
 | Tests | Jest + Testing Library (~25 test files); component/service unit tests |
 | Deploy | Netlify with `@netlify/plugin-nextjs`; local dev on port **1207** |
 
 ### Key frontend flows
 
-1. **Artist search** — user submits query → `GET /artist?q=` returns Celery `task_id` → frontend polls `GET /api/task-status?q=` (SWR) until results arrive.
-2. **Artist page** — `GET /artist-page/<name>` loads songs/albums; frontend builds matchups with `createMatchups()` and stores progress in `localStorage`.
-3. **Bracket play** — selections update `BracketContext` and local storage. Backend `BracketService` / matchup winner APIs exist but are **not the primary path** the UI uses today.
+1. **Artist search** — user submits query → RTK `startSearch` (`GET /artist?q=`) → poll `getTaskStatus` until SUCCESS/FAILURE.
+2. **Artist page** — `GET /api/brackets/artist/<name>` loads songs + structured bracket; Generate prefers server round-1 (falls back to `createMatchups`).
+3. **Bracket play** — local progression in Context + localStorage resume. Server pick persistence is available via `select-matchup-winner` but not wired in the UI yet.
 
 ### Dependency notes (frontend)
 
@@ -67,11 +67,9 @@ Dadgad/
 | --- | --- |
 | `next`, `react`, `react-dom` | Current major versions — preserve |
 | `@reduxjs/toolkit`, `react-redux` | Used for RTK Query only (no domain slices) |
-| `swr` | Used alongside RTK Query for task polling — dual data-fetching approach |
-| `firebase` | Declared; **no source imports found** — candidate for removal |
-| `axios` | Declared; **no source imports found** — candidate for removal |
-| `p5`, `p5js`, `react-p5`, `@p5-wrapper/*` | Overlapping p5 wrappers; only `react-p5` + `p5` appear in use |
+| `p5`, `react-p5` | Bracket sketch visualization |
 | `prop-types` | Legacy alongside gradual TypeScript adoption |
+| `firebase`, `axios`, `swr`, `@p5-wrapper/*`, `p5js` | **Removed in Phase 2** |
 
 ## 4. Backend architecture
 
@@ -98,7 +96,7 @@ Dadgad/
 | GET | `/api/brackets/artist/<artist_name>` | Create/fetch bracket from artist (server-side) |
 | GET | `/api/brackets/<pk>/` | Bracket detail |
 | POST | `/api/matchups/<pk>/winner/` | Advance winner via `BracketService` |
-| POST | `/api/brackets/select-matchup-winner/` | **Stub** — returns success; does not update bracket |
+| POST | `/api/brackets/select-matchup-winner/` | Advance winner via `BracketService.advance_winner` + return structured bracket |
 
 ### Models
 
@@ -115,18 +113,19 @@ Dadgad/
 
 Indexes beyond defaults are not defined on bracket tables. `Bracket.objects.filter(artist_id=...).first()` means **one persisted bracket per artist**, not per user/session.
 
-## 5. Bracket engine (dual implementation)
+## 5. Bracket engine
 
-This is the most important architectural finding.
+Phase 2 wires create + pick persistence to the server while keeping client-side round progression for UX.
 
 | Location | Role today |
 | --- | --- |
-| Frontend `createBracket.jsx` | **Primary** — builds 64-song group matchups client-side |
-| Frontend `BracketContext` + localStorage | Progression and persistence for the user’s session |
-| Backend `BracketService` | Full tree generation + `advance_winner`; used by create-from-artist API |
-| Backend `SelectMatchupWinnerView` | Incomplete stub |
+| Backend `BracketService` | Tree generation, `advance_winner`, structured payload |
+| Frontend `BracketContext` | In-play UI state (Context, not Redux domain slices) |
+| Frontend `createMatchups` | Fallback initial round-1 builder when server structure unavailable |
+| Frontend localStorage | In-progress resume cache |
+| `SelectMatchupWinnerView` | Persists picks via `advance_winner` |
 
-Implication: tournament truth lives in the browser. Server-side bracket APIs are partially built but not wired as the source of truth. Modernization Phase 2/3 should consolidate generation and progression on the backend (see roadmap M6).
+Phase 3 should still harden multi-bracket ownership, transactional validation, championship-as-server-truth, and indexes (roadmap T023–T025, T034).
 
 ## 6. Apple Music integration
 
@@ -185,16 +184,16 @@ Django local settings expect `database_name` / `database_user` / `database_passw
 
 1. README previously claimed Flask, WebSockets, and MySQL — corrected in Phase 1.
 2. Frontend path in old docs was `services/frontend`; actual path is `services/dadgad`.
-3. Dual bracket engines (client vs server).
-4. Dual data-fetching libraries (RTK Query + SWR).
-5. Unused npm packages (`firebase`, `axios`, redundant p5 wrappers).
-6. `startup.sh` references nonexistent `apple_search.wsgi`.
-7. Django Dockerfile runs `collectstatic` at build without production env — fragile.
-8. Settings comment still says Django 5.1; project is on 5.2.
-9. `ArtistDetails.updated` uses `auto_now_add` (likely meant `auto_now`).
-10. No CI pipeline.
+3. Client still owns round progression UX while server persists picks (harden championship-as-server-truth in Phase 3/4).
+4. Remaining JSX → TypeScript migration for presentational components.
+5. `startup.sh` references nonexistent `apple_search.wsgi`.
+6. Django Dockerfile runs `collectstatic` at build without production env — fragile.
+7. Settings comment still says Django 5.1; project is on 5.2.
+8. `ArtistDetails.updated` uses `auto_now_add` (likely meant `auto_now`).
+9. No CI pipeline.
 
 ## 11. Related docs
 
 - [Modernization roadmap & backlog](./modernization-roadmap.md)
+- [Frontend guidelines](./frontend-guidelines.md)
 - [Original modernization plan](./Modernization.md)

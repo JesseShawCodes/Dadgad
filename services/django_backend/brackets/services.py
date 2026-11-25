@@ -144,6 +144,40 @@ class BracketService:
         return matchup
 
     @staticmethod
+    def find_matchup_by_matchup_id(bracket, matchup_id_str):
+        """
+        Locate a matchup whose frontend matchupId (concatenated apple ids)
+        matches the provided string.
+        """
+        matchups = bracket.matchups.select_related("item1", "item2").all()
+        for matchup in matchups:
+            song1_id = matchup.item1.apple_id if matchup.item1 else "TBD"
+            song2_id = matchup.item2.apple_id if matchup.item2 else "TBD"
+            if f"{song1_id}{song2_id}" == str(matchup_id_str):
+                return matchup
+        return None
+
+    @staticmethod
+    def get_songs_for_bracket(bracket):
+        """
+        Build a minimal songs list from bracket items for structured output.
+        """
+        songs = []
+        for item in bracket.items.all():
+            songs.append(
+                {
+                    "id": item.apple_id,
+                    "type": "songs",
+                    "rank": item.seed,
+                    "attributes": {
+                        "name": item.name,
+                        "artwork": {"url": item.image_url or ""},
+                    },
+                }
+            )
+        return songs
+
+    @staticmethod
     def get_structured_bracket(bracket, songs_list):
         """
         Formats the bracket into a structured dictionary with groups

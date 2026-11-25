@@ -10,19 +10,18 @@ import ArtistPageForm from '../../components/ArtistPageForm';
 import TopTracks from '../../components/TopTracks';
 
 function ArtistPage() {
+  // Nested provider isolates reducer state per artist visit (see frontend-guidelines.md).
   return (
-    <>
-      <BracketContext>
-        <ErrorBoundary>
-          <div className="container py-4">
-            <ArtistName />
-            <ArtistPageForm />
-            <TopTracks />
-          </div>
-        </ErrorBoundary>
-      </BracketContext>
-    </>
-  )
+    <BracketContext>
+      <ErrorBoundary>
+        <div className="container py-4">
+          <ArtistName />
+          <ArtistPageForm />
+          <TopTracks />
+        </div>
+      </ErrorBoundary>
+    </BracketContext>
+  );
 }
 
 export default ArtistPage;

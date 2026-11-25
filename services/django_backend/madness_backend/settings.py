@@ -91,11 +91,16 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:1207",
+    "http://127.0.0.1:1207",
     "http://localhost:8080",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "https://dadgad.netlify.app",
 ]
+
+# Required when the frontend uses fetch/RTK Query with credentials: 'include'
+# (cross-origin cookies). Without this, browsers hide successful API responses.
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = "madness_backend.urls"
 
