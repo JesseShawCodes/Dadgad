@@ -333,55 +333,44 @@ Here is the initial audit I’d like to complete:
 
 Modernization audit checklist
 
-0/8 reviewed
+8/8 reviewed (Phase 1 complete — see architecture.md and modernization-roadmap.md)
 
 Frontend architecture
 
-Next.js version, routing, components, state management, TypeScript
+Next.js 16 / React 19, App Router, Context + RTK Query, partial TypeScript — reviewed
 
 Frontend dependencies
 
-Outdated packages, compatibility, unused dependencies
+Unused firebase/axios; overlapping p5 wrappers; dual RTK Query + SWR — reviewed
 
 Backend architecture
 
-Django apps, API endpoints, services, serializers
+apple_search + brackets apps; BracketService; mixed function/DRF views — reviewed
 
 Database
 
-Models, migrations, relationships, indexing
+Bracket / BracketItem / Matchup / AppleAuth; one bracket per artist_id — reviewed
 
 Bracket engine
 
-Generation, progression, persistence, validation
+Dual client (`createMatchups`) + server (`BracketService`); localStorage primary — reviewed
 
 Apple Music integration
 
-Authentication, API calls, caching, error handling
+JWT auth, token store, Celery search task — reviewed
 
 Infrastructure
 
-Docker, Redis, Celery, hosting, environment variables
+Compose Postgres/Redis/pgAdmin; Netlify + Render; env split documented — reviewed
 
 Testing and CI/CD
 
-Existing tests, coverage, GitHub Actions, deployment checks
+Jest + Django tests present; no GitHub Actions / E2E — reviewed
 
-My recommendation
+Phase 1 deliverables
 
-I would start with Phase 1 and resist the temptation to start upgrading packages immediately.
+* [documentation/architecture.md](./architecture.md) — system baseline
+* [documentation/modernization-roadmap.md](./modernization-roadmap.md) — prioritized backlog (T001+)
+* Root README corrected; pgAdmin credentials moved to env; `.env.example` / `.gitignore` hardened
 
-One limitation of my initial repository review: GitHub’s accessible repository view exposed the root configuration and README, but not enough of the nested source files to perform a reliable file-by-file audit.
-
-Could you upload a ZIP of the current repository (excluding .git, node_modules, virtual environments, and secrets)?
-
-With that, I can help you produce a much more concrete modernization plan containing:
-
-* Specific dependencies to upgrade and recommended target versions.
-* Files and directories that should be reorganized.
-* Existing code that should be preserved.
-* Architectural changes worth making.
-* Potential technical debt and security concerns.
-* A prioritized implementation backlog with individual tasks you can feed directly into Claude Code.
-
-I’d like to make this a modernization effort that leaves Dadgad in substantially better shape, not just a project where all the packages have newer version numbers.
+Next: start Phase 2 with T010 (remove unused frontend packages), avoiding simultaneous architecture + major version upgrades.
