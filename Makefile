@@ -1,3 +1,16 @@
+.PHONY: setup docker-start docker-stop colima-start colima-stop colima-stop-force \
+	django-start django-stop django-migrate django-test django-ruff-check django-ruff-check-fix \
+	dadgad-start dadgad-stop postgres-shell
+
+# First-time local setup: env template + infra + backend install/migrate
+setup:
+	@test -f .env || cp .env.example .env
+	@echo "Edit .env with Apple Music credentials, DJANGO_SECRET_KEY, and PGADMIN_* values."
+	$(MAKE) docker-start
+	$(MAKE) -C services/django_backend install
+	$(MAKE) django-migrate
+	@echo "Setup complete. Run: make django-start  and  make dadgad-start"
+
 docker-start:
 	docker compose up -d
 

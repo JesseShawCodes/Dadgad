@@ -1,76 +1,115 @@
-# March Maddness - React/Flask/WebSocket/Postgresql App
+# Dadgad
 
-This is the foundation for a March Madness Music App, but is also used as a place to test a lot of various services. Sorry if it's a bit messy :-)
+March Madness–style song brackets for your favorite artists. Search Apple Music, seed a tournament of top tracks, pick winners round by round, and crown a champion.
 
-This application can be tested at the link below:
-https://dadgad.netlify.app/
+Live site: [https://dadgad.netlify.app/](https://dadgad.netlify.app/)
 
-## Services
+## Architecture
 
-### Backend
+| Layer | Stack |
+| --- | --- |
+| Frontend | React 19, Next.js (App Router), Redux Toolkit / RTK Query, Bootstrap 5 |
+| Backend | Django 5.2, Django REST Framework |
+| Database | PostgreSQL 15 |
+| Background jobs | Celery 5 + Redis 7 (local) / Upstash (production-ready) |
+| Music data | Apple Music API |
+| Frontend host | Netlify (`@netlify/plugin-nextjs`) |
+| Backend host | Render (gunicorn) |
 
-Backend of application built using Django Framework. Work in Progress
-
-To start server
+Monorepo layout:
 
 ```
+services/
+  dadgad/            # Next.js frontend (port 1207 in local dev)
+  django_backend/    # Django API + Celery workers
+docker-compose.yml   # PostgreSQL, Redis, pgAdmin
+```
+
+See [documentation/architecture.md](documentation/architecture.md) for a full system overview and [documentation/modernization-roadmap.md](documentation/modernization-roadmap.md) for the phased modernization backlog.
+
+## Prerequisites
+
+- Node.js 20+
+- Python 3.10+
+- Docker (PostgreSQL + Redis)
+
+## Quick start
+
+1. **Environment**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   Fill in Apple Music credentials (`apple_key_id`, `apple_team_id`, `apple_auth_key`) and `DJANGO_SECRET_KEY`. Set pgAdmin credentials if you use that service.
+
+2. **Infrastructure**
+
+   ```bash
+   make docker-start
+   ```
+
+   Starts PostgreSQL (`localhost:5432`), Redis (`localhost:6379`), and pgAdmin (`localhost:8888`).
+
+3. **Backend**
+
+   ```bash
+   cd services/django_backend
+   make install
+   make migrate
+   make app-start
+   ```
+
+   Django runs at `http://localhost:8000`. Celery starts alongside the API.
+
+4. **Frontend**
+
+   ```bash
+   make dadgad-start
+   ```
+
+   Next.js runs at `http://localhost:1207` (Turbopack). Set `NEXT_PUBLIC_SERVER=http://localhost:8000` if needed.
+
+## Common Make targets
+
+| Target | Description |
+| --- | --- |
+| `make docker-start` / `docker-stop` | Start/stop Postgres, Redis, pgAdmin |
+| `make django-start` / `django-stop` | Start/stop Django + Celery |
+| `make django-migrate` | Run migrations |
+| `make django-test` | Run Django tests |
+| `make dadgad-start` / `dadgad-stop` | Start/stop Next.js |
+| `make postgres-shell` | `psql` into the local database |
+
+## Testing
+
+**Frontend** (Jest + Testing Library):
+
+```bash
+cd services/dadgad
+npm test
+```
+
+**Backend** (Django test runner + coverage):
+
+```bash
 cd services/django_backend
-python3 manage.py runserver
+make test
+make test-coverage
 ```
 
-### DB
+## Environment variables
 
-Database Service using MySQL. MySQL container is currently ran locally via Docker. Working on setting up an AWS Hosted MySQL database.
+See [.env.example](.env.example). Important groups:
 
-If you have docker:
+- **Apple Music** — `apple_key_id`, `apple_team_id`, `apple_auth_key`, catalog URLs
+- **Postgres** — `POSTGRES_*` for Docker; `database_*` for Django local settings
+- **Redis / Celery** — `REDIS_URL`, `UPSTASH_REDIS_URL`
+- **Django** — `DJANGO_SECRET_KEY`, `environment` (`development` / `production`)
+- **Frontend** — `NEXT_PUBLIC_SERVER`, `NEXT_PUBLIC_NAME`, `NEXT_PUBLIC_MAINTENANCE_MODE`
 
-```
-docker compose up -d
-```
+## Documentation
 
-This starts redis and a Mysql database
-
-
-### Front End
-
-Front end React Application
-
-To start Front End
-
-```
-cd services/frontend
-npm install
-npm start
-```
-
-### Django documentation
-https://www.djangoproject.com/
-
-### Testing
-
-#### Django
-
-To run tests and generate a coverage report
-```
-coverage run manage.py test
-```
-
-To view coverage report
-```
-coverage report
-```
-
-### Celery
-Start Celery from the django_backend/madness_backend folder
-```
-celery -A madness_backend worker --concurrency=4 --loglevel=DEBUG
-```
-
-### Environment Variables
-
-```
-export apple_search_url="https://api.music.apple.com/v1/catalog/us/search?term="
-apple_artist_details_url="https://api.music.apple.com/v1/catalog/us/"
-UPSTASH_REDIS_URL="redis://localhost:6379/0"
-```
-
+- [Architecture](documentation/architecture.md)
+- [Modernization roadmap & backlog](documentation/modernization-roadmap.md)
+- [Modernization plan (source)](documentation/Modernization.md)
