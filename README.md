@@ -112,4 +112,6 @@ See [.env.example](.env.example). Important groups:
 
 - [Architecture](documentation/architecture.md)
 - [Modernization roadmap & backlog](documentation/modernization-roadmap.md)
+- [Frontend guidelines](documentation/frontend-guidelines.md)
+- [Backend guidelines](documentation/backend-guidelines.md)
 - [Modernization plan (source)](documentation/Modernization.md)

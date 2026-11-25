@@ -25,6 +25,6 @@ class ArtistDetails(models.Model):
     """Artist Details"""
 
     artist_name = models.CharField(max_length=2000)
-    created = models.DateTimeField(auto_created=True)
+    created = models.DateTimeField(auto_now_add=True)
     artist_id = models.IntegerField()
-    updated = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
