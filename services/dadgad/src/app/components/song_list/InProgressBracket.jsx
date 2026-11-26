@@ -3,14 +3,16 @@ import { useParams } from 'next/navigation';
 
 import { Context } from '../../context/BracketContext';
 import WarningMessage from '../WarningMessage';
+import { normalizeArtistHandle } from '../../services/artistHandle';
 
 function InProgressBracket() {
   const { handle } = useParams();
+  const artistHandle = normalizeArtistHandle(handle);
   const value = useContext(Context);
   const [state, dispatch] = value;
 
   const showInProgressBracket = () => {
-    const inProgressBracket = JSON.parse(localStorage.getItem("userBracket")).find(item => item.artist == handle);
+    const inProgressBracket = JSON.parse(localStorage.getItem("userBracket")).find(item => item.artist == artistHandle);
     dispatch({ type: 'setRound', payload: { round: inProgressBracket.round}});
     dispatch({ type: 'setBracket', payload: { bracket: inProgressBracket.bracket}});
     dispatch({ type: 'setCurrentRoundProgres', payload: {currentRoundProgres: inProgressBracket.currentRoundProgres}});

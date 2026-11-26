@@ -1,4 +1,5 @@
 import math
+from urllib.parse import unquote
 
 from django.db import transaction
 from django.db.models import Q
@@ -10,6 +11,15 @@ from .exceptions import (
     MatchupNotReady,
 )
 from .models import Bracket, BracketItem, Matchup
+
+
+def normalize_artist_slug(artist_name):
+    """Decode URL slug leftovers into a human-readable artist name."""
+    name = unquote(artist_name or "")
+    # Defend against double-encoded path segments (Led%20Zeppelin).
+    if "%20" in name or "%2" in name.lower():
+        name = unquote(name)
+    return name.replace("+", " ").replace("-", " ").replace("%20", " ").strip()
 
 
 class BracketService:
@@ -210,11 +220,13 @@ class BracketService:
         from apple_search.artist_page import (
             add_weight_to_songs,
             featured_album_details,
+            get_artist_high_level_details,
             get_artist_id_by_name,
             top_songs_list_builder,
         )
 
-        artist_id = get_artist_id_by_name(artist_name)
+        search_name = normalize_artist_slug(artist_name)
+        artist_id = get_artist_id_by_name(search_name)
         if isinstance(artist_id, str) and not artist_id.isdigit():
             raise ArtistNotFound(artist_id)
         if not artist_id:
@@ -227,7 +239,8 @@ class BracketService:
             albums.get("data", []) if albums and "data" in albums else [],
         )
 
-        display_name = artist_name.replace("-", " ").title()
+        details = get_artist_high_level_details(artist_id) or {}
+        display_name = details.get("name") or search_name.title()
         bracket, _created = BracketService.get_or_create_bracket(
             artist_id,
             display_name,
