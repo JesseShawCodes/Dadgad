@@ -1,4 +1,4 @@
-.PHONY: start migrate setup update-requirements install
+.PHONY: start migrate migrate-dry-run setup update-requirements install
 
 PYTHON=.venv/bin/python
 
@@ -34,13 +34,26 @@ python-start:
 migrate:
 	$(PYTHON) manage.py migrate
 
+# Show model → migration changes without writing files (same check CI uses).
+migrate-dry-run:
+	$(PYTHON) manage.py makemigrations --dry-run --check --verbosity 3
+
 celery:
 	.venv/bin/celery -A madness_backend worker -l info
 
 test:
 	$(PYTHON) manage.py test
 
+pytest:
+	DJANGO_SETTINGS_MODULE=madness_backend.settings.test \
+		$(PYTHON) -m pytest
+
 test-coverage:
+	DJANGO_SETTINGS_MODULE=madness_backend.settings.test \
+		$(PYTHON) -m pytest --cov=. --cov-report=term-missing
+
+# Legacy coverage via manage.py test
+test-coverage-django:
 	coverage run manage.py test --keepdb
 	coverage report
 

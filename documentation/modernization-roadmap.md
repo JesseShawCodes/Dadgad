@@ -15,8 +15,8 @@ Frontend guidelines: [frontend-guidelines.md](./frontend-guidelines.md)
 | 1 | Codebase audit and baseline | **Complete** |
 | 2 | Frontend modernization | **Complete** (M3 + M4 + server create path / pick persistence) |
 | 3 | Backend modernization | **Complete** (M5 + multi-bracket / transactional picks / championship payload) |
-| 4 | Testing and reliability | Not started |
-| 5 | Infrastructure and deployment | Not started |
+| 4 | Testing and reliability | **Complete** (M7 + CI kickoff / T050) |
+| 5 | Infrastructure and deployment | Not started (T050 CI shipped early with Phase 4) |
 | 6 | Product and UX improvements | Not started |
 
 ### Phase 2 changes shipped
@@ -43,8 +43,8 @@ Frontend guidelines: [frontend-guidelines.md](./frontend-guidelines.md)
 | M4 | Frontend architecture cleanup | 2 ✓ |
 | M5 | Backend architecture cleanup | 3 ✓ |
 | M6 | Server-side bracket generation as source of truth | 2–3 (create + pick persist + multi-bracket + championship payload ✓; UI still drives local progression) |
-| M7 | Automated test coverage (esp. bracket progression) | 4 |
-| M8 | CI/CD and deployment improvements | 5 |
+| M7 | Automated test coverage (esp. bracket progression) | 4 ✓ |
+| M8 | CI/CD and deployment improvements | 5 (CI workflow ✓; deploy hardening remains) |
 | M9 | UI/UX redesign | 6 |
 
 ---
@@ -104,17 +104,17 @@ Priority: **P0** = do next / unblockers · **P1** = core modernization · **P2**
 
 | ID | Task | Notes | Milestone |
 | --- | --- | --- | --- |
-| T040 | End-to-end bracket progression tests (64 → champion) | Highest-value backend tests | M7 |
-| T041 | DRF APIClient integration tests for bracket endpoints | Create, select, advance, complete | M7 |
-| T042 | Frontend tests for API-driven bracket flow | After fuller M6 | M7 |
-| T043 | Add Playwright smoke for search → artist → first pick | Optional but valuable | M7 |
-| T044 | Consider pytest + pytest-django | Optional migration from `manage.py test` | M7 |
+| T040 | End-to-end bracket progression tests (64 → champion) | **Done** — `brackets/tests_progression.py` | M7 ✓ |
+| T041 | DRF APIClient integration tests for bracket endpoints | **Done** — `brackets/tests_api_integration.py` | M7 ✓ |
+| T042 | Frontend tests for API-driven bracket flow | **Partial** — client pick-flow contract; UI play still local | M7 partial |
+| T043 | Add Playwright smoke for search → artist → first pick | Deferred until server-driven play UX | M7 |
+| T044 | Consider pytest + pytest-django | **Done** — pytest primary; `manage.py test` retained | M7 ✓ |
 
 ### P2 — Infrastructure (Phase 5)
 
 | ID | Task | Notes | Milestone |
 | --- | --- | --- | --- |
-| T050 | GitHub Actions: lint + frontend tests + Django tests + migrate check | No CI today | M8 |
+| T050 | GitHub Actions: lint + frontend tests + Django tests + migrate check | **Done** — `.github/workflows/ci.yml` | M8 ✓ |
 | T051 | Fix `startup.sh` WSGI module (`madness_backend.wsgi`) | Currently wrong | M8 |
 | T052 | Harden Docker image build (collectstatic / env) | Fragile at build time | M8 |
 | T053 | Document Netlify + Render env vars and deploy order | Ops runbook | M8 |
@@ -142,13 +142,22 @@ Priority: **P0** = do next / unblockers · **P1** = core modernization · **P2**
 - Celery retries/backoff; fixed `ArtistDetails.updated`; removed unused allauth
 - Added `documentation/backend-guidelines.md`
 
-## Suggested next session (start of Phase 4)
+### Phase 4 changes shipped
 
-1. **T040 / T041** — End-to-end bracket progression + DRF APIClient coverage (64 → champion).
-2. **T042** — Frontend tests for API-driven pick flow once UI wires championship from server.
-3. **T050** — GitHub Actions CI (can start in parallel with Phase 4).
+- Bracket progression suites: 64 → champion, size matrix, round-2 readiness
+- DRF APIClient integration: create/resume, select-matchup-winner, full 16/64 via HTTP
+- pytest + pytest-django + pytest-cov; `madness_backend.settings.test`
+- GitHub Actions CI (Ruff, migration check, pytest, ESLint, Jest)
+- `documentation/testing-strategy.md`
+- Fixed flaky live-API bracket view test + InProgressBracket handle mismatch
 
-Do not upgrade Django majors while expanding test infrastructure in the same PR.
+## Suggested next session (start of Phase 5)
+
+1. **T051 / T052** — Fix `startup.sh` WSGI module; harden Docker image build.
+2. **T053 / T054** — Document Netlify + Render env/deploy order; confirm prod Redis/Postgres backups.
+3. **T043 / remaining T042** — Playwright smoke + fuller frontend pick/championship tests once UI is server-driven.
+
+Do not upgrade Django majors while expanding deploy tooling in the same PR.
 
 ---
 
@@ -161,7 +170,7 @@ documentation/
 ├── modernization-roadmap.md
 ├── frontend-guidelines.md     # Phase 2 ✓
 ├── backend-guidelines.md      # Phase 3 ✓
-└── testing-strategy.md        # Phase 4
+└── testing-strategy.md        # Phase 4 ✓
 ```
 
 For each milestone: inspect → plan → one logical change → run tests → summarize risks.

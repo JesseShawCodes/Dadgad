@@ -52,13 +52,23 @@ def get_newest_auth():
     return newest.auth if newest else ""
 
 
+DEFAULT_APPLE_ARTIST_DETAILS_URL = "https://api.music.apple.com/v1/catalog/us/"
+
+
 def apple_request(
     endpoint,
     params=None,
-    base_url=os.environ["apple_artist_details_url"],
-    default={},
+    base_url=None,
+    default=None,
 ):
     """Make a request to Apple Music API"""
+    if base_url is None:
+        base_url = os.environ.get(
+            "apple_artist_details_url", DEFAULT_APPLE_ARTIST_DETAILS_URL
+        )
+    if default is None:
+        default = {}
+
     try:
         url = f"{base_url}{endpoint}"
 

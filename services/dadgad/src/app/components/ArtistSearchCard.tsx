@@ -38,13 +38,23 @@ export default function ArtistSearchCard({artistResult}: ArtistSearchCardProps) 
   return (
     <div className="mt-4 mx-4 card artist-search-card g-col-6 g-col-md-4" key={artistResult.id}>
       {
-        artistResult.attributes.artwork && artistResult.attributes.artwork.url ? <img src={artistResult.attributes.artwork.url} className="card-img-top" alt={`${artistResult.attributes.name} promo`} /> :  
+        artistResult.attributes.artwork?.url ? (
+          <Image
+            src={artistResult.attributes.artwork.url}
+            className="card-img-top"
+            alt={`${artistResult.attributes.name} promo`}
+            width={artistResult.attributes.artwork.width || 300}
+            height={artistResult.attributes.artwork.height || 300}
+            unoptimized
+          />
+        ) : (
         <div className="h-100 placeholder-image-container d-flex justify-content-center align-items-center">
           <div className="d-flex flex-column">
             <Image src={myImage} alt="Dadgad logo" role="presentation" className="me-2" style={{width: '50px', height: 'auto'}}/>
             <FontAwesomeIcon icon={faMusic} />
           </div>
         </div>
+        )
       }
       <h2 className='text-center'>
         {artistResult.attributes.name}

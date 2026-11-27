@@ -22,9 +22,12 @@ make setup              # first-time: .env, docker, pip install, migrate
 make docker-start       # Postgres + Redis + pgAdmin
 make django-start       # API + Celery
 make dadgad-start       # Next.js
-make django-test        # backend tests
-cd services/dadgad && npm test
+make django-test        # backend tests (manage.py test)
+make django-pytest      # backend tests (pytest; preferred)
+make dadgad-test        # frontend Jest
+make dadgad-lint        # frontend ESLint
 ```
+
 
 ## Preserve
 

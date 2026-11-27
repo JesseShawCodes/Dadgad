@@ -377,4 +377,6 @@ Phase 2 complete (see modernization-roadmap.md and frontend-guidelines.md): unus
 
 Phase 3 complete (see modernization-roadmap.md and backend-guidelines.md): settings split, thin views + `BracketService` expansion, `/api/` normalization with `{error, code}`, multi-bracket resume/`?new=1`, transactional picks, indexes, championship matchups/payload, Celery retries, `ArtistDetails.updated` fix, allauth deferred.
 
-Next: start Phase 4 with T040/T041 (bracket progression + API integration tests), then CI (T050).
+Phase 4 complete (see modernization-roadmap.md and testing-strategy.md): 64→champion progression tests, DRF APIClient integration (create/select/advance/complete), pytest + pytest-django, GitHub Actions CI, frontend pick-flow client tests (partial T042). Playwright smoke (T043) deferred with remaining server-driven play UX.
+
+Next: start Phase 5 with T051/T052 (startup.sh WSGI + Docker harden), then deploy/env runbook (T053/T054).

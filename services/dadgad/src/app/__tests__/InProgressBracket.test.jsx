@@ -19,7 +19,8 @@ const localStorageMock = {
     // Pre-populate the store with a sample user bracket.
     userBracket: JSON.stringify([
       {
-        artist: 'test-artist',
+        // Matches normalizeArtistHandle('test-artist') → 'test artist'
+        artist: 'test artist',
         round: 2,
         bracket: {
           "round-1": [],

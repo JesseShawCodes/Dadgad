@@ -1,6 +1,8 @@
 .PHONY: setup docker-start docker-stop colima-start colima-stop colima-stop-force \
-	django-start django-stop django-migrate django-test django-ruff-check django-ruff-check-fix \
-	dadgad-start dadgad-stop postgres-shell
+	django-start django-stop django-migrate django-migrate-dry-run \
+	django-test django-pytest \
+	django-ruff-check django-ruff-check-fix \
+	dadgad-start dadgad-stop dadgad-test dadgad-lint postgres-shell
 
 # First-time local setup: env template + infra + backend install/migrate
 setup:
@@ -35,8 +37,14 @@ django-stop:
 django-migrate:
 	$(MAKE) -C services/django_backend migrate
 
+django-migrate-dry-run:
+	$(MAKE) -C services/django_backend migrate-dry-run
+
 django-test:
 	$(MAKE) -C services/django_backend test
+
+django-pytest:
+	$(MAKE) -C services/django_backend pytest
 
 django-ruff-check:
 	$(MAKE) -C services/django_backend ruff-check
@@ -49,6 +57,12 @@ dadgad-start:
 
 dadgad-stop:
 	$(MAKE) -C services/dadgad stop
+
+dadgad-test:
+	$(MAKE) -C services/dadgad test
+
+dadgad-lint:
+	$(MAKE) -C services/dadgad lint
 
 postgres-shell:
 	docker compose exec db psql -U postgres -d maddness

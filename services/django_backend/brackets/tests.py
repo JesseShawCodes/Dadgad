@@ -12,7 +12,31 @@ class BracketViewTests(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def test_bracket_create_from_artist_mock(self):
+    @patch("apple_search.artist_page.get_artist_high_level_details")
+    @patch("apple_search.artist_page.get_artist_id_by_name")
+    @patch("apple_search.artist_page.top_songs_list_builder")
+    @patch("apple_search.artist_page.featured_album_details")
+    @patch("apple_search.artist_page.add_weight_to_songs")
+    def test_bracket_create_from_artist_mock(
+        self,
+        mock_weights,
+        mock_albums,
+        mock_songs,
+        mock_get_id,
+        mock_details,
+    ):
+        mock_get_id.return_value = "111"
+        mock_songs.return_value = [
+            {
+                "id": f"s{i}",
+                "attributes": {"name": f"Song {i}", "artwork": {"url": "u"}},
+            }
+            for i in range(1, 5)
+        ]
+        mock_albums.return_value = {"data": []}
+        mock_weights.side_effect = lambda songs, albums: songs
+        mock_details.return_value = {"name": "Deftones"}
+
         response = self.client.get("/api/brackets/artist/deftones")
 
         self.assertEqual(response.status_code, 200)

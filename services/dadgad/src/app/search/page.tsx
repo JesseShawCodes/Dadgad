@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import Loading from '../components/Loading';
 import ArtistCardSkeleton from '../components/skeleton_loaders/ArtistCardSkeleton';
@@ -25,26 +25,23 @@ function SearchPage() {
     pollingInterval: stopPolling || !taskId ? 0 : 2000,
   });
 
+  // Adjust polling flag during render when the task reaches a terminal status.
+  // Prefer this over an Effect to avoid cascading renders (react-hooks/set-state-in-effect).
+  if (
+    !stopPolling &&
+    (statusData?.status === 'SUCCESS' || statusData?.status === 'FAILURE')
+  ) {
+    setStopPolling(true);
+  }
+
   const isPolling =
     Boolean(taskId) &&
     !stopPolling &&
     (!statusData ||
       (statusData.status !== 'SUCCESS' && statusData.status !== 'FAILURE'));
 
-  useEffect(() => {
-    if (
-      statusData?.status === 'SUCCESS' ||
-      statusData?.status === 'FAILURE'
-    ) {
-      setStopPolling(true);
-    }
-  }, [statusData?.status]);
-
-  useEffect(() => {
-    if (taskError) {
-      setError(new Error('Error fetching status'));
-    }
-  }, [taskError]);
+  const displayError =
+    error || (taskError ? new Error('Error fetching status') : null);
 
   const handleSearch = async () => {
     setTaskId(null);
@@ -110,7 +107,7 @@ function SearchPage() {
         </div>
       </div>
 
-      {error && <p>{error.message}</p>}
+      {displayError && <p>{displayError.message}</p>}
 
       {(isSubmitting || (isPolling && !statusData)) && (
         <div className="container grid d-flex flex-wrap justify-content-center">
