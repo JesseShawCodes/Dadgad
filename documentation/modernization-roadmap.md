@@ -14,7 +14,7 @@ Frontend guidelines: [frontend-guidelines.md](./frontend-guidelines.md)
 | --- | --- | --- |
 | 1 | Codebase audit and baseline | **Complete** |
 | 2 | Frontend modernization | **Complete** (M3 + M4 + server create path / pick persistence) |
-| 3 | Backend modernization | Not started |
+| 3 | Backend modernization | **Complete** (M5 + multi-bracket / transactional picks / championship payload) |
 | 4 | Testing and reliability | Not started |
 | 5 | Infrastructure and deployment | Not started |
 | 6 | Product and UX improvements | Not started |
@@ -41,8 +41,8 @@ Frontend guidelines: [frontend-guidelines.md](./frontend-guidelines.md)
 | M2 | Updated development environment docs/config | 1 ✓ |
 | M3 | Frontend dependency modernization | 2 ✓ |
 | M4 | Frontend architecture cleanup | 2 ✓ |
-| M5 | Backend architecture cleanup | 3 |
-| M6 | Server-side bracket generation as source of truth | 2–3 (create + pick persist ✓; session resume / full server progression remaining) |
+| M5 | Backend architecture cleanup | 3 ✓ |
+| M6 | Server-side bracket generation as source of truth | 2–3 (create + pick persist + multi-bracket + championship payload ✓; UI still drives local progression) |
 | M7 | Automated test coverage (esp. bracket progression) | 4 |
 | M8 | CI/CD and deployment improvements | 5 |
 | M9 | UI/UX redesign | 6 |
@@ -80,15 +80,15 @@ Priority: **P0** = do next / unblockers · **P1** = core modernization · **P2**
 
 | ID | Task | Notes | Milestone |
 | --- | --- | --- | --- |
-| T020 | Split settings into `settings/base.py`, `local.py`, `production.py` | Replace single-file env branching | M5 |
-| T021 | Keep business logic in services; thin views | Extend `BracketService`; avoid new logic in views | M5 |
-| T022 | Normalize API under `/api/` with consistent error shapes | Artist search still outside `/api/` | M5 |
-| T023 | Support multiple brackets per artist/user | Today: one `Bracket` per `artist_id` | M6 |
-| T024 | Transactional `advance_winner` + validation | Concurrent picks, completed matchups | M6 |
-| T025 | Add DB indexes for `artist_id`, matchup lookups | Query efficiency | M5 |
-| T026 | Review Celery retries / failure handling | `fetch_artist_data` uses hardcoded `sleep(2)` | M5 |
-| T027 | Fix `ArtistDetails.updated` field (`auto_now`) | Model bug | M5 |
-| T028 | Align or remove unused allauth surface until auth is productized | Config present; product path unclear | M5 |
+| T020 | Split settings into `settings/base.py`, `local.py`, `production.py` | **Done** | M5 ✓ |
+| T021 | Keep business logic in services; thin views | **Done** — `build_artist_bracket_payload` + thin DRF views | M5 ✓ |
+| T022 | Normalize API under `/api/` with consistent error shapes | **Done** — `/api/artists/*` + `{error, code}`; legacy aliases kept | M5 ✓ |
+| T023 | Support multiple brackets per artist/user | **Done** — always create; resume latest incomplete; `?new=1` | M6 ✓ |
+| T024 | Transactional `advance_winner` + validation | **Done** — `select_for_update`, reject completed/invalid | M6 ✓ |
+| T025 | Add DB indexes for `artist_id`, matchup lookups | **Done** | M5 ✓ |
+| T026 | Review Celery retries / failure handling | **Done** — retries/backoff/time limits; removed `sleep(2)` | M5 ✓ |
+| T027 | Fix `ArtistDetails.updated` field (`auto_now`) | **Done** | M5 ✓ |
+| T028 | Align or remove unused allauth surface until auth is productized | **Done** — removed from settings + requirements until needed | M5 ✓ |
 
 ### P1 — Server-side bracket as source of truth (M6)
 
@@ -98,7 +98,7 @@ Priority: **P0** = do next / unblockers · **P1** = core modernization · **P2**
 | T031 | Backend: record match selections and advance rounds | Backend endpoint implemented; UI wiring deferred (local play for now) | M6 partial |
 | T032 | Backend: return structured bracket payload the UI can render | `get_structured_bracket` | M6 ✓ |
 | T033 | Frontend: replace local `createMatchups` as sole create path | Prefers server round-1; `createMatchups` remains fallback | M6 partial |
-| T034 | Persist championship / final rounds on server as UX source of truth | Still client-driven for championship UX | M6 |
+| T034 | Persist championship / final rounds on server as UX source of truth | **Partial** — DB championship matchups + `championship`/`champion` payload; UI still advances locally | M6 partial |
 
 ### P1 — Testing (Phase 4)
 
@@ -131,13 +131,24 @@ Priority: **P0** = do next / unblockers · **P1** = core modernization · **P2**
 
 ---
 
-## Suggested next session (start of Phase 3)
+### Phase 3 changes shipped
 
-1. **T020** — Split Django settings into base/local/production.
-2. **T021 / T022** — Thin views + normalize `/api/` error shapes.
-3. **T023 / T024 / T034** — Multi-bracket ownership, transactional picks, championship as server truth.
+- Split Django settings into `madness_backend/settings/{base,local,production}.py`
+- Thin bracket views; artist-page assembly moved into `BracketService`
+- Canonical `/api/artists/search` + `/api/artists/<name>/page` with `{error, code}` shape (legacy aliases kept)
+- Multiple brackets per artist; resume latest incomplete; `?new=1` forces create
+- Transactional `advance_winner` with validation
+- DB indexes + championship fields (`is_championship`, feeders, `next_slot`)
+- Celery retries/backoff; fixed `ArtistDetails.updated`; removed unused allauth
+- Added `documentation/backend-guidelines.md`
 
-Do not upgrade Django majors while restructuring apps in the same PR.
+## Suggested next session (start of Phase 4)
+
+1. **T040 / T041** — End-to-end bracket progression + DRF APIClient coverage (64 → champion).
+2. **T042** — Frontend tests for API-driven pick flow once UI wires championship from server.
+3. **T050** — GitHub Actions CI (can start in parallel with Phase 4).
+
+Do not upgrade Django majors while expanding test infrastructure in the same PR.
 
 ---
 
@@ -149,7 +160,7 @@ documentation/
 ├── architecture.md
 ├── modernization-roadmap.md
 ├── frontend-guidelines.md     # Phase 2 ✓
-├── backend-guidelines.md      # Phase 3
+├── backend-guidelines.md      # Phase 3 ✓
 └── testing-strategy.md        # Phase 4
 ```
 

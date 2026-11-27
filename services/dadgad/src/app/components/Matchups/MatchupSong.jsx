@@ -6,11 +6,13 @@ import PropTypes from 'prop-types';
 import MatchupSongButton from './MatchupSongButton';
 import { Context } from '../../context/BracketContext';
 import { applyLocalMatchupPick } from '../../services/bracketLocalUpdate';
+import { normalizeArtistHandle } from '../../services/artistHandle';
 
 export default function MatchupSong({
   thissong, opponent, matchupId, round, group, winner,
 }) {
   const { handle } = useParams();
+  const artistHandle = normalizeArtistHandle(handle);
   const [state, dispatch] = useContext(Context);
   const [boxShadow, setBoxShadow] = useState('none');
 
@@ -29,7 +31,7 @@ export default function MatchupSong({
       type: 'setUserBracket',
       payload: {
         userBracket: {
-          artist: handle,
+          artist: artistHandle,
           bracket: state.bracket,
           round: state.round,
           currentRoundProgres: state.currentRoundProgres,

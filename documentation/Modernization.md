@@ -375,4 +375,6 @@ Phase 1 deliverables
 
 Phase 2 complete (see modernization-roadmap.md and frontend-guidelines.md): unused deps removed, RTK Query standardized, typed API client + TS migrations for core modules, component hierarchy clarified, artist page uses server bracket create. Matchup play remains client-local for now; server pick persistence is ready on the backend but not wired in the UI yet.
 
-Next: start Phase 3 with T020 (split Django settings), avoiding simultaneous architecture + major version upgrades.
+Phase 3 complete (see modernization-roadmap.md and backend-guidelines.md): settings split, thin views + `BracketService` expansion, `/api/` normalization with `{error, code}`, multi-bracket resume/`?new=1`, transactional picks, indexes, championship matchups/payload, Celery retries, `ArtistDetails.updated` fix, allauth deferred.
+
+Next: start Phase 4 with T040/T041 (bracket progression + API integration tests), then CI (T050).

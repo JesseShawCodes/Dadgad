@@ -68,6 +68,9 @@ export type ArtistPagePayload = {
   matchups?: unknown[];
   bracket_id?: number;
   bracket?: GroupBracket;
+  is_completed?: boolean;
+  champion?: Song | null;
+  championship?: ChampionshipBracket;
 };
 
 export type TaskStatusResponse = {
@@ -101,4 +104,5 @@ export type SelectMatchupWinnerRequest = {
 export type ApiErrorBody = {
   error?: string;
   message?: string;
+  code?: string;
 };

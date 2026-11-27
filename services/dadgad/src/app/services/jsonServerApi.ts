@@ -14,12 +14,12 @@ export const jsonServerApi = createApi({
   endpoints: (builder) => ({
     getArtists: builder.query<unknown, string>({
       query: (artist) => ({
-        url: `/artist?q=${encodeURIComponent(artist)}`,
+        url: `/api/artists/search?q=${encodeURIComponent(artist)}`,
       }),
     }),
     getArtistInfo: builder.query<unknown, string>({
       query: (artistName) => ({
-        url: `/artist-page/${encodeURIComponent(artistName)}`,
+        url: `/api/artists/${encodeURIComponent(artistName)}/page`,
       }),
     }),
     getArtistPage: builder.query<ArtistPagePayload, string>({
@@ -34,7 +34,7 @@ export const jsonServerApi = createApi({
     }),
     startSearch: builder.mutation<StartSearchResponse, string>({
       query: (queryParam) => ({
-        url: `/artist?q=${encodeURIComponent(queryParam)}`,
+        url: `/api/artists/search?q=${encodeURIComponent(queryParam)}`,
         method: 'GET',
       }),
     }),

@@ -12,15 +12,17 @@ import WarningMessage from './WarningMessage';
 import { checkForArtistBracket } from '../services/userBracketLocalStorage';
 import InProgressBracket from './song_list/InProgressBracket';
 import { buildInitialBracket } from '../services/serverBracket';
+import { normalizeArtistHandle } from '../services/artistHandle';
 
 function ArtistPageForm() {
   const { handle } = useParams();
+  const artistHandle = normalizeArtistHandle(handle);
   const value = useContext(Context);
   const [state, dispatch] = value;
   const [generating, setGenerating] = useState(false);
   const {
     data: musicQuery = {},
-  } = useGetArtistPageQuery(handle);
+  } = useGetArtistPageQuery(artistHandle, { skip: !artistHandle });
 
   // generateBracket prefers the server-built round-1 tree from
   // BracketCreateFromArtistView, with createMatchups as a local fallback.
@@ -46,7 +48,7 @@ function ArtistPageForm() {
 
   const checkLocalBrackets = () => {
     const localBrackets = JSON.parse(localStorage.getItem("userBracket"));
-    const initialLocalBracketCheck = checkForArtistBracket(handle, localBrackets);
+    const initialLocalBracketCheck = checkForArtistBracket(artistHandle, localBrackets);
     if (initialLocalBracketCheck) {
       return <InProgressBracket />;
     }
@@ -59,14 +61,14 @@ function ArtistPageForm() {
           if (Object.keys(state.bracket).length === 0) {
             return;
           }
-          dispatch({ type: 'setUserBracket', payload: { userBracket: {artist: handle, bracket: state.bracket, round: state.round, currentRoundProgres: state.currentRoundProgres}}});
+          dispatch({ type: 'setUserBracket', payload: { userBracket: {artist: artistHandle, bracket: state.bracket, round: state.round, currentRoundProgres: state.currentRoundProgres}}});
         } catch (error) {
           console.error("Error saving to local storage:", error);
         }
     }, 10000);
 
     return () => clearInterval(saveInterval);
-  }, [state, dispatch, handle]);
+  }, [state, dispatch, artistHandle]);
 
   useEffect(() => {
     if (Object.keys(musicQuery).length > 0) {

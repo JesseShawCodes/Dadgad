@@ -44,9 +44,10 @@ Rules:
 
 ## Bracket state
 
-- **Create:** Django `BracketCreateFromArtistView` via RTK `getArtistPage` (`/api/brackets/artist/...`). Generate uses server round-1 structure when present (`serverBracket.buildInitialBracket`), with `createMatchups` as fallback.
-- **During play:** local updates via `bracketLocalUpdate` only. Server pick persistence is deferred until M6 wiring is intentional.
-- **Resume:** localStorage “in progress” UI today. Session-scoped server resume is a later milestone.
+- **Create:** Django `BracketCreateFromArtistView` via RTK `getArtistPage` (`/api/brackets/artist/...`). Generate uses server round-1 structure when present (`serverBracket.buildInitialBracket`), with `createMatchups` as fallback. Pass `?new=1` when starting a fresh tournament for the same artist.
+- **Search:** RTK uses canonical `/api/artists/search` and `/api/artists/<name>/page`.
+- **During play:** local updates via `bracketLocalUpdate` only. Server pick persistence + championship payload exist; wiring play UX to them remains M6/Phase 4.
+- **Resume:** localStorage “in progress” UI today; server resumes latest incomplete bracket on artist-page GET.
 
 ## Accessibility baseline
 

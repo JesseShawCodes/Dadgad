@@ -42,7 +42,7 @@ describe('jsonServerApi', () => {
       const url = typeof request === 'string' ? request : request.url;
       const method = typeof request === 'string' ? fetch.mock.calls[0][1]?.method : request.method;
 
-      expect(url).toContain('/artist?q=Test%20Artist');
+      expect(url).toContain('/api/artists/search?q=Test%20Artist');
       expect(method).toBe('GET');
     });
 
@@ -71,7 +71,7 @@ describe('jsonServerApi', () => {
 
       const request = fetch.mock.calls[0][0];
       const url = typeof request === 'string' ? request : request.url;
-      expect(url).toContain('/artist-page/test-artist');
+      expect(url).toContain('/api/artists/test-artist/page');
     });
   });
 
@@ -103,7 +103,7 @@ describe('jsonServerApi', () => {
       const url = typeof request === 'string' ? request : request.url;
       const method = typeof request === 'string' ? fetch.mock.calls[0][1]?.method : request.method;
 
-      expect(url).toContain('/artist?q=Search%20Query');
+      expect(url).toContain('/api/artists/search?q=Search%20Query');
       expect(method).toBe('GET');
     });
   });

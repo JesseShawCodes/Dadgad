@@ -791,11 +791,17 @@ class AppleSearchViewTests(TestCase):
 
         response = self.client.get("/artist-page/Unknown")
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"error": "Artist not found"})
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(
+            response.json(),
+            {"error": "Artist not found", "code": "artist_not_found"},
+        )
 
+    @patch("apple_search.views.artist_content")
     @patch("apple_search.artist_page.artist_search")
-    def test_artist_page_view_name_mismatch(self, mock_artist_search):
+    def test_artist_page_view_content_error(
+        self, mock_artist_search, mock_artist_content
+    ):
         mock_artist_search.return_value = {
             "results": {
                 "artists": {
@@ -805,11 +811,15 @@ class AppleSearchViewTests(TestCase):
                 }
             }
         }
+        mock_artist_content.return_value = {"error": "Artist not found"}
 
         response = self.client.get("/artist-page/Deftones")
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"error": "Artist not found"})
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(
+            response.json(),
+            {"error": "Artist not found", "code": "artist_not_found"},
+        )
 
     @patch("apple_search.views.AsyncResult")
     def test_task_status_view_pending(self, mock_async_result):
@@ -864,6 +874,7 @@ class AppleSearchViewTests(TestCase):
                 "status": "FAILURE",
                 "request_id": "test-id",
                 "error": "Error message",
+                "code": "task_failed",
             },
         )
 

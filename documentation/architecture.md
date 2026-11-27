@@ -77,11 +77,11 @@ Dadgad/
 | --- | --- |
 | Framework | Django **5.2.15**, DRF **3.17** |
 | Apps | `apple_search`, `brackets` (+ django-allauth, celery results) |
-| Settings | Single `madness_backend/settings.py` (dev/prod via `environment` env var) |
-| Auth | django-allauth + Apple social provider configured; bracket owner FK exists but optional |
-| API style | Mix of function views (`apple_search.views`) and DRF `APIView` (`brackets.views`) |
-| Business logic | `brackets/services.py` (`BracketService`) — create, advance winner, structured output |
-| Celery | `fetch_artist_data` task wraps artist search; broker = `UPSTASH_REDIS_URL` |
+| Settings | Split package `madness_backend/settings/` (`base` / `local` / `production`) |
+| Auth | Product auth deferred; django-allauth removed until needed; `Bracket.owner` FK remains optional |
+| API style | Function views for search/status; DRF `APIView` for brackets; errors use `{error, code}` |
+| Business logic | `brackets/services.py` (`BracketService`) — create, advance, structured + championship payload |
+| Celery | `fetch_artist_data` with retries/backoff/time limits; broker = `UPSTASH_REDIS_URL` |
 | Lint | Ruff; Makefile targets `ruff-check` / `ruff-check-fix` |
 | Tests | Django `TestCase` suites in `apple_search` and `brackets` (~1.3k lines of tests) |
 | Deploy | Dockerfile (Python 3.10 + gunicorn); Procfile for Render; host `music-march-maddness.onrender.com` |
@@ -90,42 +90,44 @@ Dadgad/
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| GET | `/artist?q=` | Queue artist search Celery task |
-| GET | `/artist-page/<artist_name>` | Artist page payload (songs, albums, weights) |
+| GET | `/api/artists/search?q=` | Queue artist search Celery task (canonical) |
+| GET | `/api/artists/<artist_name>/page` | Artist page payload (songs, albums, weights) |
+| GET | `/artist?q=` | Legacy alias for artist search |
+| GET | `/artist-page/<artist_name>` | Legacy alias for artist page |
 | GET | `/api/task-status?q=` | Celery task status / result |
-| GET | `/api/brackets/artist/<artist_name>` | Create/fetch bracket from artist (server-side) |
-| GET | `/api/brackets/<pk>/` | Bracket detail |
+| GET | `/api/brackets/artist/<artist_name>` | Resume latest incomplete or create (`?new=1` forces new) |
+| GET | `/api/brackets/<pk>/` | Bracket detail + structured / championship payload |
 | POST | `/api/matchups/<pk>/winner/` | Advance winner via `BracketService` |
-| POST | `/api/brackets/select-matchup-winner/` | Advance winner via `BracketService.advance_winner` + return structured bracket |
+| POST | `/api/brackets/select-matchup-winner/` | Advance winner + return structured bracket / championship |
 
 ### Models
 
 **`brackets`**
 
-- `Bracket` — name, artist_id/name, owner (nullable), is_completed
-- `BracketItem` — song entry with seed, apple_id, image_url
-- `Matchup` — round_number, matchup_num, item1/item2/winner, next_matchup self-FK
+- `Bracket` — name, artist_id/name, owner (nullable), is_completed (indexed by artist + created/completed)
+- `BracketItem` — song entry with seed, apple_id, image_url (indexed by bracket + apple_id)
+- `Matchup` — round_number, matchup_num, item1/item2/winner, next_matchup/next_slot, championship feeders
 
 **`apple_search`**
 
 - `AppleAuth` — stored developer JWT tokens
-- `ArtistDetails` — sparse artist cache model (limited usage)
+- `ArtistDetails` — sparse artist cache (`created` auto_now_add, `updated` auto_now)
 
-Indexes beyond defaults are not defined on bracket tables. `Bracket.objects.filter(artist_id=...).first()` means **one persisted bracket per artist**, not per user/session.
+Multiple brackets per `artist_id` are supported; artist-page GET resumes the latest incomplete unless `?new=1`.
 
 ## 5. Bracket engine
 
-Phase 2 wires create + pick persistence to the server while keeping client-side round progression for UX.
+Phase 3 hardens the server bracket engine; the UI still advances rounds locally for play UX.
 
 | Location | Role today |
 | --- | --- |
-| Backend `BracketService` | Tree generation, `advance_winner`, structured payload |
+| Backend `BracketService` | Multi-bracket create/resume, transactional `advance_winner`, structured + championship payload |
 | Frontend `BracketContext` | In-play UI state (Context, not Redux domain slices) |
 | Frontend `createMatchups` | Fallback initial round-1 builder when server structure unavailable |
 | Frontend localStorage | In-progress resume cache |
-| `SelectMatchupWinnerView` | Persists picks via `advance_winner` |
+| `SelectMatchupWinnerView` | Persists picks via `advance_winner` and returns championship/champion |
 
-Phase 3 should still harden multi-bracket ownership, transactional validation, championship-as-server-truth, and indexes (roadmap T023–T025, T034).
+Remaining M6 work is mostly frontend: drive play/championship from server payloads instead of local-only progression.
 
 ## 6. Apple Music integration
 
@@ -184,16 +186,15 @@ Django local settings expect `database_name` / `database_user` / `database_passw
 
 1. README previously claimed Flask, WebSockets, and MySQL — corrected in Phase 1.
 2. Frontend path in old docs was `services/frontend`; actual path is `services/dadgad`.
-3. Client still owns round progression UX while server persists picks (harden championship-as-server-truth in Phase 3/4).
+3. Client still owns round progression UX while server persists picks and championship structure (wire UI in Phase 4/6).
 4. Remaining JSX → TypeScript migration for presentational components.
 5. `startup.sh` references nonexistent `apple_search.wsgi`.
 6. Django Dockerfile runs `collectstatic` at build without production env — fragile.
-7. Settings comment still says Django 5.1; project is on 5.2.
-8. `ArtistDetails.updated` uses `auto_now_add` (likely meant `auto_now`).
-9. No CI pipeline.
+7. No CI pipeline.
 
 ## 11. Related docs
 
 - [Modernization roadmap & backlog](./modernization-roadmap.md)
 - [Frontend guidelines](./frontend-guidelines.md)
+- [Backend guidelines](./backend-guidelines.md)
 - [Original modernization plan](./Modernization.md)
