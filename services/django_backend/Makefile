@@ -40,7 +40,16 @@ celery:
 test:
 	$(PYTHON) manage.py test
 
+pytest:
+	DJANGO_SETTINGS_MODULE=madness_backend.settings.test \
+		$(PYTHON) -m pytest
+
 test-coverage:
+	DJANGO_SETTINGS_MODULE=madness_backend.settings.test \
+		$(PYTHON) -m pytest --cov=. --cov-report=term-missing
+
+# Legacy coverage via manage.py test
+test-coverage-django:
 	coverage run manage.py test --keepdb
 	coverage report
 

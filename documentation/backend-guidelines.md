@@ -54,6 +54,9 @@ A full `apps/tournaments|music` package move is **not** required for Phase 3; pr
 
 ## Testing
 
-- Prefer Django `TestCase` + DRF `APIClient` next to the app (`brackets/tests*.py`, `apple_search/tests*.py`).
-- Protect bracket progression and validation paths whenever `BracketService` changes.
-- Full end-to-end 64→champion coverage is Phase 4 (T040).
+- Primary runner: **pytest** + **pytest-django** (`make django-pytest`; settings `madness_backend.settings.test`).
+- `manage.py test` remains supported for ad-hoc runs.
+- Suites live next to the app (`brackets/tests*.py`, `apple_search/tests*.py`); helpers in `brackets/test_factories.py`.
+- Protect bracket progression and validation paths whenever `BracketService` changes (see `tests_progression.py` / `tests_api_integration.py`).
+- Mock Apple Music / network I/O — never rely on live catalog calls in CI.
+- Strategy doc: [testing-strategy.md](./testing-strategy.md).

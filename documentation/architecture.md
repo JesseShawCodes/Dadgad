@@ -52,7 +52,7 @@ Dadgad/
 | Styling | Bootstrap 5.3 + SCSS (`App.scss`); some CSS modules |
 | TypeScript | Core services/context/API in TS; many presentational components still JSX |
 | Visualization | p5.js canvas via `react-p5` (`bracketService.jsx`, `p5Sketch.jsx`) |
-| Tests | Jest + Testing Library (~25 test files); component/service unit tests |
+| Tests | Jest + Testing Library (~30 test files); API client + pick-flow contract tests |
 | Deploy | Netlify with `@netlify/plugin-nextjs`; local dev on port **1207** |
 
 ### Key frontend flows
@@ -83,7 +83,7 @@ Dadgad/
 | Business logic | `brackets/services.py` (`BracketService`) — create, advance, structured + championship payload |
 | Celery | `fetch_artist_data` with retries/backoff/time limits; broker = `UPSTASH_REDIS_URL` |
 | Lint | Ruff; Makefile targets `ruff-check` / `ruff-check-fix` |
-| Tests | Django `TestCase` suites in `apple_search` and `brackets` (~1.3k lines of tests) |
+| Tests | pytest + pytest-django (primary) and `manage.py test`; progression + API integration suites |
 | Deploy | Dockerfile (Python 3.10 + gunicorn); Procfile for Render; host `music-march-maddness.onrender.com` |
 
 ### API surface
@@ -167,11 +167,13 @@ Django local settings expect `database_name` / `database_user` / `database_passw
 
 | Layer | Tooling | Coverage snapshot |
 | --- | --- | --- |
-| Frontend unit | Jest + RTL | Services, context, many presentational components |
-| Backend unit | `manage.py test` + coverage | Apple auth/search, bracket create/advance/structure |
-| E2E | None | No Playwright/Cypress |
-| CI | None | No `.github/workflows` |
-| Lint | ESLint 9 (frontend), Ruff (backend) | Manual via Make / npm |
+| Frontend unit | Jest + RTL | Services, context, API client, presentational components |
+| Backend unit / integration | pytest + pytest-django (also `manage.py test`) | 64→champion progression, APIClient create/select/complete, Apple mocks |
+| E2E | Deferred | Playwright planned (T043) |
+| CI | GitHub Actions | Lint + frontend Jest + Django pytest + migration check |
+| Lint | ESLint 9 (frontend), Ruff (backend) | Make targets + CI |
+
+See [testing-strategy.md](./testing-strategy.md) for commands and suite map.
 
 ## 9. What to preserve
 
@@ -190,11 +192,12 @@ Django local settings expect `database_name` / `database_user` / `database_passw
 4. Remaining JSX → TypeScript migration for presentational components.
 5. `startup.sh` references nonexistent `apple_search.wsgi`.
 6. Django Dockerfile runs `collectstatic` at build without production env — fragile.
-7. No CI pipeline.
+7. CI present (Phase 4); deploy hardening (startup.sh WSGI, Docker collectstatic) still open.
 
 ## 11. Related docs
 
 - [Modernization roadmap & backlog](./modernization-roadmap.md)
 - [Frontend guidelines](./frontend-guidelines.md)
 - [Backend guidelines](./backend-guidelines.md)
+- [Testing strategy](./testing-strategy.md)
 - [Original modernization plan](./Modernization.md)
