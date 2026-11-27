@@ -41,6 +41,8 @@ jobs:
       database_host: 127.0.0.1
       database_port: "5432"
       UPSTASH_REDIS_URL: redis://localhost:6379/0
+      apple_artist_details_url: https://api.music.apple.com/v1/catalog/us/
+      apple_search_url: https://api.music.apple.com/v1/catalog/us/search?term=
 
     steps:
       - uses: actions/checkout@v4

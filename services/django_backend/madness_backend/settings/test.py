@@ -53,3 +53,13 @@ CACHES = {
         "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
     }
 }
+
+# Stub Apple Music URLs so manage.py / app ready() can import without secrets.
+os.environ.setdefault(
+    "apple_artist_details_url",
+    "https://api.music.apple.com/v1/catalog/us/",
+)
+os.environ.setdefault(
+    "apple_search_url",
+    "https://api.music.apple.com/v1/catalog/us/search?term=",
+)

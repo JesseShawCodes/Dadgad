@@ -1,4 +1,4 @@
-.PHONY: start migrate setup update-requirements install
+.PHONY: start migrate migrate-dry-run setup update-requirements install
 
 PYTHON=.venv/bin/python
 
@@ -33,6 +33,10 @@ python-start:
 
 migrate:
 	$(PYTHON) manage.py migrate
+
+# Show model → migration changes without writing files (same check CI uses).
+migrate-dry-run:
+	$(PYTHON) manage.py makemigrations --dry-run --check --verbosity 3
 
 celery:
 	.venv/bin/celery -A madness_backend worker -l info

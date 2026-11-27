@@ -1,5 +1,6 @@
 .PHONY: setup docker-start docker-stop colima-start colima-stop colima-stop-force \
-	django-start django-stop django-migrate django-test django-pytest \
+	django-start django-stop django-migrate django-migrate-dry-run \
+	django-test django-pytest \
 	django-ruff-check django-ruff-check-fix \
 	dadgad-start dadgad-stop dadgad-test dadgad-lint postgres-shell
 
@@ -35,6 +36,9 @@ django-stop:
 
 django-migrate:
 	$(MAKE) -C services/django_backend migrate
+
+django-migrate-dry-run:
+	$(MAKE) -C services/django_backend migrate-dry-run
 
 django-test:
 	$(MAKE) -C services/django_backend test
